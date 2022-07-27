@@ -1,6 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Requests\PaymentGatewayRequest;
+use Unicodeveloper\Paystack\Facades\Paystack;
+use App\Http\Controllers\Auth\PaymentController;
 
 /*
 |--------------------------------------------------------------------------
