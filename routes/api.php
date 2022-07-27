@@ -25,6 +25,17 @@ Route::prefix('v1')->group(function(){
     // Magic Link Login 
     Route::get('auth/magic/login/{token}', MagicLoginController::class)->name('verify-login');
 
+    Route::post('auth/magic/send-token', function(Request $request){
+        $request->validate(['email' => 'required|email']);
+
+        User::whereEmail($request->email)->firstOrFail()->sendMagicLink();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Check your email inbox for a link to login'
+        ]);
+    });
+
     // Regular Authentication Routes
     Route::post('auth/login', [LoginController::class, 'login']);
 

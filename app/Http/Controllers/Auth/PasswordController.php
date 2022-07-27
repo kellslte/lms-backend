@@ -61,16 +61,16 @@ class PasswordController extends Controller
             }
         );
 
-        if(!$status === Password::PASSWORD_RESET){
+        if($status === Password::PASSWORD_RESET){
             return response()->json([
-                'status' => $status,
-                'message' => 'Your password could not be reset, please try again'
-            ], 422);
+                'status' => 'success',
+                'message' => 'Your password was reset successfully.'
+            ], 200);
         }
-
+        
         return response()->json([
-            'status' => $status,
-            'message' => 'Your password was reset successfully.'
-        ], 200);
+            'status' => 'failed',
+            'message' => 'Your password could not be reset, please try again'
+        ], 422);
     }
 }

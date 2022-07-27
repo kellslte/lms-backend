@@ -11,14 +11,16 @@ class SendPasswordResetMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $url;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($url)
     {
-        //
+        $this->url = $url;
     }
 
     /**

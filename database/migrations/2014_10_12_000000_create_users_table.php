@@ -20,7 +20,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password')->nullable();
             $table->enum('gender', ['male', 'female'])->default('female');
-            $table->boolean('access_to_laptop')->default(true);
+            $table->enum('access_to_laptop', ['yes', 'no'])->default('yes');
             $table->string('current_education_level')->nullable();
             $table->string('phonenumber')->nullable();
             $table->string('github_link')->nullable();

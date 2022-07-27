@@ -15,6 +15,8 @@ use App\Mail\SendWelcomeMailToNewUser;
 class RegisterController extends Controller
 {
     public function register(CreateUserRequest $request){
+        //return response()->json($request->trackId);
+        
         // create user
         $user = User::create([
             'name' => $request->fullname,
@@ -47,6 +49,7 @@ class RegisterController extends Controller
             'status' => 'successful',
             'data' => [
                 'user' => $user,
+                'role' => $user->roles[0]->name,
             ]
         ]);
     }

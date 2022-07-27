@@ -8,6 +8,7 @@ use App\Traits\HasUuid;
 use Laravel\Sanctum\HasApiTokens;
 use App\Services\MagicLinkService;
 use App\Mail\SendPasswordResetMail;
+use Illuminate\Support\Facades\Mail;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
@@ -30,9 +31,13 @@ Authenticatable implements JWTSubject
         'email',
         'password',
         'gender',
+        'cv_details',
+        'github_link',
         'access_to_laptop',
         'current_education_level',
-        'phonenumber'
+        'phonenumber',
+        'track_id',
+        'course_id'
     ];
 
     /**
@@ -106,8 +111,8 @@ Authenticatable implements JWTSubject
      */
     public function sendPasswordResetNotification($token)
     {
-        $url = config('app.url') . '/reset-password?token=' . $token;
+        $url = config('app.url') . '/reset-password?token=' . $token.'&email='.$this->email;
 
-        $this->notify(new SendPasswordResetMail($url));
+        Mail::to($this->email)->queue(new SendPasswordResetMail($url));
     }
 }

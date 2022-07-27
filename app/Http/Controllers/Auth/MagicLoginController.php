@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Models\MagicToken;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class MagicLoginController extends Controller
@@ -25,9 +26,12 @@ class MagicLoginController extends Controller
 
         $token = Auth::login($dbtoken->user);
 
+        $user = User::whereEmail($dbtoken->user->email)->firstOrFail();
+
         return response()->json([
             'token' => $token,
             'user' => $dbtoken->user,
+            'role' => $user->roles[0]->name
         ]);
     }
 }

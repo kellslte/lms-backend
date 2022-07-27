@@ -20,13 +20,16 @@ class LoginController extends Controller
             'message' => 'Email or password incorrect',
         ], 401);
 
+        $user = User::whereEmail($credentials['email'])->firstOrFail();
+
         return response()->json([
             'status' => 'success',
             'authorization' => [
                 'token' => $token,
                 'type' => 'bearer',
             ],
-            'user' => User::whereEmail($credentials['email'])->firstOrFail(),
+            'user' => $user,
+            'role' => $user->roles[0]->name
         ]);
     }
 
