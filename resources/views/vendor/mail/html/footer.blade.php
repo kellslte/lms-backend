@@ -25,24 +25,24 @@
                                                     width="184px">
                                                     <tr>
                                                         <td style="padding:0 7px 0 7px;"><a
-                                                                href="https://www.facebook.com/" target="_blank"><img
+                                                                href="https://www.facebook.com/enugustatetechhub/" target="_blank"><img
                                                                     alt="Facebook" height="32"
                                                                     src="https://res.cloudinary.com/laudworx/image/upload/v1658838146/ada%20lms%20mail%20assets/facebook2x_kzcbia.png"
                                                                     style="display: block; height: auto; border: 0;"
                                                                     title="Facebook" width="32" /></a></td>
-                                                        <td style="padding:0 7px 0 7px;"><a href="https://twitter.com/"
+                                                        <td style="padding:0 7px 0 7px;"><a href="https://twitter.com/enugustechhub"
                                                                 target="_blank"><img alt="Twitter" height="32"
                                                                     src="https://res.cloudinary.com/laudworx/image/upload/v1658838146/ada%20lms%20mail%20assets/twitter2x_zfaqtw.png"
                                                                     style="display: block; height: auto; border: 0;"
                                                                     title="Twitter" width="32" /></a></td>
                                                         <td style="padding:0 7px 0 7px;"><a
-                                                                href="https://instagram.com/" target="_blank"><img
+                                                                href="https://www.instagram.com/enugustatetechhub/" target="_blank"><img
                                                                     alt="Instagram" height="32"
                                                                     src="https://res.cloudinary.com/laudworx/image/upload/v1658838146/ada%20lms%20mail%20assets/instagram2x_zi0mbi.png"
                                                                     style="display: block; height: auto; border: 0;"
                                                                     title="Instagram" width="32" /></a></td>
                                                         <td style="padding:0 7px 0 7px;"><a
-                                                                href="https://www.linkedin.com/" target="_blank"><img
+                                                                href="https://www.linkedin.com/company/enugu-state-tech-hub/" target="_blank"><img
                                                                     alt="LinkedIn" height="32"
                                                                     src="https://res.cloudinary.com/laudworx/image/upload/v1658838146/ada%20lms%20mail%20assets/linkedin2x_mvc55c.png"
                                                                     style="display: block; height: auto; border: 0;"
@@ -61,29 +61,10 @@
                                         <td class="pad">
                                             <div style="font-family: sans-serif">
                                                 <div class="txtTinyMce-wrapper"
-                                                    style="font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #ebebeb; line-height: 1.2; font-family: Arial, Helvetica Neue, Helvetica, sans-serif;">
-                                                    <p style="margin: 0; font-size: 14px; text-align: center;">
-                                                        {{ Illuminate\Mail\Markdown::parse($slot) }}</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </table>
-                                <table border="0" cellpadding="0" cellspacing="0" class="text_block block-4"
-                                    role="presentation"
-                                    style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;"
-                                    width="100%">
-                                    <tr>
-                                        <td class="pad"
-                                            style="padding-bottom:50px;padding-left:10px;padding-right:10px;padding-top:10px;">
-                                            <div style="font-family: sans-serif">
-                                                <div class="txtTinyMce-wrapper"
-                                                    style="font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #ebebeb; line-height: 1.2; font-family: Arial, Helvetica Neue, Helvetica, sans-serif;">
-                                                    <p style="margin: 0; font-size: 14px; text-align: center;">
-                                                        If you'd like to unsubscribe, <a href="http://www.example.com"
-                                                            rel="noopener"
-                                                            style="text-decoration: underline; color: #0068A5;"
-                                                            target="_blank">click here</a></p>
+                                                    style="font-size: 12px; mso-line-height-alt: 14.399999999999999px; color: #ebebeb; line-height: 1.2; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; text-align: center;">
+                                                    <p style="margin: 0 auto; font-size: 14px; text-align: center;">
+                                                        © {{ date('Y') }} {{ config('app.name') }}. @lang('All rights reserved.')
+                                                    </p>
                                                 </div>
                                             </div>
                                         </td>

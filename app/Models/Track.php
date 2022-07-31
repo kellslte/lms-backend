@@ -2,21 +2,17 @@
 
 namespace App\Models;
 
+use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Track extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuid;
 
     protected $fillable = [
         "title",
     ];
-
-    public function student()
-    {
-        return $this->belongsTo(User::class);
-    }
 
     public function courses()
     {

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Course extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuid;
 
     protected $fillable = [
         "title"
@@ -16,6 +17,10 @@ class Course extends Model
     public function track()
     {
         return $this->belongsTo(Track::class);
+    }
+
+    public function students(){
+        return $this->hasMany(User::class);
     }
 
     public function lessons()

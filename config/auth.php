@@ -14,7 +14,7 @@ return [
     */
 
     'defaults' => [
-        'guard' => 'api',
+        'guard' => 'student',
         'passwords' => 'users',
     ],
 
@@ -41,9 +41,29 @@ return [
             'provider' => 'users',
         ],
 
-        'api' => [
+        'student' => [
             'driver' => 'jwt',
             'provider' => 'users',
+        ],
+
+        'admin' => [
+            'driver' => 'jwt',
+            'provider' => 'admins',
+        ],
+
+        'facilitator' => [
+            'driver' => 'jwt',
+            'provider' => 'facilitators',
+        ],
+
+        'mentor' => [
+            'driver' => 'jwt',
+            'provider' => 'mentors',
+        ],
+
+        'help-desk-user' => [
+            'driver' => 'jwt',
+            'provider' => 'help-desk-users',
         ],
     ],
 
@@ -70,6 +90,26 @@ return [
             'model' => App\Models\User::class,
         ],
 
+        'admins' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Admin::class,
+        ],
+
+        'mentors' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Mentor::class,
+        ],
+
+        'help-desk-users' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\HelpDeskUser::class,
+        ],
+
+        'facilitators' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Facilitator::class,
+        ],
+
         // 'users' => [
         //     'driver' => 'database',
         //     'table' => 'users',
@@ -94,6 +134,34 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'admins' => [
+            'provider' => 'admins',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'mentors' => [
+            'provider' => 'mentors',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'facilitators' => [
+            'provider' => 'facilitators',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'help-desk-users' => [
+            'provider' => 'help-desk-users',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,

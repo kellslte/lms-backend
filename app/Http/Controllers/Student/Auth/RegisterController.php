@@ -1,12 +1,11 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Student\Auth;
 
 use App\Models\User;
 use App\Models\Track;
 use App\Models\Course;
 use Illuminate\Http\Request;
-use App\Services\PaystackService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\CreateUserRequest;
@@ -16,9 +15,10 @@ class RegisterController extends Controller
 {
     public function register(CreateUserRequest $request){
         //return response()->json($request->trackId);
-        
+        $course = Course::whereTitle($request->courseTitle)->firstOrFail();
+
         // create user
-        $user = User::create([
+        $user = $course->students()->create([
             'name' => $request->fullname,
             'email' => $request->email,
             'gender' => $request->gender,
@@ -27,12 +27,7 @@ class RegisterController extends Controller
             'phonenumber' => $request->phonenumber,
             'github_link' => $request->githubLink,
             'cv_details' => $request->cvDetails,
-            'track_id' => $request->trackId,
-            'course_id' => $request->courseId,
         ]);
-
-        // assign role
-        $user->assignRole('student');
 
         //  create transaction details and set it to unpaid
         $user->transaction()->create([
@@ -41,15 +36,12 @@ class RegisterController extends Controller
             'status' => 'unpaid',
         ]);
 
-        // TODO Send Welcome Email to user
-        Mail::to($user->email)->queue(new SendWelcomeMailToNewUser($user));
-
         // return response on account creation
         return response()->json([
             'status' => 'successful',
             'data' => [
                 'user' => $user,
-                'role' => $user->roles[0]->name,
+                'role' => 'student',
             ]
         ]);
     }

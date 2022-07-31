@@ -15,40 +15,27 @@ use Illuminate\Auth\Events\PasswordReset;
 
 class PasswordController extends Controller
 {
-    public function createNewPassword(CreatePasswordRequest $request){
-        $user = User::whereId(Auth::id())->firstOrFail();
-
-        $user->update([
-            'password' => bcrypt($request->password)
-        ]);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'password created successfully'
-        ], 200);
-    }
-
-
-    public function requestPasswordReset(Request $request){
+    public function requestPasswordReset(Request $request, $user){
         $request->validate(['email' => 'required|email']);
 
-        $status = Password::sendResetLink($request->only('email'));
+        $status = Password::broker($user)->sendResetLink($request->only('email'));
 
-        if(!$status === Password::RESET_LINK_SENT){
+        if($status === Password::RESET_LINK_SENT){
             return response()->json([
-                'status' => $status,
-                'message' => 'Email is not registered'
-            ], 422);
+                'status' => 'success',
+                'message' => 'Link  has been sent to email address',
+            ], 200);
         }   
-
+        
         return response()->json([
-            'status' => $status,
-            'message' => 'Link  has been sent to email address',
-        ], 200);
+            'status' => 'failed',
+            'message' => 'Email is not registered'
+        ], 422);
     }
 
-    public function resetPassword(ResetPasswordRequest $request){
-        $status = Password::reset(
+    public function resetPassword(ResetPasswordRequest $request, $user){
+
+        $status = Password::broker($user)->reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function($user, $password){
                 $user->forceFill([

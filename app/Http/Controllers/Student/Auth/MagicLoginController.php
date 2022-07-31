@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Student\Auth;
 
 use App\Models\MagicToken;
 use Illuminate\Http\Request;
@@ -24,14 +24,18 @@ class MagicLoginController extends Controller
 
         $dbtoken->consume();
 
-        $token = Auth::login($dbtoken->user);
+        $token = auth()->guard('student')->login($dbtoken->user);
 
         $user = User::whereEmail($dbtoken->user->email)->firstOrFail();
 
         return response()->json([
             'token' => $token,
-            'user' => $dbtoken->user,
-            'role' => $user->roles[0]->name
+            'data' => [
+                'user' => $user,
+                'course' => $user->course->title,
+                'track' => $user->course->track->title,
+                'role' => 'student'
+            ]
         ]);
     }
 }

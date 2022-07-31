@@ -9,7 +9,6 @@ use Laravel\Sanctum\HasApiTokens;
 use App\Services\MagicLinkService;
 use App\Mail\SendPasswordResetMail;
 use Illuminate\Support\Facades\Mail;
-use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -19,7 +18,9 @@ class User extends
 
 Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable, HasUuid, HasRoles;
+    use HasFactory, Notifiable, HasUuid;
+
+    protected $guard = 'student';
 
     /**
      * The attributes that are mass assignable.
@@ -36,8 +37,6 @@ Authenticatable implements JWTSubject
         'access_to_laptop',
         'current_education_level',
         'phonenumber',
-        'track_id',
-        'course_id'
     ];
 
     /**
@@ -88,14 +87,9 @@ Authenticatable implements JWTSubject
         return [];
     }
 
-    public function track()
-    {
-        return $this->hasOne(Track::class);
-    }
-
     public function course()
     {
-        return $this->hasOne(Course::class);
+        return $this->belongsTo(Course::class);
     }
 
     public function transaction()
@@ -111,8 +105,12 @@ Authenticatable implements JWTSubject
      */
     public function sendPasswordResetNotification($token)
     {
-        $url = config('app.url') . '/reset-password?token=' . $token.'&email='.$this->email;
+        $url = config('app.url') . '/users/reset-password?token=' . $token.'&email='.$this->email;
 
         Mail::to($this->email)->queue(new SendPasswordResetMail($url));
+    }
+
+    public function submissions(){
+        return $this->hasMany(Submission::class, 'student_id');
     }
 }

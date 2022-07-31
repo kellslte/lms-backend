@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers\Student\Auth;
 
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -15,7 +15,7 @@ class PaymentController extends Controller
 {
     public function __invoke(PaymentGatewayRequest $request)
     {
-        $user = User::where($request->email)->firstOrFail();
+        $user = User::whereEmail($request->email)->firstOrFail();
 
         if($request->transaction_status !== 'success'){
             return response()->json([
