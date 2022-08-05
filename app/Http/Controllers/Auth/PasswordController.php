@@ -8,13 +8,19 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Services\PasswordResetService;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Auth\Events\PasswordReset;
 use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\CreatePasswordRequest;
-use Illuminate\Auth\Events\PasswordReset;
+use App\Services\RequestPasswordResetService;
 
 class PasswordController extends Controller
 {
+    public function checkUserIdentity(Request $request){
+        return RequestPasswordResetService::redirectBasedOnIdentity($request);
+    }
+
     public function requestPasswordReset(Request $request, $user){
         $request->validate(['email' => 'required|email']);
 
@@ -25,12 +31,16 @@ class PasswordController extends Controller
                 'status' => 'success',
                 'message' => 'Link  has been sent to email address',
             ], 200);
-        }   
-        
+        }
+
         return response()->json([
             'status' => 'failed',
             'message' => 'Email is not registered'
         ], 422);
+    }
+
+    public function checkUserIdentityForReset(ResetPasswordRequest $request, $user){
+        return PasswordResetService::redirectBasedOnIdentity($request, $user);
     }
 
     public function resetPassword(ResetPasswordRequest $request, $user){
@@ -54,7 +64,7 @@ class PasswordController extends Controller
                 'message' => 'Your password was reset successfully.'
             ], 200);
         }
-        
+
         return response()->json([
             'status' => 'failed',
             'message' => 'Your password could not be reset, please try again'

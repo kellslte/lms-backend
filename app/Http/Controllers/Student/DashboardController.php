@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers\Student;
 
-use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
     public function index(){
+        $user = User::find(Auth::id());
+
+        $user->load(['schedule', 'notifications', 'submissions']);
         
-        $notifications = [];
+        $notifications = $user->notifications;
 
         $schedule = [];
 

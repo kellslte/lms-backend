@@ -31,26 +31,20 @@ class DatabaseSeeder extends Seeder
     {
         Admin::create([
             'name' => 'Favour Max-Oti',
-            'email' => 'maxotif@gmail.com',
+            'email' => 'maxotif.admin@gmail.com',
             'password' => bcrypt('password'),
         ]);
 
         Mentor::create([
             'name' => 'Chidera Max-Oti',
-            'email' => 'deramaxoti@gmail.com',
+            'email' => 'deramaxoti.mentor@gmail.com',
             'password' => bcrypt('mental'),
         ]);
 
         Facilitator::create([
             'name' => 'Signs Madueke',
-            'email' => 'signsmadueke@gmail.com',
+            'email' => 'signs.facilitator@gmail.com',
             'password' => bcrypt('fascille'),
-        ]);
-        
-        HelpDeskUser::create([
-            'name' => 'Lilivet Ujagbor',
-            'email' => 'lilivet@gmail.com',
-            'password' => bcrypt('secret'),
         ]);
 
         $course = Course::whereTitle('Cloud Engineering')->firstOrFail();

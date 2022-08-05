@@ -8,11 +8,12 @@ use App\Http\Controllers\Student\Auth\PaymentController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Student\Auth\RegisterController;
 use App\Http\Controllers\Admin\Auth\AdminLoginController;
-use App\Http\Controllers\Student\Auth\MagicLoginController;
+use App\Http\Controllers\Auth\MagicLoginController;
 use App\Http\Controllers\Admin\Auth\AdminPasswordController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Student\Auth\StudentLoginController;
 use App\Http\Controllers\Student\Auth\StudentPasswordController;
+use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,44 +28,26 @@ use App\Http\Controllers\Student\Auth\StudentPasswordController;
 
 
 Route::prefix('v1')->group(function(){
-    // Magic Link Login 
-    Route::middleware('guest:student')->get('auth/magic/login/{token}', MagicLoginController::class)->name('verify-login');
+    // Magic Link Login
+    Route::middleware('guest')->get('auth/magic/login/{token}', [MagicLoginController::class, 'checkUserAndRedirect'])->name('verify-login');
 
-    Route::post('auth/magic/send-token', function(Request $request){
-        $request->validate(['email' => 'required|email']);
+    Route::post('auth/magic/send-token', [MagicLoginController::class, 'sendLoginLink']);
 
-        User::whereEmail($request->email)->firstOrFail()->sendMagicLink();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Check your email inbox for a link to login'
-        ]);
-    });
-
-    Route::post('contact-us', ContactController::class);
-
-    // Regular Authentication Routes
-    // Route::post('auth/admin/login', [LoginController::class, 'adminLogin']);
-    // Route::post('auth/mentor/login', [LoginController::class, 'mentorLogin']);
-    // Route::post('auth/facilitator/login', [LoginController::class, 'facilitatorLogin']);
-    // Route::post('auth/help-desk/login', [LoginController::class, 'helpDeskLogin']);
-    
-    
     // Student Registration Routes
-    Route::post('auth/login', [LoginController::class, 'login']);
-    Route::post('auth/register', [RegisterController::class, 'register']);
+    Route::post('auth/login', [LoginController::class, 'checkUserLogin']);
+
     Route::get('auth/tracks', [RegisterController::class, 'getTracksAndCourses']);
-    
+
     Route::post('auth/student/transaction/complete', PaymentController::class);
-    
+
     // Password Reset Routes
-    Route::post('auth/password/{user}/send-reset-link', [PasswordController::class, 'requestPasswordReset']);
-    
-    Route::post('auth/password/{user}/reset', [PasswordController::class, 'resetPassword']);
-    
+    Route::post('auth/password/{user}/send-reset-link', [PasswordController::class, 'checkUserIdentity']);
+
+    Route::post('auth/password/{user}/reset', [PasswordController::class, 'checkUserIdentityForReset']);
+
+
     // Protected Routes
-    
-    Route::middleware('auth:student')->group(function(){        
+    Route::middleware('auth:student')->group(function(){
         Route::prefix('auth/user')->group(function(){
             // User Logout
             Route::post('logout', [StudentLoginController::class, 'logout']);
@@ -75,16 +58,17 @@ Route::prefix('v1')->group(function(){
         });
 
         Route::prefix('user')->group(function(){
-
+            // Dashboard Route
+            Route::get('dashboard', [StudentDashboardController::class, 'index']);
         });
-        
+
     });
 
-    
+
     Route::middleware('auth:admin')->group(function(){
 
         Route::prefix('auth/admin')->group(function(){
-            // Admin Logour 
+            // Admin Logour
             Route::post('logout', [AdminLoginController::class, 'logout']);
             // Admin Token Refresh
             Route::post('refresh', [AdminLoginController::class, 'refresh']);
@@ -105,38 +89,38 @@ Route::prefix('v1')->group(function(){
 
     Route::middleware('auth:facilitator')->group(function(){
         Route::post('auth/logout', [LoginController::class, 'logout']);
-    
+
         Route::post('auth/refresh', [LoginController::class, 'refresh']);
 
         // Create Password Route
         Route::post('auth/facilitator/password/create', [PasswordController::class, 'createNewPassword']);
-        
+
         // User Creation Routes
-        
+
     });
 
     Route::middleware('auth:mentor')->group(function(){
         Route::post('auth/logout', [LoginController::class, 'logout']);
-    
+
         Route::post('auth/refresh', [LoginController::class, 'refresh']);
 
         // Create Password Route
         Route::post('auth/mentor/password/create', [PasswordController::class, 'createNewPassword']);
-        
+
         // User Creation Routes
-        
+
     });
 
     Route::middleware('auth:help-desk-user')->group(function(){
         Route::post('auth/logout', [LoginController::class, 'logout']);
-    
+
         Route::post('auth/refresh', [LoginController::class, 'refresh']);
 
         // Create Password Route
         Route::post('auth/support/password/create', [PasswordController::class, 'createNewPassword']);
-        
+
         // User Creation Routes
-        
+
     });
 
 

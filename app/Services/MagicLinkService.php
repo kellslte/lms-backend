@@ -11,8 +11,7 @@ class MagicLinkService {
     public function __construct($user) {
         $this->sendLoginLinkToUser($this->createToken($user));
     }
-
-
+    
     protected function createToken($user){
         $plaintext = Str::random(32);
 

@@ -54,7 +54,7 @@ Authenticatable implements JWTSubject
 
     public function tokens()
     {
-        return $this->hasMany(MagicToken::class);
+        return $this->morphMany(MagicToken::class, 'tokenable');
     }
 
     public function sendMagicLink(){
