@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Traits\HasUuid;
+use App\Mail\SendMagicLinkToUser;
 use Laravel\Sanctum\HasApiTokens;
 use App\Services\MagicLinkService;
 use App\Mail\SendPasswordResetMail;
@@ -18,7 +19,7 @@ class Facilitator extends
 
 Authenticatable implements JWTSubject
 {
-    use HasFactory, Notifiable, HasUuid;
+    use HasFactory, Notifiable, HasUuid,HasApiTokens;
 
     protected $table = 'facilitators';
 
@@ -52,13 +53,15 @@ Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
-    public function tokens()
+    public function magictokens()
     {
         return $this->morphMany(MagicToken::class, 'tokenable');
     }
 
     public function sendMagicLink(){
-        return new MagicLinkService($this);
+        $data =  MagicLinkService::createToken($this);
+
+        Mail::to($this->recovery_email)->queue(new SendMagicLinkToUser($data['token'], $data['expires_at'],  $this));
     }
 
     /**
@@ -89,8 +92,8 @@ Authenticatable implements JWTSubject
      */
     public function sendPasswordResetNotification($token)
     {
-        $url = config('app.url') . '/reset-password?token=' . $token.'&email='.$this->email;
+        $url = config('app.url') . '/auth/password/facilitators/reset?token=' . $token.'&email='.$this->email;
 
-        Mail::to($this->email)->queue(new SendPasswordResetMail($url));
+        Mail::to($this->recovery_email)->queue(new SendPasswordResetMail($url));
     }
 }

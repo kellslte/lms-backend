@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
+use App\Models\Admin;
+use App\Models\Mentor;
+use App\Models\Facilitator;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Services\PasswordResetService;
+use App\Services\CreatePasswordService;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Auth\Events\PasswordReset;
 use App\Http\Requests\ResetPasswordRequest;
@@ -69,5 +73,39 @@ class PasswordController extends Controller
             'status' => 'failed',
             'message' => 'Your password could not be reset, please try again'
         ], 422);
+    }
+
+    public function createPassword(Request $request){
+        switch ($request->guard) {
+            case 'admin':
+                $user = Admin::find(auth($request->guard)->id());
+                break;
+
+            case 'facilitator': 
+                $user = Facilitator::find(auth($request->guard)->id());
+                break;
+
+            case 'mentor': 
+                $user = Mentor::find(auth($request->guard)->id());
+                break;
+            
+            default:
+                $user = User::find(auth($request->guard)->id());
+                break;
+        }
+
+        if(!$user) return response()->json([
+            'status' => 'error',
+            'message' => 'The user does not exist.'
+        ]);
+
+        $user->update([
+            'password' => bcrypt($request->password),
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Password created successfully.'
+        ]);
     }
 }

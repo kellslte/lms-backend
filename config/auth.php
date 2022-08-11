@@ -42,28 +42,23 @@ return [
         ],
 
         'student' => [
-            'driver' => 'jwt',
+            'driver' => 'session',
             'provider' => 'users',
         ],
 
         'admin' => [
-            'driver' => 'jwt',
+            'driver' => 'session',
             'provider' => 'admins',
         ],
 
         'facilitator' => [
-            'driver' => 'jwt',
+            'driver' => 'session',
             'provider' => 'facilitators',
         ],
 
         'mentor' => [
-            'driver' => 'jwt',
+            'driver' => 'session',
             'provider' => 'mentors',
-        ],
-
-        'help-desk-user' => [
-            'driver' => 'jwt',
-            'provider' => 'help-desk-users',
         ],
     ],
 
@@ -98,11 +93,6 @@ return [
         'mentors' => [
             'driver' => 'eloquent',
             'model' => App\Models\Mentor::class,
-        ],
-
-        'help-desk-users' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\HelpDeskUser::class,
         ],
 
         'facilitators' => [

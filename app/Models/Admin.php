@@ -5,20 +5,18 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Traits\HasUuid;
+use App\Mail\SendMagicLinkToUser;
 use Laravel\Sanctum\HasApiTokens;
 use App\Services\MagicLinkService;
 use App\Mail\SendPasswordResetMail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Notifications\Notifiable;
-use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Admin extends
-
-Authenticatable implements JWTSubject
+class Admin extends Authenticatable
 {
-    use HasFactory, Notifiable, HasUuid;
+    use HasFactory, Notifiable, HasUuid, HasApiTokens;
 
     protected $table = 'admins';
 
@@ -52,33 +50,15 @@ Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
-    public function tokens()
+    public function magictokens()
     {
         return $this->morphMany(MagicToken::class, 'tokenable');
     }
 
     public function sendMagicLink(){
-        return new MagicLinkService($this);
-    }
+        $data =  MagicLinkService::createToken($this);
 
-    /**
-     * Get the identifier that will be stored in the subject claim of the JWT.
-     *
-     * @return mixed
-     */
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
-
-    /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
-     *
-     * @return array
-     */
-    public function getJWTCustomClaims()
-    {
-        return [];
+        Mail::to($this->recovery_email)->queue(new SendMagicLinkToUser($data['token'], $data['expires_at'],  $this));
     }
 
     /**
@@ -89,8 +69,8 @@ Authenticatable implements JWTSubject
      */
     public function sendPasswordResetNotification($token)
     {
-        $url = config('app.url') . '/admin/reset-password?token=' . $token.'&email='.$this->email;
+        $url = config('app.url') . '/auth/password/admins/reset?token=' . $token.'&email='.$this->email;
 
-        Mail::to($this->email)->queue(new SendPasswordResetMail($url));
+        Mail::to($this->recovery_email)->queue(new SendPasswordResetMail($url));
     }
 }

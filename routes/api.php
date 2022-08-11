@@ -11,8 +11,6 @@ use App\Http\Controllers\Admin\Auth\AdminLoginController;
 use App\Http\Controllers\Auth\MagicLoginController;
 use App\Http\Controllers\Admin\Auth\AdminPasswordController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\Student\Auth\StudentLoginController;
-use App\Http\Controllers\Student\Auth\StudentPasswordController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 
 /*
@@ -36,10 +34,6 @@ Route::prefix('v1')->group(function(){
     // Student Registration Routes
     Route::post('auth/login', [LoginController::class, 'checkUserLogin']);
 
-    Route::get('auth/tracks', [RegisterController::class, 'getTracksAndCourses']);
-
-    Route::post('auth/student/transaction/complete', PaymentController::class);
-
     // Password Reset Routes
     Route::post('auth/password/{user}/send-reset-link', [PasswordController::class, 'checkUserIdentity']);
 
@@ -47,14 +41,14 @@ Route::prefix('v1')->group(function(){
 
 
     // Protected Routes
-    Route::middleware('auth:student')->group(function(){
+    Route::middleware('auth:sanctum')->group(function(){
         Route::prefix('auth/user')->group(function(){
             // User Logout
-            Route::post('logout', [StudentLoginController::class, 'logout']);
+            Route::post('logout', fn() => (new LoginController)->logout('student'));
             // Token Refresh
-            Route::post('refresh', [StudentLoginController::class, 'refresh']);
+            Route::post('refresh', fn() => (new LoginController)->refresh('student'));
             // Create New User Password
-            Route::post('password/create', StudentPasswordController::class);
+            Route::post('password/create', [PasswordController::class, 'createPassword']);
         });
 
         Route::prefix('user')->group(function(){
@@ -65,15 +59,15 @@ Route::prefix('v1')->group(function(){
     });
 
 
-    Route::middleware('auth:admin')->group(function(){
+    Route::middleware('auth:sanctum')->group(function(){
 
         Route::prefix('auth/admin')->group(function(){
             // Admin Logour
-            Route::post('logout', [AdminLoginController::class, 'logout']);
+            Route::post('logout', fn() => (new LoginController)->logout('admin'));
             // Admin Token Refresh
-            Route::post('refresh', [AdminLoginController::class, 'refresh']);
+            Route::post('refresh', fn() => (new LoginController)->refresh('admin'));
             // Admin Create Password Route
-            Route::post('password/create', AdminPasswordController::class);
+            Route::post('password/create', [PasswordController::class, 'createPassword']);
         });
 
         Route::prefix('admin')->group(function(){
@@ -87,37 +81,25 @@ Route::prefix('v1')->group(function(){
         });
     });
 
-    Route::middleware('auth:facilitator')->group(function(){
-        Route::post('auth/logout', [LoginController::class, 'logout']);
+    Route::middleware('auth:sanctum')->group(function(){
+        Route::post('auth/logout', fn() => (new LoginController)->logout('facilitator'));
 
-        Route::post('auth/refresh', [LoginController::class, 'refresh']);
+        Route::post('auth/refresh', fn() => (new LoginController)->refresh('facilitator'));
 
         // Create Password Route
-        Route::post('auth/facilitator/password/create', [PasswordController::class, 'createNewPassword']);
+        Route::post('auth/facilitator/password/create', [PasswordController::class, 'createPassword']);
 
         // User Creation Routes
 
     });
 
-    Route::middleware('auth:mentor')->group(function(){
-        Route::post('auth/logout', [LoginController::class, 'logout']);
+    Route::middleware('auth:sanctum')->group(function(){
+        Route::post('auth/logout', fn() => (new LoginController)->logout('mentor'));
 
-        Route::post('auth/refresh', [LoginController::class, 'refresh']);
-
-        // Create Password Route
-        Route::post('auth/mentor/password/create', [PasswordController::class, 'createNewPassword']);
-
-        // User Creation Routes
-
-    });
-
-    Route::middleware('auth:help-desk-user')->group(function(){
-        Route::post('auth/logout', [LoginController::class, 'logout']);
-
-        Route::post('auth/refresh', [LoginController::class, 'refresh']);
+        Route::post('auth/refresh', fn() => (new LoginController)->refresh('mentor'));
 
         // Create Password Route
-        Route::post('auth/support/password/create', [PasswordController::class, 'createNewPassword']);
+        Route::post('auth/mentor/password/create', [PasswordController::class, 'createPassword']);
 
         // User Creation Routes
 

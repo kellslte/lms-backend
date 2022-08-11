@@ -9,6 +9,7 @@ use App\Models\MagicToken;
 use App\Models\Facilitator;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\Model;
 
 class MagicLoginController extends Controller
 {
@@ -78,10 +79,12 @@ class MagicLoginController extends Controller
      */
     private function login($user)
     {
-        $token = auth()->guard('student')->login($user);;
+        auth()->guard('student')->login($user);
+
+        $token = $user->createToken('access_token');
 
         return response()->json([
-            'token' => $token,
+            'token' => $token->plainTextToken,
             'data' => [
                 'user' => $user,
                 'course' => $user->course->title,
@@ -93,7 +96,9 @@ class MagicLoginController extends Controller
 
     private function adminLogin($admin)
     {
-        $token = auth()->guard('admin')->login($admin);
+        auth()->guard('admin')->login($admin);
+
+        $token = $admin->createToken('access_token');
 
         if (!$token) return response()->json([
             'status' => 'failed',
@@ -103,7 +108,7 @@ class MagicLoginController extends Controller
         return response()->json([
             'status' => 'success',
             'authorization' => [
-                'token' => $token,
+                'token' => $token->plainTextToken,
                 'type' => 'bearer',
             ],
             'user' => $admin,
@@ -113,7 +118,9 @@ class MagicLoginController extends Controller
 
     private function mentorLogin($mentor)
     {
-        $token = auth()->guard('mentor')->login($mentor);
+        auth()->guard('mentor')->login($mentor);
+
+        $token =  $mentor->createToken('access_token');
 
         if (!$token) return response()->json([
             'status' => 'failed',
@@ -123,7 +130,7 @@ class MagicLoginController extends Controller
         return response()->json([
             'status' => 'success',
             'authorization' => [
-                'token' => $token,
+                'token' => $token->plainTextToken,
                 'type' => 'bearer',
             ],
             'user' => $mentor,
@@ -133,7 +140,9 @@ class MagicLoginController extends Controller
 
     private function facilitatorLogin($facilitator)
     {
-        $token = auth()->guard('facilitator')->login($facilitator);
+        auth()->guard('facilitator')->login($facilitator);
+
+        $token = $facilitator->createToken('access_token');
 
         if (!$token) return response()->json([
             'status' => 'failed',
@@ -143,7 +152,7 @@ class MagicLoginController extends Controller
         return response()->json([
             'status' => 'success',
             'authorization' => [
-                'token' => $token,
+                'token' => $token->plainTextToken,
                 'type' => 'bearer',
             ],
             'user' => $facilitator,
@@ -151,10 +160,11 @@ class MagicLoginController extends Controller
         ]);
     }
 
-    private function sendLink($user){
+    private function sendLink(Model $user){
+        
         try{
             $user->sendMagicLink();
-    
+            
             return response()->json([
                 'status' => 'success',
                 'message' => 'Check your email inbox for a link to login'
@@ -164,7 +174,7 @@ class MagicLoginController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Something went wrong and we could not send your link. Please try again later.'
-            ], 422);
+            ], 400);
         }
     }
 

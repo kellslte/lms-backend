@@ -32,18 +32,21 @@ class DatabaseSeeder extends Seeder
         Admin::create([
             'name' => 'Favour Max-Oti',
             'email' => 'maxotif.admin@gmail.com',
+            'recovery_email' => 'maxotif@gmail.com',
             'password' => bcrypt('password'),
         ]);
 
         Mentor::create([
             'name' => 'Chidera Max-Oti',
             'email' => 'deramaxoti.mentor@gmail.com',
+            'recovery_email' => 'deramaxoti@gmail.com',
             'password' => bcrypt('mental'),
         ]);
 
         Facilitator::create([
             'name' => 'Signs Madueke',
             'email' => 'signs.facilitator@gmail.com',
+            'recovery_email' => 'signsmaduaeke@gmail.com',
             'password' => bcrypt('fascille'),
         ]);
 

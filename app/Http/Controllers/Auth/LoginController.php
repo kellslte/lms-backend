@@ -8,11 +8,10 @@ use App\Models\Mentor;
 use App\Models\Facilitator;
 use Illuminate\Http\Request;
 use App\Services\LoginService;
+use App\Services\LogoutService;
 use App\Http\Requests\LoginRequest;
 use App\Http\Controllers\Controller;
-use App\Services\LogoutService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -33,8 +32,9 @@ class LoginController extends Controller
                 'message' => 'Email or password incorrect'
             ]);
 
-        $token = Auth::guard('admin')->login($admin);
+        Auth::guard('admin')->login($admin);
 
+        $token  = $admin->createToken('access_token');
 
         if (!$token) return response()->json([
             'status' => 'failed',
@@ -44,7 +44,7 @@ class LoginController extends Controller
         return response()->json([
             'status' => 'success',
             'authorization' => [
-                'token' => $token,
+                'token' => $token->plainTextToken,
                 'type' => 'bearer',
             ],
             'user' => $admin,
@@ -60,8 +60,10 @@ class LoginController extends Controller
                 'status' => 'failed',
                 'message' => 'Email or password incorrect'
             ]);
+            
+        Auth::guard('mentor')->login($mentor);
 
-        $token = Auth::guard('mentor')->login($mentor);
+        $token = $mentor->create_function('access_token');
 
         if(!$token) return response()->json([
             'status' => 'failed',
@@ -71,8 +73,8 @@ class LoginController extends Controller
         return response()->json([
             'status' => 'success',
             'authorization' => [
-                'token' => $token,
-                'type' => 'bearer',
+                'token' => $token->plainTextToken,
+                'type' => 'bearer'
             ],
             'user' => $mentor,
             'role' => 'mentor'
@@ -89,7 +91,9 @@ class LoginController extends Controller
             ]);
         
 
-        $token = Auth::login($facilitator);
+        Auth::guard('facilitator')->login($facilitator);
+
+        $token = $facilitator->createToken('access_token');
 
         if(!$token) return response()->json([
             'status' => 'failed',
@@ -99,7 +103,7 @@ class LoginController extends Controller
         return response()->json([
             'status' => 'success',
             'authorization' => [
-                'token' => $token,
+                'token' => $token->plainTextToken,
                 'type' => 'bearer',
             ],
             'user' => $facilitator,
@@ -111,19 +115,22 @@ class LoginController extends Controller
     {
         $credentials = $request->only(['email', 'password']);
 
-        $token = Auth::guard('student')->attempt($credentials);
+        Auth::guard('student')->attempt($credentials);
+
+        $user = User::whereEmail($credentials['email'])->first();
+
+        $token = $user->createToken('access_token');
 
         if (!$token) return response()->json([
             'status' => 'failed',
             'message' => 'Email or password incorrect',
         ], 401);
 
-        $user = User::whereEmail($credentials['email'])->firstOrFail();
 
         return response()->json([
             'status' => 'success',
             'authorization' => [
-                'token' => $token,
+                'token' => $token->plainTextToken,
                 'type' => 'bearer',
             ],
             'data' => [
@@ -139,20 +146,12 @@ class LoginController extends Controller
     {
         Auth::guard($guard)->logout();
 
+        request()->user()->currentAccessToken()->delete();
+
         return response()->json([
             'status' => 'success',
             'message' => 'Successfully logged out',
-        ]);
-    }
-
-    public function refresh(Request $request){
-        return response()->json([
-            'status' => 'success',
-            'user' => Auth::guard($request->guard)->user(),
-            'authorisation' => [
-                'token' => auth($request->guard)->refresh(),
-                'type' => 'bearer',
-            ]
+            'user' => auth($guard)->user(),
         ]);
     }
 }
