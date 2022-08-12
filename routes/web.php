@@ -22,4 +22,4 @@ Route::get('/', function () {
 });
 
 // Magic Link Login
-Route::middleware('guest')->get('magic/login/{token}', [MagicLoginController::class, 'checkUserAndRedirect'])->name('verify-login');
+Route::middleware('guest')->get('auth/magiclink/{token}', [MagicLoginController::class, 'checkUserAndRedirect'])->name('verify-login');
