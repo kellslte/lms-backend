@@ -28,8 +28,7 @@ return new class extends Migration
             $table->rememberToken();
             $table->timestamps();
 
-            $table->foreignId('track_id')->references('id')->on('tracks')->cascadeOnUpdate();
-            $table->foreignId('course_id')->references('id')->on('courses')->cascadeOnDelete();
+            $table->foreignUuid('course_id')->references('id')->on('courses');
         });
     }
 

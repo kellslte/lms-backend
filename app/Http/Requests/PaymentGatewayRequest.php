@@ -16,9 +16,9 @@ class PaymentGatewayRequest extends FormRequest
     public function rules()
     {
         return [
-            'firstname' => 'required|string',
-            'lastname' => 'required|string',
             'email' => "required|email",
+            "transaction_status" => "required|string",
+            "transaction_id" => 'required|string',
         ];
     }
 

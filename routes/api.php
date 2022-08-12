@@ -4,11 +4,12 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\PaymentController;
 use App\Http\Controllers\Auth\PasswordController;
-use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\MagicLoginController;
-
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Facilitator\ProfileController as FacilitatorProfileController;
+use App\Http\Controllers\Mentor\ProfileController as MentorProfileController;
+use App\Http\Controllers\Student\ProfileController as StudentProfileController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,50 +23,75 @@ use App\Http\Controllers\Auth\MagicLoginController;
 
 
 Route::prefix('v1')->group(function(){
-    // Magic Link Login 
-    Route::get('auth/magic/login/{token}', MagicLoginController::class)->name('verify-login');
+    // Magic Link Login
+    Route::middleware('guest')->get('auth/magic/login/{token}', [MagicLoginController::class, 'checkUserAndRedirect'])->name('verify-login');
 
-    Route::post('auth/magic/send-token', function(Request $request){
-        $request->validate(['email' => 'required|email']);
-
-        User::whereEmail($request->email)->firstOrFail()->sendMagicLink();
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Check your email inbox for a link to login'
-        ]);
-    });
-
-    // Regular Authentication Routes
-    Route::post('auth/login', [LoginController::class, 'login']);
-
-    Route::post('auth/logout', [LoginController::class, 'logout']);
-
-    Route::post('auth/refresh', [LoginController::class, 'refresh']);
+    Route::post('auth/magic/send-token', [MagicLoginController::class, 'sendLoginLink']);
 
     // Student Registration Routes
-    Route::post('auth/register', [RegisterController::class, 'register']);
-    Route::get('auth/tracks', [RegisterController::class, 'getTracksAndCourses']);
-
-    Route::post('auth/transaction/complete', PaymentController::class);
+    Route::post('auth/login', [LoginController::class, 'checkUserLogin']);
 
     // Password Reset Routes
-    Route::post('auth/password/send-reset-link', [PasswordController::class, 'requestPasswordReset']);
+    Route::post('auth/password/{user}/send-reset-link', [PasswordController::class, 'checkUserIdentity']);
 
-    Route::post('auth/password/reset', [PasswordController::class, 'resetPassword']);
+    Route::post('auth/password/{user}/reset', [PasswordController::class, 'checkUserIdentityForReset']);
+
 
     // Protected Routes
-    Route::middleware('auth:api')->group(function(){
-        // Create Password Route
-        Route::post('auth/password/create', [PassworDController::class, 'createNewPassword']);
-
-        // User Creation Routes
+    Route::middleware('auth:sanctum')->group(function(){
         
-    });
-});
+        // Student Routes
+        Route::prefix('auth/user')->group(function(){
+            // User Logout
+            Route::post('logout', fn() => (new LoginController)->logout('student'));
+            // Create New User Password
+            Route::post('password/create', [PasswordController::class, 'createPassword']);
+            // Dashboard Route
+            Route::get('dashboard', [StudentDashboardController::class, 'index']);
+            // Profile Route
+            Route::get('profile', [StudentProfileController::class, 'index']);
+            // Change Proflie Settings Route
+            Route::post('profile', [StudentProfileController::class, 'storeSettings']);
+        });
 
-Route::get('send-login-link', function(){
-    User::whereEmail('maxotif@gmail.com')->firstOrFail()->sendMagicLink();
+        // Admin Routes
+        Route::prefix('auth/admin')->group(function(){
+            // Admin Logour
+            Route::post('logout', fn() => (new LoginController)->logout('admin'));
+            // Admin Token Refresh
+            Route::post('password/create', [PasswordController::class, 'createPassword']);
+            // Profile Route
+            Route::get('profile', [AdminProfileController::class, 'index']);
+            // Change Proflie Settings Route
+            Route::post('profile', [AdminProfileController::class, 'storeSettings']);
+        });
+
+        // Facilitator Routes
+        Route::prefix('auth/facilitator')->group(function(){
+            Route::post('logout', fn() => (new LoginController)->logout('facilitator'));
+            // Create Password Route
+            Route::post('password/create', [PasswordController::class, 'createPassword']);
+            // Profile Route
+            Route::get('profile', [FacilitatorProfileController::class, 'index']);
+            // Change Proflie Settings Route
+            Route::post('profile', [FacilitatorProfileController::class, 'storeSettings']);
+        });
+
+        // Mentor Routes
+        Route::prefix('auth/mentor')->group(function(){
+            Route::post('auth/logout', fn() => (new LoginController)->logout('mentor'));
+        
+            // Create Password Route
+            Route::post('auth/mentor/password/create', [PasswordController::class, 'createPassword']);
+            // Profile Route
+            Route::get('profile', [MentorProfileController::class, 'index']);
+            // Change Proflie Settings Route
+            Route::post('profile', [MentorProfileController::class, 'storeSettings']);
+
+        });
+    });
+
+
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

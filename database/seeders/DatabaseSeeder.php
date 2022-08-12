@@ -3,7 +3,13 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
 use App\Models\User;
+use App\Models\Admin;
+use App\Models\Course;
+use App\Models\Mentor;
+use App\Models\Facilitator;
+use App\Models\HelpDeskUser;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 
@@ -18,25 +24,39 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(TrackTableSeeder::class);
         $this->call(CourseTableSeeder::class);
-        $this->createUser();
-        $this->createRoles();
+        $this->createTestUsers();
     }
 
-    public function createUser()
+    public function createTestUsers()
     {
-        User::create([
+        Admin::create([
             'name' => 'Favour Max-Oti',
-            'email' => 'maxotif@gmail.com',
-            'gender' => 'male',
-            'track_id' => 1,
-            'course_id' => 2,
-        ]);
-    }
+            'email' => 'maxotif.admin@gmail.com',
+            'recovery_email' => 'maxotif@gmail.com',
+            'password' => bcrypt('password'),
+        ])->settings()->create();
 
-    public function createRoles(){
-        Role::create(['name' => 'admin']);
-        Role::create(['name' => 'facilitator']);
-        Role::create(['name' => 'mentor']);
-        Role::create(['name' => 'student']);
+        Mentor::create([
+            'name' => 'Chidera Max-Oti',
+            'email' => 'deramaxoti.mentor@gmail.com',
+            'recovery_email' => 'deramaxoti@gmail.com',
+            'password' => bcrypt('mental'),
+        ])->settings()->create();
+
+        Facilitator::create([
+            'name' => 'Signs Madueke',
+            'email' => 'signs.facilitator@gmail.com',
+            'recovery_email' => 'signsmaduaeke@gmail.com',
+            'password' => bcrypt('fascille'),
+        ])->settings()->create();
+
+        $course = Course::whereTitle('Cloud Engineering')->firstOrFail();
+
+        $course->students()->create([
+            'name' => 'Amarachi Nwankwo',
+            'email' => 'amaramnwankwo@gmail.com',
+            'gender' => 'female',
+            'phonenumber' => '08106243946'
+        ])->settings()->create();
     }
 }

@@ -14,4 +14,12 @@ class Task extends Model
     {
         return $this->belongsTo(Lesson::class);
     }
+
+    public function submissions(){
+        return $this->morphMany(Submission::class, 'submittable');
+    }
+
+    public function running(){
+        return ($this->status === 'running') ? true : false;
+    }
 }

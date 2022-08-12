@@ -17,9 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description');
-            $table->boolean('submitted')->default(false);
             $table->enum('status', ['expired', 'extended', 'running']);
-            $table->string('link')->nullable();
             $table->foreignId('lesson_id')->references('id')->on('lessons')->cascadeOnUpdate()->cascadeOnDelete();
             $table->timestamps();
         });
