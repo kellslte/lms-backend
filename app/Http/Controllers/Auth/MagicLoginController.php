@@ -162,8 +162,8 @@ class MagicLoginController extends Controller
 
     private function sendLink(Model $user){
         
-        $user->sendMagicLink();
         try{
+            $user->sendMagicLink();
             
             return response()->json([
                 'status' => 'success',
