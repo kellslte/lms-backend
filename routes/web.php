@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Requests\PaymentGatewayRequest;
 use Unicodeveloper\Paystack\Facades\Paystack;
 use App\Http\Controllers\Auth\PaymentController;
+use App\Http\Controllers\Auth\MagicLoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,3 +20,6 @@ use App\Http\Controllers\Auth\PaymentController;
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Magic Link Login
+Route::middleware('guest')->get('magic/login/{token}', [MagicLoginController::class, 'checkUserAndRedirect'])->name('verify-login');

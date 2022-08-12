@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SendMagicLinkToUser extends Mailable implements ShouldQueue
+class SendMagicLinkToUser extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -34,9 +34,9 @@ class SendMagicLinkToUser extends Mailable implements ShouldQueue
     public function build()
     {
         return $this->markdown('emails.send-magic-link', [
-            'url' => URL::temporarySignedRoute('verify-login', $this->expiresAt, [
+            'url' => config('app.front.url').URL::temporarySignedRoute('verify-login', $this->expiresAt, [
                 'token' => $this->token,
-            ]),
+            ], false),
             'user' => $this->user,
         ])->subject('Your Login Link');
     }
