@@ -73,4 +73,9 @@ class Admin extends Authenticatable
 
         Mail::to($this->recovery_email)->queue(new SendPasswordResetMail($url));
     }
+
+    public function settings()
+    {
+        return $this->morphOne(Setting::class, 'changeable');
+    }
 }

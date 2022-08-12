@@ -121,6 +121,10 @@ class LoginController extends Controller
 
         $token = $user->createToken('access_token');
 
+        $request->merge([
+            'user' => $user,
+        ]);
+
         if (!$token) return response()->json([
             'status' => 'failed',
             'message' => 'Email or password incorrect',

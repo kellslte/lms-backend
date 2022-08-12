@@ -16,7 +16,7 @@ class Task extends Model
     }
 
     public function submissions(){
-        return $this->hasMany(Submission::class);
+        return $this->morphMany(Submission::class, 'submittable');
     }
 
     public function running(){

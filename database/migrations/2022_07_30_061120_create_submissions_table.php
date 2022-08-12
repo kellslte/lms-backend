@@ -15,8 +15,10 @@ return new class extends Migration
     {
         Schema::create('submissions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('task_id')->references('id')->on('tasks')->cascadeOnDelete()->cascadeOnUpdate();
-            $table->foreignUuid('student_id')->references('id')->on('users');
+            $table->unsignedBigInteger('submittable_id');
+            $table->string('submittable_type');
+            $table->uuid('taskable_id');
+            $table->string('taskable_type');
             $table->enum('status', ['submitted', 'approved', 'redo'])->default('submitted');
             $table->integer('grade');
             $table->string('link_to_resource');

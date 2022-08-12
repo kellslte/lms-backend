@@ -14,6 +14,13 @@ class Course extends Model
         "title"
     ];
 
+    protected $hidden = [
+        'id',
+        'updated_at',
+        'created_at',
+        'track_id',
+    ];
+
     public function track()
     {
         return $this->belongsTo(Track::class);

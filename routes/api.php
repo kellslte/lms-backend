@@ -4,15 +4,12 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Student\Auth\PaymentController;
 use App\Http\Controllers\Auth\PasswordController;
-use App\Http\Controllers\Student\Auth\RegisterController;
-use App\Http\Controllers\Admin\Auth\AdminLoginController;
 use App\Http\Controllers\Auth\MagicLoginController;
-use App\Http\Controllers\Admin\Auth\AdminPasswordController;
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
-
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Facilitator\ProfileController as FacilitatorProfileController;
+use App\Http\Controllers\Mentor\ProfileController as MentorProfileController;
+use App\Http\Controllers\Student\ProfileController as StudentProfileController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -42,74 +39,59 @@ Route::prefix('v1')->group(function(){
 
     // Protected Routes
     Route::middleware('auth:sanctum')->group(function(){
+        
+        // Student Routes
         Route::prefix('auth/user')->group(function(){
             // User Logout
             Route::post('logout', fn() => (new LoginController)->logout('student'));
-            // Token Refresh
-            Route::post('refresh', fn() => (new LoginController)->refresh('student'));
             // Create New User Password
             Route::post('password/create', [PasswordController::class, 'createPassword']);
-        });
-
-        Route::prefix('user')->group(function(){
             // Dashboard Route
             Route::get('dashboard', [StudentDashboardController::class, 'index']);
+            // Profile Route
+            Route::get('profile', [StudentProfileController::class, 'index']);
+            // Change Proflie Settings Route
+            Route::post('profile', [StudentProfileController::class, 'storeSettings']);
         });
 
-    });
-
-
-    Route::middleware('auth:sanctum')->group(function(){
-
+        // Admin Routes
         Route::prefix('auth/admin')->group(function(){
             // Admin Logour
             Route::post('logout', fn() => (new LoginController)->logout('admin'));
             // Admin Token Refresh
-            Route::post('refresh', fn() => (new LoginController)->refresh('admin'));
-            // Admin Create Password Route
             Route::post('password/create', [PasswordController::class, 'createPassword']);
+            // Profile Route
+            Route::get('profile', [AdminProfileController::class, 'index']);
+            // Change Proflie Settings Route
+            Route::post('profile', [AdminProfileController::class, 'storeSettings']);
         });
 
-        Route::prefix('admin')->group(function(){
-            // Create Facilitator
+        // Facilitator Routes
+        Route::prefix('auth/facilitator')->group(function(){
+            Route::post('logout', fn() => (new LoginController)->logout('facilitator'));
+            // Create Password Route
+            Route::post('password/create', [PasswordController::class, 'createPassword']);
+            // Profile Route
+            Route::get('profile', [FacilitatorProfileController::class, 'index']);
+            // Change Proflie Settings Route
+            Route::post('profile', [FacilitatorProfileController::class, 'storeSettings']);
+        });
 
-            // Create Mentor
-
-            // Create Help Desk User
-
+        // Mentor Routes
+        Route::prefix('auth/mentor')->group(function(){
+            Route::post('auth/logout', fn() => (new LoginController)->logout('mentor'));
+        
+            // Create Password Route
+            Route::post('auth/mentor/password/create', [PasswordController::class, 'createPassword']);
+            // Profile Route
+            Route::get('profile', [MentorProfileController::class, 'index']);
+            // Change Proflie Settings Route
+            Route::post('profile', [MentorProfileController::class, 'storeSettings']);
 
         });
     });
 
-    Route::middleware('auth:sanctum')->group(function(){
-        Route::post('auth/logout', fn() => (new LoginController)->logout('facilitator'));
 
-        Route::post('auth/refresh', fn() => (new LoginController)->refresh('facilitator'));
-
-        // Create Password Route
-        Route::post('auth/facilitator/password/create', [PasswordController::class, 'createPassword']);
-
-        // User Creation Routes
-
-    });
-
-    Route::middleware('auth:sanctum')->group(function(){
-        Route::post('auth/logout', fn() => (new LoginController)->logout('mentor'));
-
-        Route::post('auth/refresh', fn() => (new LoginController)->refresh('mentor'));
-
-        // Create Password Route
-        Route::post('auth/mentor/password/create', [PasswordController::class, 'createPassword']);
-
-        // User Creation Routes
-
-    });
-
-
-});
-
-Route::get('send-login-link', function(Request $request){
-    User::whereEmail($request->email)->firstOrFail()->sendMagicLink();
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

@@ -2,26 +2,27 @@
 
 namespace App\Models;
 
-use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Track extends Model
+class Setting extends Model
 {
-    use HasFactory, HasUuid;
+    use HasFactory;
 
     protected $fillable = [
-        "title",
+        'notification_preference',
+        'text_message_preference',
     ];
 
     protected $hidden = [
         'id',
+        'changeable_id',
+        'changeable_type',
         'created_at',
         'updated_at',
     ];
 
-    public function courses()
-    {
-        return $this->hasMany(Course::class);
+    public function changeable(){
+        return $this->morphTo();
     }
 }

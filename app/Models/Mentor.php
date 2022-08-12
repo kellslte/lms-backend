@@ -73,4 +73,9 @@ class Mentor extends Authenticatable
 
         Mail::to($this->email)->queue(new SendPasswordResetMail($url));
     }
+
+    public function settings()
+    {
+        return $this->morphOne(Setting::class, 'changeable');
+    }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Student;
+namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -10,7 +10,6 @@ class ProfileController extends Controller
 {
     public function index(){
         $user = getAuthenticatedUser();
-
         return response()->json([
             'status' => 'success',
             'data' => [
@@ -20,9 +19,9 @@ class ProfileController extends Controller
         ]);
     }
 
-    public function storeSettings(ChangeSettingsRequest $request,){
+    public function storeSettings(ChangeSettingsRequest $request,)
+    {
         $user = getAuthenticatedUser();
-
         $settings = $user->settings;
 
         try {

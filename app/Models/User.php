@@ -45,6 +45,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'created_at',
+        'updated_at',
     ];
 
     /**
@@ -91,10 +93,22 @@ class User extends Authenticatable
     }
 
     public function submissions(){
-        return $this->hasMany(Submission::class, 'student_id');
+        return $this->morphMany(Submission::class, 'taskable');
     }
 
     public function schedule(){
         return $this->hasOne(Schedule::class);
+    }
+
+    public function attendance(){
+        return $this->morphMany(Attendance::class, 'attendees');
+    }
+
+    public function settings(){
+        return $this->morphOne(Setting::class, 'changeable');
+    }
+
+    public function completedTasks(){
+        return $this->submissions()->whereStatus('approved')->get();
     }
 }

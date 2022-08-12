@@ -5,17 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Submission extends Model
+class Attendance extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
-
-    public function submittable(){
+    public function attender(){
         return $this->morphTo();
     }
 
-    public function taskable(){
+    public function attendable(){
         return $this->morphTo();
     }
 }

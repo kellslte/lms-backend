@@ -15,9 +15,7 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class Facilitator extends
-
-Authenticatable implements JWTSubject
+class Facilitator extends Authenticatable
 {
     use HasFactory, Notifiable, HasUuid,HasApiTokens;
 
@@ -65,26 +63,6 @@ Authenticatable implements JWTSubject
     }
 
     /**
-     * Get the identifier that will be stored in the subject claim of the JWT.
-     *
-     * @return mixed
-     */
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
-
-    /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
-     *
-     * @return array
-     */
-    public function getJWTCustomClaims()
-    {
-        return [];
-    }
-
-    /**
      * Send a password reset notification to the user.
      *
      * @param  string  $token
@@ -95,5 +73,10 @@ Authenticatable implements JWTSubject
         $url = config('app.url') . '/auth/password/facilitators/reset?token=' . $token.'&email='.$this->email;
 
         Mail::to($this->recovery_email)->queue(new SendPasswordResetMail($url));
+    }
+
+    public function settings()
+    {
+        return $this->morphOne(Setting::class, 'changeable');
     }
 }

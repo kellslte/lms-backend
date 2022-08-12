@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Student;
+namespace App\Http\Controllers\Facilitator;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -10,7 +10,6 @@ class ProfileController extends Controller
 {
     public function index(){
         $user = getAuthenticatedUser();
-
         return response()->json([
             'status' => 'success',
             'data' => [
