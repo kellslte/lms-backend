@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('tokenable_type');
             $table->string('token')->unique();
             $table->timestamp('consumed_at')->nullable();
-            $table->timestamp('expires_at');
+            $table->timestamp('expires_at')->nullable();
             $table->timestamps();
         });
     }
