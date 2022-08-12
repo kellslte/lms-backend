@@ -23,6 +23,8 @@ use App\Http\Controllers\Student\ProfileController as StudentProfileController;
 
 
 Route::prefix('v1')->group(function(){
+    // Magic Link Login
+    Route::middleware('guest')->get('auth/magic/login/{token}', [MagicLoginController::class, 'checkUserAndRedirect'])->name('verify-login');
 
     Route::post('auth/magic/send-token', [MagicLoginController::class, 'sendLoginLink']);
 
