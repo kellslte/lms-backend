@@ -40,6 +40,9 @@ class Facilitator extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'created_at',
+        'updated_at',
+        'id'
     ];
 
     /**
@@ -78,5 +81,9 @@ class Facilitator extends Authenticatable
     public function settings()
     {
         return $this->morphOne(Setting::class, 'changeable');
+    }
+
+    public function course(){
+        return $this->belongsTo(Course::class);
     }
 }

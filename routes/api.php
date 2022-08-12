@@ -64,6 +64,11 @@ Route::prefix('v1')->group(function(){
             Route::get('profile', [AdminProfileController::class, 'index']);
             // Change Proflie Settings Route
             Route::post('profile', [AdminProfileController::class, 'storeSettings']);
+
+            // Onboarding Routes
+            Route::post('onboard', [OnboardingController::class, 'facilitator']);
+
+            Route::post('onboad/send-login-link', [OnboadController::class, 'sendMagicLinkToStudents']);
         });
 
         // Facilitator Routes
