@@ -12,3 +12,16 @@ function getAuthenticatedUser(){
 
     return $token->tokenable;
 }
+
+function generatePassword($strenght = 13){
+    $permitted_chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+    $randomString = '';
+
+    for($i = 0; $i < $strenght; $i++){
+        $character = $permitted_chars[mt_rand(0, strlen($permitted_chars) - 1)];
+        $randomString .= $character;
+    }
+
+    return $randomString;
+}

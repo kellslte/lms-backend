@@ -21,6 +21,10 @@ class Course extends Model
         'track_id',
     ];
 
+    public function facilitator(){
+        return $this->hasOne(Facilitator::class);
+    }
+
     public function track()
     {
         return $this->belongsTo(Track::class);

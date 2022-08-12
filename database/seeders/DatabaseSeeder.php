@@ -8,10 +8,7 @@ use App\Models\User;
 use App\Models\Admin;
 use App\Models\Course;
 use App\Models\Mentor;
-use App\Models\Facilitator;
-use App\Models\HelpDeskUser;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 
 class DatabaseSeeder extends Seeder
 {
@@ -42,15 +39,16 @@ class DatabaseSeeder extends Seeder
             'recovery_email' => 'deramaxoti@gmail.com',
             'password' => bcrypt('mental'),
         ])->settings()->create();
-
-        Facilitator::create([
+        
+        $course = Course::whereTitle('Cloud Engineering')->firstOrFail();
+        
+        $course->facilitator()->create([
             'name' => 'Signs Madueke',
             'email' => 'signs.facilitator@gmail.com',
             'recovery_email' => 'signsmaduaeke@gmail.com',
             'password' => bcrypt('fascille'),
         ])->settings()->create();
 
-        $course = Course::whereTitle('Cloud Engineering')->firstOrFail();
 
         $course->students()->create([
             'name' => 'Amarachi Nwankwo',
