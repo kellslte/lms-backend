@@ -63,7 +63,7 @@ class LoginController extends Controller
             
         Auth::guard('mentor')->login($mentor);
 
-        $token = $mentor->create_function('access_token');
+        $token = $mentor->createToken('access_token');
 
         if(!$token) return response()->json([
             'status' => 'failed',

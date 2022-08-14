@@ -73,7 +73,8 @@ class Facilitator extends Authenticatable
      */
     public function sendPasswordResetNotification($token)
     {
-        $url = config('app.url') . '/auth/password/facilitators/reset?token=' . $token.'&email='.$this->email;
+        $url =
+        config('app.front.url') . '/auth/password/facilitators/reset?token=' . $token.'&email='.$this->email;
 
         Mail::to($this->recovery_email)->queue(new SendPasswordResetMail($url));
     }

@@ -111,4 +111,13 @@ class User extends Authenticatable
     public function completedTasks(){
         return $this->submissions()->whereStatus('approved')->get();
     }
+
+    public function lessons()
+    {
+        return $this->hasManyThrough(Lesson::class, Course::class);
+    }
+
+    public function track(){
+        return $this->hasOneThrough(Track::class, Course::class);
+    }
 }

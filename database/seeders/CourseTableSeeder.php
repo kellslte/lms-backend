@@ -43,7 +43,7 @@ class CourseTableSeeder extends Seeder
 
         $this->createCourse([
             'title' =>
-            'Product Development',
+            'Product Design',
         ], 'Explorer');
 
         $this->createCourse([
@@ -84,18 +84,6 @@ class CourseTableSeeder extends Seeder
 
         $this->createCourse([
             'title' => 'Software Engineering (C++)',
-        ], 'Innovator');
-
-        $this->createCourse([
-            'title' => 'Admin',
-        ], 'Innovator');
-        
-        $this->createCourse([
-            'title' => 'Admin',
-        ], 'Innovator');
-
-        $this->createCourse([
-            'title' => 'Admin',
         ], 'Innovator');
     }
 
