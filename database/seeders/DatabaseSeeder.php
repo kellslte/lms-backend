@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(TrackTableSeeder::class);
         $this->call(CourseTableSeeder::class);
-        //$this->createTestUsers();
+        $this->createTestUsers();
     }
 
     public function createTestUsers()
