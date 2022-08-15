@@ -25,7 +25,7 @@ class LoginController extends Controller
     }
 
     public function adminLogin($request){
-        $request->only(['email', 'password']);
+        $credentials = $request->only(['email', 'password']);
 
         if (!$admin = Admin::whereEmail($request->email)->first())
             return response()->json([
@@ -33,7 +33,7 @@ class LoginController extends Controller
                 'message' => 'User record does not exist'
             ], 404);
 
-        if(Hash::check($request->password, $admin->password)){
+        if(Auth::guard('admin')->attempt($credentials)){
             $token  = $admin->createToken('access_token');
     
             if (!$token) return response()->json([
@@ -58,7 +58,7 @@ class LoginController extends Controller
     }
 
     public function mentorLogin($request){
-        $request->only(['email', 'password']);
+        $credentials = $request->only(['email', 'password']);
 
         if(!$mentor = Mentor::whereEmail($request->email)->first())
             return response()->json([
@@ -67,7 +67,7 @@ class LoginController extends Controller
             ], 404);
             
         // Check password
-        if(Hash::check($request->password, $mentor->password)){
+        if(Auth::guard('mentor')->attempt($credentials)){
             $token = $mentor->createToken('access_token');
     
             if(!$token) return response()->json([
@@ -92,7 +92,7 @@ class LoginController extends Controller
     }
 
     public function facilitatorLogin($request){
-        $request->only(['email', 'password']);
+        $credentials = $request->only(['email', 'password']);
 
         if (!$facilitator = Facilitator::whereEmail($request->email)->first())
             return response()->json([
@@ -101,7 +101,7 @@ class LoginController extends Controller
             ], 404);
         
             // check password 
-        if(Hash::check($$request->password, $facilitator->password)){
+        if(Auth::guard('facilitator')->attempt($credentials)){
             $token = $facilitator->createToken('access_token');
     
             if(!$token) return response()->json([
@@ -127,6 +127,7 @@ class LoginController extends Controller
 
     public function login($request)
     {
+        $credentials = $request->only(['email', 'password']);
         
         if(!$user = User::whereEmail($request->email)->first()){
             return response()->json([
@@ -135,7 +136,7 @@ class LoginController extends Controller
             ], 404);
         };
 
-        if(Hash::check($request->password, $user->password)){
+        if(Auth::guard('student')->attempt($credentials)){
             $token = $user->createToken('access_token');
     
             if (!$token) return response()->json([
