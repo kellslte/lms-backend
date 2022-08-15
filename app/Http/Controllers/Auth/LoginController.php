@@ -12,6 +12,7 @@ use App\Services\LogoutService;
 use App\Http\Requests\LoginRequest;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -29,27 +30,31 @@ class LoginController extends Controller
         if (!$admin = Admin::whereEmail($request->email)->first())
             return response()->json([
                 'status' => 'failed',
-                'message' => 'Email or password incorrect'
+                'message' => 'User record does not exist'
+            ], 404);
+
+        if(Hash::check($request->password, $admin->password)){
+            $token  = $admin->createToken('access_token');
+    
+            if (!$token) return response()->json([
+                'status' => 'failed',
+                'message' => 'Email or password incorrect',
+            ], 401);
+    
+            return response()->json([
+                'status' => 'success',
+                'token' => $token->plainTextToken,
+                'data' => [
+                    'user' => $admin,
+                    'role' => 'admin'
+                ],
             ]);
+        }
 
-        Auth::guard('admin')->login($admin);
-
-        $token  = $admin->createToken('access_token');
-
-        if (!$token) return response()->json([
+        return response()->json([
             'status' => 'failed',
             'message' => 'Email or password incorrect',
         ], 401);
-
-        return response()->json([
-            'status' => 'success',
-            'authorization' => [
-                'token' => $token->plainTextToken,
-                'type' => 'bearer',
-            ],
-            'user' => $admin,
-            'role' => 'admin'
-        ]);
     }
 
     public function mentorLogin($request){
@@ -58,27 +63,32 @@ class LoginController extends Controller
         if(!$mentor = Mentor::whereEmail($request->email)->first())
             return response()->json([
                 'status' => 'failed',
-                'message' => 'Email or password incorrect'
-            ]);
+                'message' => 'User record does not exist',
+            ], 404);
             
-        Auth::guard('mentor')->login($mentor);
+        // Check password
+        if(Hash::check($request->password, $mentor->password)){
+            $token = $mentor->createToken('access_token');
+    
+            if(!$token) return response()->json([
+                'status' => 'failed',
+                'message' => 'Email or password incorrect',
+            ], 401);
 
-        $token = $mentor->createToken('access_token');
+            return response()->json([
+                    'status' => 'success',
+                    'token' => $token->plainTextToken,
+                    'data' => [
+                        'user' => $mentor,
+                        'role' => 'mentor'
+                    ],
+                ]);
+        }
 
-        if(!$token) return response()->json([
+        return response()->json([
             'status' => 'failed',
             'message' => 'Email or password incorrect',
         ], 401);
-
-        return response()->json([
-            'status' => 'success',
-            'authorization' => [
-                'token' => $token->plainTextToken,
-                'type' => 'bearer'
-            ],
-            'user' => $mentor,
-            'role' => 'mentor'
-        ]);
     }
 
     public function facilitatorLogin($request){
@@ -87,70 +97,73 @@ class LoginController extends Controller
         if (!$facilitator = Facilitator::whereEmail($request->email)->first())
             return response()->json([
                 'status' => 'failed',
-                'message' => 'Email or password incorrect'
-            ]);
+                'message' => 'User record does not exist',
+            ], 404);
         
+            // check password 
+        if(Hash::check($$request->password, $facilitator->password)){
+            $token = $facilitator->createToken('access_token');
+    
+            if(!$token) return response()->json([
+                'status' => 'failed',
+                'message' => 'Email or password incorrect',
+            ], 400);
 
-        Auth::guard('facilitator')->login($facilitator);
+            return response()->json([
+                    'status' => 'success',
+                    'token' => $token->plainTextToken,
+                    'data' => [
+                        'user' => $facilitator,
+                        'role' => 'facilitator'
+                    ],
+                ]);
+        }
 
-        $token = $facilitator->createToken('access_token');
-
-        if(!$token) return response()->json([
-            'status' => 'failed',
-            'message' => 'Email or password incorrect',
-        ], 401);
-
-        return response()->json([
-            'status' => 'success',
-            'authorization' => [
-                'token' => $token->plainTextToken,
-                'type' => 'bearer',
-            ],
-            'user' => $facilitator,
-            'role' => 'facilitator'
-        ]);
+       return response()->json([
+        'status' => 'failed',
+        'message' => 'Email or password incorrect',
+       ], 401);
     }
 
     public function login($request)
     {
-        $credentials = $request->only(['email', 'password']);
+        
+        if(!$user = User::whereEmail($request->email)->first()){
+            return response()->json([
+                'status' => 'failed',
+                'message' => 'User record does not exist',
+            ], 404);
+        };
 
-        Auth::guard('student')->attempt($credentials);
-
-        $user = User::whereEmail($credentials['email'])->first();
-
-        $token = $user->createToken('access_token');
-
-        $request->merge([
-            'user' => $user,
-        ]);
-
-        if (!$token) return response()->json([
-            'status' => 'failed',
-            'message' => 'Email or password incorrect',
-        ], 401);
-
-
-        return response()->json([
-            'status' => 'success',
-            'authorization' => [
+        if(Hash::check($request->password, $user->password)){
+            $token = $user->createToken('access_token');
+    
+            if (!$token) return response()->json([
+                'status' => 'failed',
+                'message' => 'Email or password incorrect',
+            ], 401);
+    
+            return response()->json([
+                'status' => 'success',
                 'token' => $token->plainTextToken,
-                'type' => 'bearer',
-            ],
-            'data' => [
-                'user' => $user,
-                'course' => $user->course->title,
-                'track' => $user->course->track->title,
-                'role' => 'student'
-            ]
-        ]);
+                'data' => [
+                    'user' => $user,
+                    'course' => $user->course->title,
+                    'track' => $user->course->track->title,
+                    'role' => 'student'
+                ]
+            ]);
+        }
+
     }
 
     public function logout($guard)
     {
         Auth::guard($guard)->logout();
 
-        request()->user()->currentAccessToken()->delete();
+        $user = getAuthenticatedUser();
+
+        $user->currentAccessToken()->delete();
 
         return response()->json([
             'status' => 'success',

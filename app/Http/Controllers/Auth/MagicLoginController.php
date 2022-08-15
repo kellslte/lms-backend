@@ -107,12 +107,11 @@ class MagicLoginController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'authorization' => [
-                'token' => $token->plainTextToken,
-                'type' => 'bearer',
+            'token' => $token->plainTextToken,
+            'data' => [
+                'user' => $admin,
+                'role' => 'admin'
             ],
-            'user' => $admin,
-            'role' => 'admin'
         ]);
     }
 
@@ -129,12 +128,11 @@ class MagicLoginController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'authorization' => [
-                'token' => $token->plainTextToken,
-                'type' => 'bearer',
+            'token' => $token->plainTextToken,
+            'data' => [
+                'user' => $mentor,
+                'role' => 'mentor'
             ],
-            'user' => $mentor,
-            'role' => 'mentor'
         ]);
     }
 
@@ -151,12 +149,11 @@ class MagicLoginController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'authorization' => [
-                'token' => $token->plainTextToken,
-                'type' => 'bearer',
+            'token' => $token->plainTextToken,
+            'data' => [
+                'user' => $facilitator,
+                'role' => 'facilitator'
             ],
-            'user' => $facilitator,
-            'role' => 'facilitator'
         ]);
     }
 
