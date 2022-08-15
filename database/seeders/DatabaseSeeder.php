@@ -21,7 +21,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(TrackTableSeeder::class);
         $this->call(CourseTableSeeder::class);
-        $this->createTestUsers();
+        if(config('app.env') === 'production'){
+            $this->createTestUsers();
+        }
     }
 
     public function createTestUsers()

@@ -24,12 +24,13 @@ class ProfileController extends Controller
         $user = getAuthenticatedUser();
 
         $settings = $user->settings;
+        
+        $settings->update([
+            'notification_preference' => $request->notificationsToMail,
+            'text_message_preference' => $request->receiveTexts
+        ]);
 
         try {
-            $settings->update([
-                'notification_preference' => $request->notificationsToMail,
-                'text_message_preference' => $request->receiveTexts
-            ]);
 
             return response()->json([
                 'status' => 'success',
