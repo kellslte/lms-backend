@@ -15,8 +15,7 @@ return new class extends Migration
     {
         Schema::create('facilitators', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('firstname');
-            $table->string('lastname');
+            $table->string('name');
             $table->string('email')->unique();
             $table->foreignUuid('course_id')->references('id')->on('courses')->cascadeOnUpdate();
             $table->string('recovery_email')->unique();
