@@ -163,7 +163,7 @@ class LoginController extends Controller
         
         $user = getAuthenticatedUser();
         
-        $user->currentAccessToken()->delete();
+        $user->tokens()->delete();
         
         Auth::guard($guard)->logout();
 
