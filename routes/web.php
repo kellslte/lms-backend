@@ -26,3 +26,5 @@ Route::middleware('guest')->get('auth/magiclink/{token}', fn($token) => response
     'status' => 'success',
     'token' => $token,
 ]))->name('verify-login');
+
+Route::get('ordinal', fn() => response()->json(ordinal(41)));

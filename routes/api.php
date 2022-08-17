@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\MagicLoginController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Facilitator\ProfileController as FacilitatorProfileController;
 use App\Http\Controllers\Mentor\ProfileController as MentorProfileController;
+use App\Http\Controllers\Student\LeaderboardController;
 use App\Http\Controllers\Student\ProfileController as StudentProfileController;
 /*
 |--------------------------------------------------------------------------
@@ -35,10 +36,13 @@ Route::prefix('v1')->group(function(){
     Route::post('auth/password/{user}/send-reset-link', [PasswordController::class, 'checkUserIdentity']);
 
     Route::post('auth/password/{user}/reset', [PasswordController::class, 'checkUserIdentityForReset']);
-
-
+    
+    
     // Protected Routes
     Route::middleware('auth:sanctum')->group(function(){
+
+        Route::post('auth/password/change', [PasswordController::class, 'changePassword']);
+
         
         // Student Routes
         Route::prefix('auth/user')->group(function(){
@@ -52,6 +56,11 @@ Route::prefix('v1')->group(function(){
             Route::get('profile', [StudentProfileController::class, 'index']);
             // Change Proflie Settings Route
             Route::post('profile', [StudentProfileController::class, 'storeSettings']);
+            // Leaderboard
+            Route::get('leaderboard', LeaderboardController::class);
+
+            // Classroom Routes
+            //Route::get('classroom', []);
         });
 
         // Admin Routes
@@ -80,6 +89,9 @@ Route::prefix('v1')->group(function(){
             Route::get('profile', [FacilitatorProfileController::class, 'index']);
             // Change Proflie Settings Route
             Route::post('profile', [FacilitatorProfileController::class, 'storeSettings']);
+
+            // Class Room Routes
+
         });
 
         // Mentor Routes

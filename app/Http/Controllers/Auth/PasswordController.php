@@ -9,6 +9,7 @@ use App\Models\Facilitator;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ChangePasswordRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Services\PasswordResetService;
@@ -106,6 +107,28 @@ class PasswordController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Password created successfully.'
+        ]);
+    }
+
+    public function changePassword(ChangePasswordRequest $request){
+        $user = getauthenticatedUser();
+
+        $details = $request->only(['old_password', 'new_password']);
+
+        if(Hash::check($details['old_password'], $user->password)){
+            $user->update([
+                'password' => Hash::make($details['new_password']),
+            ]);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Password changed successfully.'
+            ]);
+        }
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Error changing password.'
         ]);
     }
 }

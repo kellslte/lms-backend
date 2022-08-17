@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Student;
 
-use App\Http\Controllers\Controller;
+use App\Models\Task;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\TaskSubmissionRequest;
 
 class TaskController extends Controller
 {
@@ -16,5 +18,23 @@ class TaskController extends Controller
                 'completed_tasks' => $user->completedTasks()
             ]
         ]);
+    }
+
+    public function submit(Task $task, TaskSubmissionRequest $request){
+        $user = getAuthenticatedUser();
+
+        if($task->running()){
+            $user->submissions()->create([
+                'link_to_resource' => $request->assignmentLink,
+                'grade' => 0,
+            ])->associate($task);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Task submitted successfully',
+            ], 201);
+        }
+
+        ()
     }
 }

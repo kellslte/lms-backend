@@ -120,4 +120,12 @@ class User extends Authenticatable
     public function track(){
         return $this->hasOneThrough(Track::class, Course::class);
     }
+
+    public function point(){
+        return $this->hasOne(Point::class);
+    }
+
+    public function awardPoints(Int $points){
+        return $this->point->increment('points', $points);
+    }
 }
