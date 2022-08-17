@@ -13,6 +13,7 @@ use App\Http\Controllers\Student\LeaderboardController;
 use App\Http\Controllers\Student\ProfileController as StudentProfileController;
 use App\Http\Controllers\Student\ClassroomController as StudentClassroomController;
 use App\Http\Controllers\Student\TaskController as StudentTaskController;
+use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -43,8 +44,7 @@ Route::prefix('v1')->group(function(){
     // Protected Routes
     Route::middleware('auth:sanctum')->group(function(){
 
-        Route::post('auth/password/change', [PasswordController::class, 'changePassword']);
-
+        Route::post('password/change', [PasswordController::class, 'changePassword']); 
         
         // Student Routes
         Route::prefix('auth/user')->group(function(){
