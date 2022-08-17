@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('points', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('points')->default(0);
-            $table->json('history')->default('{}');
+            $table->json('history');
             $table->foreignUuid('user_id')->references('id')->on('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->timestamps();
         });
