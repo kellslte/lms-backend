@@ -12,6 +12,7 @@ use App\Http\Controllers\Mentor\ProfileController as MentorProfileController;
 use App\Http\Controllers\Student\LeaderboardController;
 use App\Http\Controllers\Student\ProfileController as StudentProfileController;
 use App\Http\Controllers\Student\ClassroomController as StudentClassroomController;
+use App\Http\Controllers\Student\TaskController as StudentTaskController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -66,6 +67,10 @@ Route::prefix('v1')->group(function(){
             Route::get('classroom/lessons', [StudentClassroomController::class, 'getStudentLessons']);
             // Get Single Lesson from classroom
             Route::get('classroom/lessons/{lesson}', [StudentClassroomController::class, 'getLessons']);
+            // Task Routes
+            Route::get('tasks', [StudentTaskController::class, 'index']);
+            // Submit Task
+            Route::post('tasks/{task}', [StudentTaskController::class, 'submit']);
         });
 
         // Admin Routes

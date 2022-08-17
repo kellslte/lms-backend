@@ -16,8 +16,8 @@ class TaskController extends Controller
             'status' => 'success',
             'data' => [
                 'completed_tasks' => $user->completedTasks(),
-                'pending_tasks' => 8,
-                'expired_tasks' => 4,
+                'pending_tasks' => $user->pendingTasks(),
+                'expired_tasks_count' => 4,
             ]
         ]);
     }
@@ -44,5 +44,9 @@ class TaskController extends Controller
         'status' => 'error',
         'message' => 'Something went wrong here, please contact your facilitator',
        ], 404);
+    }
+
+    public function getpendingTasks(){
+
     }
 }

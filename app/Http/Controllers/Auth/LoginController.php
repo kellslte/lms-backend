@@ -160,11 +160,12 @@ class LoginController extends Controller
 
     public function logout($guard)
     {
-        Auth::guard($guard)->logout();
-
+        
         $user = getAuthenticatedUser();
-
+        
         $user->currentAccessToken()->delete();
+        
+        Auth::guard($guard)->logout();
 
         return response()->json([
             'status' => 'success',

@@ -22,9 +22,9 @@ class LeaderboardController extends Controller
         return response()->json($board);
 
         
-        array_walk($board, function($item, $index){
-            return [ordinal($index++) => $item];
-        });
+        // array_walk($board, function($item, $index){
+        //     return [ordinal($index++) => $item];
+        // });
 
         $user = getAuthenticatedUser();
 

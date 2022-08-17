@@ -112,6 +112,14 @@ class User extends Authenticatable
         return $this->submissions()->whereStatus('approved')->get();
     }
 
+    public function pendingTasks(){
+        return collect($this->tasks)->reject(fn($task) => $this->completedTasks()->contains($task) && $task->running() !== true);
+    }
+
+    public function expiredTasks(){
+        return collect($this->tasks)->reject(fn($task) => $this->completedTasks()->contains($task) && $task->expired() === true);
+    }
+
     public function tasks(){
         return $this->lessons->task;
     }
