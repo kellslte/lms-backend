@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->enum('status', ['expired', 'extended', 'running']);
-            $table->foreignId('lesson_id')->references('id')->on('lessons')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignUuid('lesson_id')->references('id')->on('lessons')->cascadeOnUpdate()->cascadeOnDelete();
             $table->timestamps();
         });
     }

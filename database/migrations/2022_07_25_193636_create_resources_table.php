@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('resources', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('lesson_id')->references('id')->on('lessons')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignUuid('lesson_id')->references('id')->on('lessons')->cascadeOnDelete()->cascadeOnUpdate();
             $table->enum('type', ['video_link', 'transcript', 'file_link'])->default('file_link');
             $table->timestamps();
         });
