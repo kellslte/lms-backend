@@ -19,6 +19,8 @@ class LeaderboardController extends Controller
             ];
         })->keyBy('points')->sortKeysDesc();
 
+        return response()->json($board);
+
         
         array_walk($board, function($item, $index){
             return [ordinal($index++) => $item];
