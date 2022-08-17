@@ -52,11 +52,14 @@ class DatabaseSeeder extends Seeder
         ])->settings()->create();
 
 
-        $course->students()->create([
+        $student =  $course->students()->create([
             'name' => 'Amarachi Nwankwo',
             'email' => 'amaramnwankwo@gmail.com',
             'gender' => 'female',
             'phonenumber' => '08106243946'
-        ])->settings()->create();
+        ]);
+
+        $student->settings()->create();
+        $student->point()->create();
     }
 }

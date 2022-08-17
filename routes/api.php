@@ -65,8 +65,7 @@ Route::prefix('v1')->group(function(){
             // Get Student Lessons
             Route::get('classroom/lessons', [StudentClassroomController::class, 'getStudentLessons']);
             // Get Single Lesson from classroom
-            Route::get('classroom/lesson', [StudentClassroomController::class, 'getLessons']);
-
+            Route::get('classroom/lessons/{lesson}', [StudentClassroomController::class, 'getLessons']);
         });
 
         // Admin Routes

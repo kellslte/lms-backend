@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Models\Lesson;
 use Illuminate\Http\Request;
 
 class ClassroomController extends Controller
@@ -19,7 +20,7 @@ class ClassroomController extends Controller
         // TODO pull this from Youtube
     }
 
-    public function getLesson(){}
+    public function getLesson(Lesson $lesson){}
 
     public function getStudentLessons(){}
 }
