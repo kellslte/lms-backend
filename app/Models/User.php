@@ -143,7 +143,9 @@ class User extends Authenticatable
 
     public function updateUserPoints(){
         $this->point()->update([
-            'total' =>  $this->point->attendance_points + $this->point->bonus_points + $this->point->task_points,
+            'total' =>  ($this->point->attendance_points + $this->point->bonus_points + $this->point->task_points),
         ]);
+
+        return $this->point->total;
     }
 }
