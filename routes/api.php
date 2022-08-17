@@ -6,15 +6,16 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\MagicLoginController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
-use App\Http\Controllers\Facilitator\ProfileController as FacilitatorProfileController;
-use App\Http\Controllers\Mentor\ProfileController as MentorProfileController;
+use App\Http\Controllers\Admin\OnboardingController;
 use App\Http\Controllers\Student\LeaderboardController;
+use App\Http\Controllers\Student\TaskController as StudentTaskController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
+use App\Http\Controllers\Mentor\ProfileController as MentorProfileController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Student\ProfileController as StudentProfileController;
 use App\Http\Controllers\Student\ClassroomController as StudentClassroomController;
-use App\Http\Controllers\Student\TaskController as StudentTaskController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
+use App\Http\Controllers\Facilitator\ProfileController as FacilitatorProfileController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -88,7 +89,7 @@ Route::prefix('v1')->group(function(){
             // Onboarding Routes
             Route::post('onboard', [OnboardingController::class, 'facilitator']);
 
-            Route::post('onboad/send-login-link', [OnboadController::class, 'sendMagicLinkToStudents']);
+            Route::post('onboad/send-login-link', [OnboardingController::class, 'sendMagicLinkToStudents']);
         });
 
         // Facilitator Routes
