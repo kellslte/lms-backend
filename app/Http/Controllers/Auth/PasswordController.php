@@ -113,11 +113,11 @@ class PasswordController extends Controller
     public function changePassword(ChangePasswordRequest $request){
         $user = getauthenticatedUser();
 
-        $details = $request->only(['old_password', 'new_password']);
+        $details = $request->only(['old_password', 'password']);
 
         if(Hash::check($details['old_password'], $user->password)){
             $user->update([
-                'password' => Hash::make($details['new_password']),
+                'password' => Hash::make($details['password']),
             ]);
 
             return response()->json([
