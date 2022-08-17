@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class ClassroomController extends Controller
 {
-    public function index($query){
+    public function index($query = null){
         // TODO get lessons for that week and all its resources
         return response()->json([
             'status' => 'success',

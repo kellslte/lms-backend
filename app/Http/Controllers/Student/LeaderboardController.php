@@ -11,11 +11,9 @@ class LeaderboardController extends Controller
     public function __invoke(){
         $users = User::all();
 
-        $data = [];
-
         // TODO get points and arrange the points in descending order;
         $board = collect($users)->map(function ($user) {
-            return $data[$user->name] = [
+            return [
                 "name" => $user->name,
                 "attendances" => $user->point->attendance_points,
                 "bonus" => $user->point->bonus_points,
@@ -25,24 +23,10 @@ class LeaderboardController extends Controller
 
         })->keyBy('total')->sortKeysDesc();
 
-        $keys = $board->keys();
-
-        
-        array_walk($board, function($item, $index){
-            return [ordinal((int)$index++) => $item];
-        });
-        
-        return response()->json($board);
-
-        $user = getAuthenticatedUser();
-
-        $userPosition = ($board->contains($user->name)) ? array_search($user->name, $board->whereStrict('name', '===', $user->name)->toArray()) : null;
-
         return response()->json([
             'status' => 'Successfull',
             "data" => [
-                "ranking" => $board,
-                "position" => $userPosition,
+                "leaderboard" => $board
             ]
         ]);
     }

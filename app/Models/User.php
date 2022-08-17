@@ -126,7 +126,7 @@ class User extends Authenticatable
 
     public function lessons()
     {
-        return $this->hasManyThrough(Lesson::class, Course::class);
+        return $this->course->lessons;
     }
 
     public function track(){
