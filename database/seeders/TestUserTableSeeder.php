@@ -49,6 +49,11 @@ class TestUserTableSeeder extends Seeder
         ]);
 
         $student->settings()->create();
-        $student->point()->create();
+        $student->point()->create([
+            'history' => json_encode([
+                'user created ='
+            ]),
+            'points' => 100,
+        ]);
     }
 }
