@@ -25,11 +25,14 @@ class LeaderboardController extends Controller
 
         })->keyBy('total')->sortKeysDesc();
 
-        return response()->json($board);
+        $keys = $board->keys();
+
         
         array_walk($board, function($item, $index){
-            return [ordinal($index++) => $item];
+            return [ordinal((int)$index++) => $item];
         });
+        
+        return response()->json($board);
 
         $user = getAuthenticatedUser();
 
