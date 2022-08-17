@@ -18,7 +18,7 @@ class LeaderboardController extends Controller
                 "attendances" => $user->point->attendance_points,
                 "bonus" => $user->point->bonus_points,
                 "task" => $user->point->task_points,
-                "total" => $user->updateUserPoints(),
+                "total" => $user->point->total,
             ];
 
         })->keyBy('total')->sortKeysDesc();
