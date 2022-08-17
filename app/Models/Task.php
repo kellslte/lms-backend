@@ -23,5 +23,7 @@ class Task extends Model
         return ($this->status === 'running') ? true : false;
     }
 
-    public function expired
+    public function expired(){
+        return ($this->status === 'expired') ? true : false;
+    }
 }

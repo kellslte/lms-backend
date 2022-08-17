@@ -160,7 +160,6 @@ class LoginController extends Controller
 
     public function logout($guard)
     {
-        
         $user = getAuthenticatedUser();
         
         $user->tokens()->delete();

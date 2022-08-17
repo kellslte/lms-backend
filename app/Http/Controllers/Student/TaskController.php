@@ -17,7 +17,8 @@ class TaskController extends Controller
             'data' => [
                 'completed_tasks' => $user->completedTasks(),
                 'pending_tasks' => $user->pendingTasks(),
-                'expired_tasks_count' => 4,
+                'expired_tasks_count' => $user->expiredTasks(),
+                'tasks' => $user->tasks,
             ]
         ]);
     }
@@ -46,7 +47,7 @@ class TaskController extends Controller
        ], 404);
     }
 
-    public function getpendingTasks(){
+    // public function getpendingTasks(){
 
-    }
+    // }
 }

@@ -13,9 +13,16 @@ class LeaderboardController extends Controller
 
         // TODO get points and arrange the points in descending order;
         $board = collect($users)->map(function($user){
-            return [
+            
+            // update user total points
+            $user->updateUserPoints();
+
+            return $board[] = [
                 "name" => $user->name,
-                "points" => $user->points,
+                "attendances" => $user->point->attendance_points,
+                "bonus" => $user->point->bonus_points,
+                "task" => $user->point->task_points,
+                "total" => $user->point->total_points,
             ];
         })->keyBy('points')->sortKeysDesc();
 

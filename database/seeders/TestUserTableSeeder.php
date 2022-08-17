@@ -53,7 +53,7 @@ class TestUserTableSeeder extends Seeder
             'history' => json_encode([
                 'user created ='
             ]),
-            'points' => 100,
+            'bonus_points' => 100,
         ]);
     }
 }
