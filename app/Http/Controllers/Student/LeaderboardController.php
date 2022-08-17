@@ -11,9 +11,11 @@ class LeaderboardController extends Controller
     public function __invoke(){
         $users = User::all();
 
+        $data = [];
+
         // TODO get points and arrange the points in descending order;
         $board = collect($users)->map(function ($user) {
-            return [$user->name] = [
+            return $data[$user->name] = [
                 "name" => $user->name,
                 "attendances" => $user->point->attendance_points,
                 "bonus" => $user->point->bonus_points,
