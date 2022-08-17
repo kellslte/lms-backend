@@ -15,7 +15,9 @@ class TaskController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => [
-                'completed_tasks' => $user->completedTasks()
+                'completed_tasks' => $user->completedTasks(),
+                'pending_tasks' => 8,
+                'expired_tasks' => 4,
             ]
         ]);
     }
@@ -35,6 +37,12 @@ class TaskController extends Controller
             ], 201);
         }
 
-        ()
+       return (!$task->running()) ? response()->json([
+        'status' => 'failed',
+        'message' => 'You cannot submit this task anymore',
+       ], 406) :  response()->json([
+        'status' => 'error',
+        'message' => 'Something went wrong here, please contact your facilitator',
+       ], 404);
     }
 }

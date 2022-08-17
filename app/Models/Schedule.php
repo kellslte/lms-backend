@@ -12,7 +12,11 @@ class Schedule extends Model
 
     protected $guarded = [];
 
-    public function student(){
-        return $this->belongsTo(User::class);
+    public function schedulable_owner(){
+        return $this->morphTo();
+    }
+
+    public function schedulable(){
+        return $this->morphTo();
     }
 }

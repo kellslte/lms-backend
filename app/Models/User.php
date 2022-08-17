@@ -97,7 +97,7 @@ class User extends Authenticatable
     }
 
     public function schedule(){
-        return $this->hasOne(Schedule::class);
+        return $this->morphMany(Schedule::class, 'schedulable_owner');
     }
 
     public function attendance(){
@@ -110,6 +110,10 @@ class User extends Authenticatable
 
     public function completedTasks(){
         return $this->submissions()->whereStatus('approved')->get();
+    }
+
+    public function tasks(){
+        return $this->lessons->task;
     }
 
     public function lessons()

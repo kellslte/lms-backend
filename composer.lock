@@ -4,8 +4,76 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "822aba22b98495129a376625ff36951a",
+    "content-hash": "39f52665213f013daf68d4e2e2614bbd",
     "packages": [
+        {
+            "name": "alchemyguy/youtube-laravel-api",
+            "version": "v1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/alchemyguy/YoutubeLaravelApi.git",
+                "reference": "2df1dee7e4f479b8c2d21cc21d6f594df078feec"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/alchemyguy/YoutubeLaravelApi/zipball/2df1dee7e4f479b8c2d21cc21d6f594df078feec",
+                "reference": "2df1dee7e4f479b8c2d21cc21d6f594df078feec",
+                "shasum": ""
+            },
+            "require": {
+                "google/apiclient": "^2.0"
+            },
+            "require-dev": {
+                "squizlabs/php_codesniffer": "^2.3"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                },
+                "laravel": {
+                    "providers": [
+                        "alchemyguy\\YoutubeLaravelApi\\YoutubeLaravelApiServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "alchemyguy\\YoutubeLaravelApi\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mukesh Chandra",
+                    "email": "mukesh201722@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "It is a wrapper over Youtube Api v3 which simplifies functionalities the laravel way.",
+            "homepage": "https://github.com/alchemyguy/YoutubeLaravelApi",
+            "keywords": [
+                "AlchemyGuy",
+                "Youtube Api V3",
+                "Youtube Backup",
+                "Youtube Channel",
+                "Youtube LiveStream",
+                "Youtube Video",
+                "YoutubeLaravelApi",
+                "google api",
+                "laravel",
+                "oauth",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/alchemyguy/YoutubeLaravelApi/issues",
+                "source": "https://github.com/alchemyguy/YoutubeLaravelApi/tree/v1.0.3"
+            },
+            "time": "2021-04-14T18:51:12+00:00"
+        },
         {
             "name": "brick/math",
             "version": "0.9.3",

@@ -11,6 +11,7 @@ use App\Http\Controllers\Facilitator\ProfileController as FacilitatorProfileCont
 use App\Http\Controllers\Mentor\ProfileController as MentorProfileController;
 use App\Http\Controllers\Student\LeaderboardController;
 use App\Http\Controllers\Student\ProfileController as StudentProfileController;
+use App\Http\Controllers\Student\ClassroomController as StudentClassroomController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -60,7 +61,12 @@ Route::prefix('v1')->group(function(){
             Route::get('leaderboard', LeaderboardController::class);
 
             // Classroom Routes
-            //Route::get('classroom', []);
+            Route::get('classroom', [StudentClassroomController::class, 'index']);
+            // Get Student Lessons
+            Route::get('classroom/lessons', [StudentClassroomController::class, 'getStudentLessons']);
+            // Get Single Lesson from classroom
+            Route::get('classroom/lesson', [StudentClassroomController::class, 'getLessons']);
+
         });
 
         // Admin Routes

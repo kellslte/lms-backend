@@ -32,8 +32,11 @@ return [
     ],
 
     'youtube' => [
-        'oauth' => env('YOUTUBE_OAUTH_KEY'),
-        'token' => env('YOUTUBE_TOKEN'),
+        'id' => env('YOUTUBE_CLIENT_ID'),
+        'secret' => env('YOUTUBE_CLIENT_SECRET'),
+        'token' => env('YOUTUBE_DEVELOPER_TOKEN'),
+        'redirecturi' => env('YOUTUBE_REDIRECT_URI'),
+        'language' => env('YOUTUBE_LANGUAGE'),
     ],
 
 ];
