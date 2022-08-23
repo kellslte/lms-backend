@@ -6,8 +6,9 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class CreatePasswordRequest extends FormRequest
+class CreateLessonRequest extends FormRequest
 {
+
     /**
      * Get the validation rules that apply to the request.
      *
@@ -16,8 +17,13 @@ class CreatePasswordRequest extends FormRequest
     public function rules()
     {
         return [
-            'password' => 'required|string|confirmed',
-            'password_confirmation' => 'required|string',
+            'title' => 'required|string|min:3',
+            'description' => 'required|min:8',
+            'status' => 'required|string',
+            'courseTitle' => 'required|string',
+            'lessonVideo' => 'required|file|mime:mp4,avi,mkv',
+            'lessonThumbnail' => 'required|file|mime:png',
+            'lessonTransacript' => 'required|file|mime:txt'
         ];
     }
 

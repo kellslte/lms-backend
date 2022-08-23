@@ -87,4 +87,9 @@ class Facilitator extends Authenticatable
     public function course(){
         return $this->belongsTo(Course::class);
     }
+
+    public function schedule()
+    {
+        return $this->morphMany(Schedule::class, 'schedules');
+    }
 }

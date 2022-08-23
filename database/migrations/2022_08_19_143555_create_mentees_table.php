@@ -13,14 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('schedules', function (Blueprint $table) {
+        Schema::create('mentees', function (Blueprint $table) {
             $table->id();
-            $table->uuid('schedules_id');
-            $table->string('schedules_type');
-            $table->uuid('schedulable_id');
-            $table->string('schedulable_type');
-            $table->date('date');
-            $table->time('time');
             $table->timestamps();
         });
     }
@@ -32,6 +26,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('schedules');
+        Schema::dropIfExists('mentees');
     }
 };

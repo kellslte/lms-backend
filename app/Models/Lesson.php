@@ -10,7 +10,6 @@ class Lesson extends Model
 {
     use HasFactory, HasUuid;
 
-
     protected $guarded = [];
 
     public function course()
@@ -30,5 +29,9 @@ class Lesson extends Model
 
     public function comments(){
         return $this->morphMany(Comment::class, 'commentable');
+    }
+
+    public function media(){
+        return $this->morphMany(Media::class, 'mediaable');
     }
 }

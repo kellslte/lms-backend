@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('link');
             $table->time('time');
             $table->date('date');
+            $table->enum('type', ['sotu', 'live_class']);
             $table->timestamps();
         });
     }

@@ -2,9 +2,8 @@
 
 namespace App\Providers;
 
-use App\Models\User;
 use App\Models\Point;
-use App\Observers\UserObserver;
+use App\Observers\PointObserver;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -21,6 +20,8 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+
+       
     ];
 
     /**
@@ -30,7 +31,7 @@ class EventServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Point::observe(UserObserver::class);
+        Point::observe(PointObserver::class);
     }
 
     /**

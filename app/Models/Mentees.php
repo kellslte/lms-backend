@@ -6,17 +6,17 @@ use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Schedule extends Model
+class Mentees extends Model
 {
     use HasFactory, HasUuid;
 
     protected $guarded = [];
 
-    public function schedules(){
-        return $this->morphTo();
+    public function mentor(){
+        return $this->belongsTo(Mentor::class);
     }
 
-    public function schedulable(){
+    public function mentorable(){
         return $this->morphTo();
     }
 }

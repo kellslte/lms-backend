@@ -15,8 +15,9 @@ return new class extends Migration
     {
         Schema::create('lessons', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('topic');
+            $table->string('title');
             $table->text('description');
+            $table->enum('status', ['published', 'unpublished'])->default('unpublished');
             $table->foreignUuid('course_id')->references('id')->on('courses')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });

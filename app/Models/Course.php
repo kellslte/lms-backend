@@ -38,4 +38,8 @@ class Course extends Model
     {
         return $this->hasMany(Lesson::class);
     }
+
+    public function mentors(){
+        return $this->hasMany(Mentor::class);
+    }
 }

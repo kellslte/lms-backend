@@ -21,10 +21,14 @@ use App\Http\Controllers\Student\TaskController as StudentTaskController;
 use App\Http\Controllers\Student\ProfileController as StudentProfileController;
 use App\Http\Controllers\Student\ClassroomController as StudentClassroomController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
-use App\Http\Controllers\Facilitator\ProfileController as FacilitatorProfileController;
+use App\Http\Controllers\Student\ScheduleController as StudentScheduleController;
 
 // Facilitator Controllers
+use App\Http\Controllers\Facilitator\ProfileController as FacilitatorProfileController;
 use App\Http\Controllers\Facilitator\DashboardController as FacilitatorDashboardController;
+use App\Http\Controllers\Facilitator\ClassRoomController as FacilitatorClassRoomController;
+use App\Http\Controllers\Facilitator\ScheduleController as FacilitatorScheduleController;
+use App\Http\Controllers\Facilitator\TaskController as FacilitatorTaskController;
 
 /*
 |--------------------------------------------------------------------------
@@ -73,6 +77,9 @@ Route::prefix('v1')->group(function(){
             // Leaderboard
             Route::get('leaderboard', LeaderboardController::class);
 
+            // Schedule
+            Route::get('schedule', StudentScheduleController::class);
+
             // Classroom Routes
             Route::get('classroom', [StudentClassroomController::class, 'index']);
             // Get Student Lessons
@@ -87,7 +94,7 @@ Route::prefix('v1')->group(function(){
 
         // Admin Routes
         Route::prefix('auth/admin')->group(function(){
-            // Admin Logour
+            // Admin Logout
             Route::post('logout', fn() => (new LoginController)->logout('admin'));
             // Admin Token Refresh
             Route::post('password/create', [PasswordController::class, 'createPassword']);
@@ -113,8 +120,31 @@ Route::prefix('v1')->group(function(){
             Route::post('profile', [FacilitatorProfileController::class, 'storeSettings']);
 
             // Class Room Routes
-            Route::get('dashboard', [FacilitatorDashboardController::class, 'index']);
+            Route::get('dashboard', FacilitatorDashboardController::class);
 
+            Route::get('classroom', [FacilitatorClassroomController::class, 'index']);
+
+            Route::post('classroom', [FacilitatorClassroomController::class, 'store']);
+
+            Route::get('schedule', [FacilitatorScheduleController::class, 'index']);
+
+            Route::post('schedule', [FacilitatorScheduleController::class, 'fixLiveClass']);
+
+            // Task Route
+            Route::get('tasks', [FacilitatorTaskController::class, 'index']);
+
+            Route::get('tasks/{task}', [FacilitatorTaskController::class, 'viewSubmissions']);
+            
+            Route::post('tasks/{lesson}', [FacilitatorTaskController::class, 'store']); 
+
+            Route::put('tasks/{task}', [FacilitatorTaskController::class, 'update']);
+
+            Route::post('tasks/{task}/grade/{user}', [FacilitatorTaskController::class, 'gradeTask']);
+
+            //Route::post();
+
+            // Mentor Area Routes
+            //Route::get('mentors', []);
         });
 
         // Mentor Routes
@@ -132,8 +162,4 @@ Route::prefix('v1')->group(function(){
     });
 
 
-});
-
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
 });

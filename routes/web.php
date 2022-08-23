@@ -5,6 +5,7 @@ use App\Http\Requests\PaymentGatewayRequest;
 use Unicodeveloper\Paystack\Facades\Paystack;
 use App\Http\Controllers\Auth\PaymentController;
 use App\Http\Controllers\Auth\MagicLoginController;
+use  alchemyguy\YoutubeLaravelApi\AuthenticateService;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,3 +29,10 @@ Route::middleware('guest')->get('auth/magiclink/{token}', fn($token) => response
 ]))->name('verify-login');
 
 Route::get('ordinal', fn() => response()->json(ordinal(41)));
+
+Route::get('youtube', function(){
+    $authObject  = new AuthenticateService;
+
+    # Replace the identifier with a unqiue identifier for account or channel
+    $authUrl = $authObject->getLoginUrl('email', 'UCtaa9WH19QmP2sIkqQXXDgw'); 
+});

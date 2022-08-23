@@ -6,17 +6,11 @@ use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Schedule extends Model
+class Media extends Model
 {
     use HasFactory, HasUuid;
 
-    protected $guarded = [];
-
-    public function schedules(){
-        return $this->morphTo();
-    }
-
-    public function schedulable(){
+    public function mediaable(){
         return $this->morphTo();
     }
 }

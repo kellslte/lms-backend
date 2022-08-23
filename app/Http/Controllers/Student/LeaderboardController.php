@@ -9,7 +9,9 @@ use App\Http\Controllers\Controller;
 class LeaderboardController extends Controller
 {
     public function __invoke(){
-        $users = User::all();
+        $user = getAuthenticatedUser();
+
+        $users = $user->course->students;
 
         // TODO get points and arrange the points in descending order;
         $board = collect($users)->map(function ($user) {

@@ -1,12 +1,16 @@
 <?php
 namespace App\Services;
 
-use Google\Client;
+use alchemyguy\YoutubeLaravelApi\ChannelService;
+use  alchemyguy\YoutubeLaravelApi\AuthenticateService;
+use  alchemyguy\YoutubeLaravelApi\VideoService;	
 
 class YoutubeService {
 
     protected static $client;
     protected static $language;
+    protected static $channelService;
+    protected static $videoService;
 
     public static function __constructStatic()
     {
@@ -14,27 +18,35 @@ class YoutubeService {
     }
 
     protected static function initialize(){
-        self::$client = new Client();
-        // set auth credentials
-        self::$client->setClientId(config('services.youtube.id'));
-        self::$client->setClientSecret(config('services.youtube.secret'));
-        self::$client->setDeveloperKey(config('services.youtube.token'));
-        self::$client->setRedirectUri(config('services.youtube.redirecturi'));
+        self::$client = new AuthenticateService;
 
-        // set cliient scopes
-        self::$client->setScopes([
-            'https://www.googleapis.com/auth/youtube',
-        ]);
+        // Change the 'identifier' property once you pull this from Google Devs console
+        $authUrl = self::$client->getLoginUrl('email', 'identifier');
 
-        // setup remaining configuration
-        self::$client->setAccessType('offline');
-        self::$client->setPrompt('consent');
-        self::$language = config('services.youtube.language');
+        self::$channelService = new ChannelService;
+        self::$videoService =  new VideoService;
     }
 
-    public static function listVideos(){}
+    public function setAuth(){
+        
+    }
 
-    public static function getVideo(){}
+    public static function listVideos(String $channelID){
+        $part = 'id,snippet';
+
+        $params = [
+            'id' => $channelID,
+        ];
+
+        return self::$channelService->listVideos($part, $params);
+    }
+
+    public static function getVideo(String $videoId){
+        $part = 'snippet,contentDetails,id,statistices';
+        $params = [ 'id' => $videoId ];
+
+        return self::$videoService->videsoListById($part, $params);
+    }
 
     public static function streamVideo(){}
 

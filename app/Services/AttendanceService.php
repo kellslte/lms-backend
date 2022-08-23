@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class AttendanceService {
     protected $attendance;
     
-    public function __construct(Attendance $attendance){
-        $this->attendance = $attendance;
+    public function __construct(){
+        $this->attendance = new Attendance();
     }
     
     public function attend(Model $model){
@@ -25,6 +25,7 @@ class AttendanceService {
 
     public function setDate($date){
         $this->attendance->date = $date;
+        $this->attendance->save();
     }
 
     public function mark(Model $model){

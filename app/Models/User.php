@@ -97,7 +97,7 @@ class User extends Authenticatable
     }
 
     public function schedule(){
-        return $this->morphMany(Schedule::class, 'schedulable_owner');
+        return $this->morphMany(Schedule::class, 'schedules');
     }
 
     public function attendance(){
@@ -121,7 +121,9 @@ class User extends Authenticatable
     }
 
     public function tasks(){
-        return $this->lessons->task;
+        $lessons = $this->lessons();
+
+        return $lessons->with('task');
     }
 
     public function lessons()
@@ -137,8 +139,11 @@ class User extends Authenticatable
         return $this->hasOne(Point::class);
     }
 
-    public function awardPoints(Int $points){
-        return $this->point->increment('points', $points);
+    public function awardPoints(String $field, Int $points){
+
+        return $this->point->update([
+            $field => (int)$this->point->$field + $points, 
+        ]);
     }
 
     public function updateUserPoints(){
@@ -147,5 +152,9 @@ class User extends Authenticatable
         ]);
 
         return $this->point->total;
+    }
+
+    public function mentor(){
+        return $this->morphOne(Mentee::class, 'mentorable');
     }
 }

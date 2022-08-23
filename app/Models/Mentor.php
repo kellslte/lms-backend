@@ -79,4 +79,8 @@ class Mentor extends Authenticatable
     {
         return $this->morphOne(Setting::class, 'changeable');
     }
+
+    public function mentees(){
+        return $this->morphMany(Mentees::class, 'mentorable');
+    }
 }

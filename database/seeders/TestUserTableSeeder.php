@@ -31,29 +31,135 @@ class TestUserTableSeeder extends Seeder
             'password' => bcrypt('mental'),
         ])->settings()->create();
 
-        $course = Course::whereTitle('Cloud Engineering')->firstOrFail();
+        $this->createFacilitators();
 
-        $course->facilitator()->create([
+        $this->createStudents();
+    }
+    
+    protected function createStudent(array $data, String $courseTitle)
+    {
+        $course = Course::whereTitle($courseTitle)->firstOrFail();
+
+        $student = $course->students()->create($data);
+
+        $student->settings()->create();
+
+        $student->point()->create([
+            'history' => json_encode([
+                'user created|'
+            ]),
+            'bonus_points' => 100,
+        ]);
+
+        //$student->awardPoints('task_points', 50);
+    }
+
+    protected function createFacilitators(){
+        $this->createFacilitator([
             'name' => 'Signs Madueke',
             'email' => 'signs.facilitator@gmail.com',
             'recovery_email' => 'signsmaduaeke@gmail.com',
             'password' => bcrypt('fascille'),
-        ])->settings()->create();
+        ], 'Cloud Engineering');
 
+        $this->createFacilitator([
+            'name' => 'Favour Onyebuchi',
+            'email' => 'favour.facilitator@gmail.com',
+            'recovery_email' => 'onyifavour@gmail.com',
+            'password' => bcrypt('fascille'),
+        ], 'Product Design');
 
-        $student =  $course->students()->create([
-            'name' => 'Amarachi Nwankwo',
-            'email' => 'amaramnwankwo@gmail.com',
-            'gender' => 'female',
-            'phonenumber' => '08106243946'
-        ]);
+        $this->createFacilitator([
+            'name' => 'Sophia Ahuoyiza',
+            'email' => 'sophia.facilitator@gmail.com',
+            'recovery_email' => 'sophiaabubaka@gmail.com',
+            'password' => bcrypt('fascille'),
+        ], 'Backend Engineering');
+    }
 
-        $student->settings()->create();
-        $student->point()->create([
-            'history' => json_encode([
-                'user created ='
-            ]),
-            'bonus_points' => 100,
-        ]);
+    protected function createFacilitator(array $data, String $courseTitle){
+        $course = Course::whereTitle($courseTitle)->firstOrFail();
+
+        $course->facilitator()->create($data)->settings()->create();
+    }
+
+    protected function createStudents(){
+
+        $this->createStudent([
+            'name' => 'Obianuju Chibuokem',
+            'email' => 'ujuchibuoke@gmail.com',
+            'current_education_level' => 'B.Sc',
+            'access_to_laptop' => 'Yes',
+        ], 'Frontend Engineering');
+
+        $this->createStudent([
+            'name' => 'Esther Mbadiwe',
+            'email' => 'mbadiweesther@gmail.com',
+            'current_education_level' => 'HND',
+            'access_to_laptop' => 'Yes',
+        ], 'Backend Engineering');
+
+        $this->createStudent([
+            'name' => 'Agnes Wuruola',
+            'email' => 'olaagnes@gmail.com',
+            'current_education_level' => 'Others',
+            'access_to_laptop' => 'No',
+        ], 'Cloud Engineering');
+
+        $this->createStudent([
+            'name' => 'Camilla Ninioluwa',
+            'email' => 'camilaagirl@gmail.com',
+            'current_education_level' => 'B.Sc',
+            'access_to_laptop' => 'Yes',
+        ], 'Android Application Development');
+
+        $this->createStudent([
+            'name' => 'Beatrice Odinma',
+            'email' => 'odinmabee@gmail.com',
+            'current_education_level' => 'Others',
+            'access_to_laptop' => 'Yes',
+        ], 'iOS Application Development');
+
+        $this->createStudent([
+            'name' => 'Andromeda Emerem',
+            'email' => 'emremadnie@gmail.com',
+            'current_education_level' => 'B.Sc',
+            'access_to_laptop' => 'Yes',
+        ], 'Flutter Application Development');
+
+        $this->createStudent([
+            'name' => 'Bibi Wellington',
+            'email' => 'wellsbibi@gmail.com',
+            'current_education_level' => 'Others',
+            'access_to_laptop' => 'Yes',
+        ], 'Product Design');
+
+        $this->createStudent([
+            'name' => 'Taylor Artwell',
+            'email' => 'artwellt@gmail.com',
+            'current_education_level' => 'Higher',
+            'access_to_laptop' => 'No',
+        ], 'Product Management');
+
+        $this->createStudent([
+            'name' => 'Darlene Onyema',
+            'email' => 'onyemadarlene@gmail.com',
+            'current_education_level' => 'B.Sc',
+            'access_to_laptop' => 'Yes',
+        ], 'Data Science');
+
+        $this->createStudent([
+            'name' => 'Christina Ogbata',
+            'email' => 'ogbatac@gmail.com',
+            'current_education_level' => 'Others',
+            'access_to_laptop' => 'No',
+        ], 'Data Analysis');
+
+        $this->createStudent([
+            'name' => 'Isabella Christian',
+            'email' => 'bellachris@gmail.com',
+            'current_education_level' => 'OND',
+            'access_to_laptop' => 'Yes',
+        ], 'Cloud Engineering');
     }
 }
