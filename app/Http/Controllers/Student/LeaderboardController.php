@@ -22,7 +22,6 @@ class LeaderboardController extends Controller
                 "task" => $user->point->task_points,
                 "total" => $user->point->total,
             ];
-
         });
 
         return response()->json([
