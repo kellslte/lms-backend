@@ -23,7 +23,7 @@ class LeaderboardController extends Controller
                 "total" => $user->point->total,
             ];
 
-        })->keyBy('total')->sortKeysDesc();
+        });
 
         return response()->json([
             'status' => 'Successfull',
