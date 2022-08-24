@@ -51,7 +51,22 @@ class TestUserTableSeeder extends Seeder
             'bonus_points' => 100,
         ]);
 
-        //$student->awardPoints('task_points', 50);
+        $lessons = [];
+
+        foreach ($course->lessons as $lesson){
+            $lessons[] = [
+                "lesson_id" => $lesson->id,
+                "lesson_status" => "uncompleted",
+            ];
+        }
+
+        $student->curriculum()->create([
+            "viewables" => json_encode($lessons),
+        ]);
+
+        $student->schedule()->create([
+            "meetings" => json_encode($lessons)
+        ]);
     }
 
     protected function createFacilitators(){

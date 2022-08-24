@@ -14,13 +14,10 @@ return new class extends Migration
     public function up()
     {
         Schema::create('schedules', function (Blueprint $table) {
-            $table->id();
-            $table->uuid('schedules_id');
-            $table->string('schedules_type');
+            $table->uuid('id')->primary();
             $table->uuid('schedulable_id');
             $table->string('schedulable_type');
-            $table->date('date');
-            $table->time('time');
+            $table->json("meetings")->nullable();
             $table->timestamps();
         });
     }

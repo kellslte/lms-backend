@@ -5,27 +5,16 @@ use App\Models\Attendance;
 use Illuminate\Database\Eloquent\Model;
 
 class AttendanceService {
-    protected $attendance;
     
-    public function __construct(){
-        $this->attendance = new Attendance();
-    }
-    
-    public function attend(Model $model){
-        $this->attendance->attendable()->associate($model);
+    public function attend(Model $user, Model $meeting){
+        $records = collect(json_decode($user->attendance->record));
+        
+        $record = $records->first($meeting->id);
 
-        return $this;
-    }
+        $newRecord = ($record) ? $record['present'] = true : $record['present'] = false;
 
-    public function attender(Model $model){
-        $this->attendance->attender()->associate($model);
+        
 
-        return $this;
-    }
-
-    public function setDate($date){
-        $this->attendance->date = $date;
-        $this->attendance->save();
     }
 
     public function mark(Model $model){

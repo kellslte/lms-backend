@@ -35,3 +35,11 @@ function ordinal(Int $number){
         return ($number) ? $number . $ends[$number % 10] : $number;
 
 }
+
+function formatDate($date){
+    return date_format(date_create($date), 'jS M, Y');
+}
+
+function formatTime($time){
+    return date_format(date_create($time), 'h:i a');
+}

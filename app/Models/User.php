@@ -97,11 +97,11 @@ class User extends Authenticatable
     }
 
     public function schedule(){
-        return $this->morphMany(Schedule::class, 'schedules');
+        return $this->morphOne(Schedule::class, 'schedulable');
     }
 
     public function attendance(){
-        return $this->morphMany(Attendance::class, 'attendees');
+        return $this->morphOne(Attendance::class, 'attendable');
     }
 
     public function settings(){
@@ -156,5 +156,9 @@ class User extends Authenticatable
 
     public function mentor(){
         return $this->morphOne(Mentee::class, 'mentorable');
+    }
+
+    public function curriculum(){
+        return $this->morphOne(Curriculum::class, 'plannable');
     }
 }

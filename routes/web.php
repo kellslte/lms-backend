@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Course;
 use Illuminate\Support\Facades\Route;
 use App\Http\Requests\PaymentGatewayRequest;
 use Unicodeveloper\Paystack\Facades\Paystack;
@@ -35,4 +36,18 @@ Route::get('youtube', function(){
 
     # Replace the identifier with a unqiue identifier for account or channel
     $authUrl = $authObject->getLoginUrl('email', 'UCtaa9WH19QmP2sIkqQXXDgw'); 
+});
+
+Route::get('lessons', function(){
+    $lessons = [];
+    $course = Course::firstWhere('title', 'Product Design');
+
+    foreach ($course->lessons as $lesson){
+        $lessons[] = [
+            "lesson_id" => $lesson->id,
+            "lesson_status" => "uncompleted"
+        ];
+    }
+
+    return response()->json(json_encode($lessons));
 });

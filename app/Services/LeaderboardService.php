@@ -5,16 +5,33 @@ use App\Models\Submission;
 use App\Models\User;
 
 class LeaderboardService {
-    public static function getBoard(){
-        $users = User::all()->load('submissions');
+    public static function getTrackBoard($user){
+        $users = $user->course->students;
 
-        $board = collect($users)->map(function(User $user){
-            return [$user->name => collect($user->submissions)->map(function (Submission $submission) {
-                    return $submission->grade;
-                })->sum() / $user->submissions->count()
+        // TODO get points and arrange the points in descending order;
+        $board = collect($users)->map(function ($user) {
+            return [
+                "name" => $user->name,
+                "attendances" => $user->point->attendance_points,
+                "bonus" => $user->point->bonus_points,
+                "task" => $user->point->task_points,
+                "total" => $user->point->total,
             ];
         });
 
         return $board;
+    }
+
+    public static function getTotalLeaderBoard(){
+        // pull alll courses
+
+        // puul students too
+
+        // pull points too
+
+        // render leaderboard
+
+        // return data;
+        $users = User::all();
     }
 }

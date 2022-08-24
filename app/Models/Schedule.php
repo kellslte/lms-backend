@@ -12,9 +12,13 @@ class Schedule extends Model
 
     protected $guarded = [];
 
-    public function schedules(){
-        return $this->morphTo();
-    }
+    protected $hidden = [
+        "id",
+        "schedulable_id",
+        "schedulable_type",
+        "created_at",
+        "updated_at",
+    ];
 
     public function schedulable(){
         return $this->morphTo();

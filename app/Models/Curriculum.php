@@ -6,11 +6,13 @@ use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Attendance extends Model
+class Curriculum extends Model
 {
     use HasFactory, HasUuid;
 
-    public function attendable(){
+    protected $guarded = [];
+
+    public function plannable(){
         return $this->morphTo();
     }
 }

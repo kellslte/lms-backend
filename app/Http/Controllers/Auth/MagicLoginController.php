@@ -158,6 +158,11 @@ class MagicLoginController extends Controller
     }
 
     private function sendLink(Model $user){
+
+        if(is_null($user)) return response()->json([
+            'status' => 'failed',
+            'message' => 'User not found',
+        ], 404);
         
         try{
             $user->sendMagicLink();

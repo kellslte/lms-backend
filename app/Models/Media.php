@@ -10,6 +10,14 @@ class Media extends Model
 {
     use HasFactory, HasUuid;
 
+    protected $hidden = [
+        "created_at",
+        "updated_at",
+        "id",
+        "mediaable_type",
+        "mediaable_id",
+    ];
+
     public function mediaable(){
         return $this->morphTo();
     }
