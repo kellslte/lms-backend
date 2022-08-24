@@ -9,6 +9,10 @@ If you sent this intentionally, click on the button to reset your password.
 Reset Password
 @endcomponent
 
+If you cannot click on the button, you can copy this link and paste in your browser to reset you password
+
+[{{ $url }}]({{ $url }})
+
 Regards,<br>
 The ADA Team.
 @endcomponent
