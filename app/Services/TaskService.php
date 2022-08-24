@@ -80,4 +80,8 @@ class TaskService {
             return $lesson->task->submissions;
         });
     }
+
+    public static function getSubmissions($task){
+        return $task->submissions->taskable;
+    }
 }

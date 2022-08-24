@@ -34,4 +34,8 @@ class Lesson extends Model
     public function media(){
         return $this->morphMany(Media::class, 'mediaable');
     }
+
+    public function views(){
+        return $this->morphOne(View::class, 'viewable');
+    }
 }

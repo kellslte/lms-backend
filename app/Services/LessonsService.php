@@ -3,28 +3,35 @@ namespace App\Services;
 
 use App\Models\Lesson;
 use App\Models\Facilitator;
+use App\Services\TaskService;
 use App\Http\Requests\CreateLessonRequest;
 
 class LessonsService {
-    protected $course;
 
-    public function __construct(Facilitator $user){
-        $this->course = $user->course;
+    public static function getAllLessons(Facilitator $user){
+        return collect($user->course->lessons)->map(function($lesson){
+            return [
+                'title' => $lesson->title,
+                "description" => $lesson->description,
+                "published_date" => formatDate($lesson->updated_at),
+                "tutor" => $lesson->course->facilitator->name,
+                "student_views" => $lesson->views->views,
+                "task_submitted" => TaskService::getSubmissions($lesson->task)
+            ];
+        });
     }
 
-    public function getAllLessons(){
-        return $this->course->lessons;
+    public static function getPublishedLessons(Facilitator $user){
+        return collect($user->course->lessons)->reject(fn($lesson) => $lesson->status === 'unpublished')->map(function($lesson){
+            return $lesson->load('views');
+        });
     }
 
-    public function getPublishedLessons(){
-        return collect($this->course->lessons)->reject(fn($lesson) => $lesson->status === 'unpublished');
+    public static function getUnpublishedLessons(Facilitator $user){
+        return collect($user->course->lessons)->reject(fn($lesson) => $lesson->status === 'published');
     }
 
-    public function getUnpublishedLessons(){
-        return collect($this->course->lessons)->reject(fn($lesson) => $lesson->status === 'published');
-    }
-
-    public function createLesson(CreateLessonRequest $request){
+    public static function createLesson(CreateLessonRequest $request){
         // TODO first upload the video then return the id
 
         // TODO create the lessons and attatch the video id as a media
@@ -44,7 +51,8 @@ class LessonsService {
                 "title" => $lesson->title,
                 "description" => $lesson->description,
                 "published_date" => formatDate($lesson->updated_at),
-                "media" => $lesson->media
+                "media" => $lesson->media,
+                "status" => $lesson->status,
             ];
         });
     }

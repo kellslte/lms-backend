@@ -51,6 +51,10 @@ class LessonsTableSeeder extends Seeder
             'resource' => 'https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqa2tvZkpjM0Jla0lublo3dm9mRE5Tc3MwTXYwZ3xBQ3Jtc0tsQmphMEQ5aERGb2lvUWhuOHo4THhGcnBSLVBJaXZvT0s1WkZ1aGs3c2RSZGJhQ2FQQThWSVg0c3ZSU1BnN0p3X1dLcEtPUXVHRzRsWERDLWhrVW4yb0xjT0xTVFpYVDFKSHlRcURHaGRsZHVheTA2MA&q=https%3A%2F%2Fwww.skillshare.com%2Fprofile%2FShawn-Barry%2F1750071&v=mHb2-3dsuic'
         ]);
 
+        $lesson->views()->create([
+            "views" => 1203
+        ]);
+
         $lesson->media()->create([
             'video_link' => 'https://www.youtube.com/watch?v=3RbpQSFdP6A',
             'thumbnail' => 'https://www.youtube.com/watch?v=3RbpQSFdP6A',

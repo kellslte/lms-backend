@@ -12,17 +12,16 @@ class DashboardController extends Controller
     public function __invoke()
     {
         $user = getAuthenticatedUser();
-
-        $lessonService = new LessonsService($user);
-
-        // TODO get data from database
+    
         $data =  [
-            'published_lessons' => $lessonService->getPublishedLessons(),
-            'unpublished_lessons' => $lessonService->getUnpublishedLessons(),
+            'published_lessons' => LessonsService::getPublishedLessons($user),
+            'unpublished_lessons' => LessonsService::getUnpublishedLessons($user),
             'completed_tasks' => TaskService::getTasksCompletedByStudents($user),
             'pending_tasks' => TaskService::getTasksSubmittedButNotYetApproved($user),
             'live_classes' => 21,
-            'schedule' => $user->schedule
+            'schedule' => $user->schedule,
+            'notifications' => $user->notifications,
+            'enrolled_students' => $user->course->students,
         ];
 
         return response()->json([
