@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use App\Models\Task;
+use App\Models\Submission;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\TaskSubmissionRequest;
@@ -12,13 +13,17 @@ class TaskController extends Controller
     public function index(){
         $user = getAuthenticatedUser();
 
+        $tasks = collect($user->course->lessons)->map(function($lesson){
+            return $lesson->task;
+        });
+
         return response()->json([
             'status' => 'success',
             'data' => [
                 'completed_tasks' => $user->completedTasks(),
                 'pending_tasks' => $user->pendingTasks(),
-                'expired_tasks_count' => $user->expiredTasks(),
-                'tasks' => $user->tasks,
+                'expired_tasks' => $user->expiredTasks(),
+                'tasks' => $tasks,
             ]
         ]);
     }
@@ -26,28 +31,31 @@ class TaskController extends Controller
     public function submit(Task $task, TaskSubmissionRequest $request){
         $user = getAuthenticatedUser();
 
-        if($task->running()){
-            $user->submissions()->create([
-                'link_to_resource' => $request->assignmentLink,
-                'grade' => 0,
-            ])->associate($task);
-
+        if($task->expired()){
             return response()->json([
-                'status' => 'success',
-                'message' => 'Task submitted successfully',
-            ], 201);
+             'status' => 'failed',
+             'message' => 'You cannot submit this task anymore',
+            ], 400);
         }
 
-       return (!$task->running()) ? response()->json([
-        'status' => 'failed',
-        'message' => 'You cannot submit this task anymore',
-       ], 406) :  response()->json([
-        'status' => 'error',
-        'message' => 'Something went wrong here, please contact your facilitator',
-       ], 404);
+        if($task->submissions()->where('taskable_id', $user->id)->first()){
+            return response()->json([
+                'status' => 'failed',
+                "messaged" => 'You can only submit a task once',
+            ], 400);
+        }
+
+        $user->submissions()->create([
+            'link_to_resource' => $request->linkToResource,
+            'submittable_id' => $task->id,
+            'submittable_type' => 'App\\Models\\Task',
+        ]);
+
+        // TODO add notification for task submission
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Task submitted successfully',
+        ], 201);
     }
-
-    // public function getpendingTasks(){
-
-    // }
 }

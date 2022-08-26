@@ -2,13 +2,21 @@
 
 namespace App\Models;
 
+use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUuid;
     protected $guarded = [];
+
+    protected $hidden = [
+        "lesson_id",
+        "created_at",
+        "updated_at",
+        "id"
+    ];
 
     public function lesson()
     {
@@ -20,7 +28,7 @@ class Task extends Model
     }
 
     public function running(){
-        return ($this->status === 'running') ? true : false;
+        return ($this->status === 'pending') ? true : false;
     }
 
     public function expired(){

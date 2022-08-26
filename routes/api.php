@@ -60,6 +60,13 @@ Route::prefix('v1')->group(function(){
     // Protected Routes
     Route::middleware('auth:sanctum')->group(function(){
 
+        Route::get("auth/notifications", function() {
+            return response()->json([
+                'success' => true,
+                "notifications" => getAuthenticatedUser()->notifications,
+            ]);
+        });
+
         Route::post('password/change', [PasswordController::class, 'changePassword']); 
         
         // Student Routes

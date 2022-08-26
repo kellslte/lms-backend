@@ -113,17 +113,13 @@ class User extends Authenticatable
     }
 
     public function pendingTasks(){
-        return collect($this->tasks)->reject(fn($task) => $this->completedTasks()->contains($task) && $task->running() !== true);
+        return $this->submissions()->whereStatus('submitted')->get();
     }
 
     public function expiredTasks(){
-        return collect($this->tasks)->reject(fn($task) => $this->completedTasks()->contains($task) && $task->expired() === true);
-    }
-
-    public function tasks(){
-        $lessons = $this->lessons();
-
-        return $lessons->with('task');
+        return collect($this->course->lessons)->reject(function($lesson){
+            return !collect($this->submissions)->contains($lesson->task) && !$lesson->task->expired();
+        })->map(fn($lesson) => $lesson->task);
     }
 
     public function lessons()

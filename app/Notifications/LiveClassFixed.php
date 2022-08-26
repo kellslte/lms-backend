@@ -2,10 +2,11 @@
 
 namespace App\Notifications;
 
+use App\Services\SmsService;
 use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
-use Illuminate\Notifications\Notification;
 
 class LiveClassFixed extends Notification
 {
@@ -29,7 +30,11 @@ class LiveClassFixed extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return ($notifiable->text_message_preference) ? 'sms': ['mail', 'database'];
+    }
+
+    public function toSms($notifiable){
+        return SmsService::send("Hi, {$notifiable->name}, a live class has been fixed! Go to your dashboard to check the details of the class", $notifiable->phonenumber, "The ADA Team");
     }
 
     /**
@@ -41,9 +46,11 @@ class LiveClassFixed extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+                    ->subject('ADA Software Engineering Internship')
+                    ->line("Hi, {$notifiable->name},")
+                    ->line("A Live class has been fixed! Go to your dashboard to check out the details of the class")
+                    ->action('Go to dashboard', url('/'))
+                    ->line('Happy learning!');
     }
 
     /**
@@ -55,7 +62,7 @@ class LiveClassFixed extends Notification
     public function toArray($notifiable)
     {
         return [
-            //
+            "message" => "Hi, {$notifiable->name}, a live class has been fixed! Go to your dashboard to check the details of the class"
         ];
     }
 }

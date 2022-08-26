@@ -25,7 +25,6 @@ class DashboardController extends Controller
                 'leaderboard_position' => 2,
                 'total_tasks_done' => 21,
                 'schedule' => ScheduleService::getSchedule($user),
-                'notifications' => $user->notifications,
                 'submissions' => $user->submissions,
                 'leaderboard' => LeaderboardService::getTrackBoard(getAuthenticatedUser())->take(5),
             ],
