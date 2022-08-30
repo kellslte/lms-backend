@@ -112,12 +112,24 @@ class User extends Authenticatable
         $tasks  = $this->submissions()->whereStatus('submitted')->get();
 
         return collect($tasks)->map(function($task){
-            return Task::find($task->taskable_id);
+            return Task::find($task->submittable_id);
         });
     }
 
     public function pendingTasks(){
-        return $this->submissions()->whereStatus('submitted')->get();
+        $tasks = collect($this->submissions)->map(function($submission){
+            return Task::find($submission->submittable_id);
+        });
+
+        $allTasks = collect($this->course->lessons)->map(function ($lesson) {
+            return $lesson->task;
+        })->filter(function ($lesson) {
+            return $lesson->status == 'expired' || 'graded';
+        })->flatten();
+
+        return collect($allTasks)->map(function($task) use ($tasks){
+            return !$tasks->contains($task) ? $task: null;
+        })->filter()->flatten();
     }
 
     public function expiredTasks(){
