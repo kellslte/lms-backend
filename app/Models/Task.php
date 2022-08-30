@@ -12,10 +12,8 @@ class Task extends Model
     protected $guarded = [];
 
     protected $hidden = [
-        "lesson_id",
         "created_at",
-        "updated_at",
-        "id"
+        "updated_at"
     ];
 
     public function lesson()
