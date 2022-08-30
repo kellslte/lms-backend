@@ -109,7 +109,11 @@ class User extends Authenticatable
     }
 
     public function completedTasks(){
-        return $this->submissions()->whereStatus('approved')->get();
+        $tasks  = $this->submissions()->whereStatus('submitted')->get();
+
+        return collect($tasks)->map(function($task){
+            return Task::find($task->taskable_id);
+        });
     }
 
     public function pendingTasks(){

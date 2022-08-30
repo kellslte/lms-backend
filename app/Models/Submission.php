@@ -12,7 +12,6 @@ class Submission extends Model
     protected $guarded = [];
 
     protected $hidden = [
-        'submittable_id',
         'submittable_type',
         'taskable_id',
         'taskable_type',
