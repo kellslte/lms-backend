@@ -117,9 +117,11 @@ class User extends Authenticatable
     }
 
     public function expiredTasks(){
-        return collect($this->course->lessons)->map(fn($lesson) => $lesson->task)->reject(function ($lesson) {
-            return !$lesson->task->expired();
-        });
+       $lessons = $this->course->lessons;
+        
+       return collect($lessons)->reject(function($lesson){
+        return !$lesson->task->expired();
+       });  
     }
 
     public function lessons()
