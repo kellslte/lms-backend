@@ -121,7 +121,7 @@ class User extends Authenticatable
 
             return !collect($this->submissions)->contains($lesson->task) && !$lesson->task->expired();
 
-        })->map(fn($lesson) => $lesson->task)->toArray();
+        })->map(fn($lesson) => [$lesson->task])->toArray();
     }
 
     public function lessons()
