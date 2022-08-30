@@ -101,7 +101,7 @@ class User extends Authenticatable
     }
 
     public function attendance(){
-        return $this->morphOne(Attendance::class, 'attendable');
+        return $this->morphOne(Attendance::class, 'attender');
     }
 
     public function settings(){
@@ -117,9 +117,7 @@ class User extends Authenticatable
     }
 
     public function expiredTasks(){
-        return collect($this->course->lessons)->reject(function($lesson){
-            return !collect($this->submissions)->contains($lesson->task) && !$lesson->task->expired();
-        })->map(fn($lesson) => $lesson->task);
+        return collect($this->course->lessons)->map(fn($lesson) => $lesson->task)->reject(fn($lesson) => $lesson->task->status === 'graded' || 'pending');
     }
 
     public function lessons()
