@@ -120,8 +120,10 @@ class User extends Authenticatable
        $lessons = $this->course->lessons;
         
        return collect($lessons)->map(function($lesson){
-        return $lesson->task->whereStatus('expired')->first();
-       });  
+            return $lesson->task;
+       })->filter(function($lesson){
+        return $lesson->status == 'expired';
+       })->flatten();  
     }
 
     public function lessons()
