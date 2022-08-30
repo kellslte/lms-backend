@@ -124,7 +124,7 @@ class User extends Authenticatable
         $allTasks = collect($this->course->lessons)->map(function ($lesson) {
             return $lesson->task;
         })->filter(function ($lesson) {
-            return $lesson->status == 'expired' || 'graded';
+            return $lesson->status == 'pending' || $lesson->status == 'graded';
         })->flatten();
 
         return collect($allTasks)->map(function($task) use ($tasks){
