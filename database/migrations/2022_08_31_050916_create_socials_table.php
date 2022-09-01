@@ -13,12 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('mentees', function (Blueprint $table) {
-            $table->id();
-            $table->uuid('mentor_id');
-            $table->string('mentor_type');
-            $table->uuid('mentorable_id');
-            $table->string('mentorable_type');
+        Schema::create('socials', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->uuid('sociable_id');
+            $table->string('sociable_type');
+            $table->string('linkedin');
+            $table->string('twitter');
+            $table->string('facebook');
+            $table->string('mail');
             $table->timestamps();
         });
     }
@@ -30,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('mentees');
+        Schema::dropIfExists('socials');
     }
 };

@@ -7,28 +7,30 @@ use Illuminate\Support\Facades\Route;
 // Authentication and Authorization Controllers
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
-use App\Http\Controllers\Auth\MagicLoginController;
+use App\Http\Controllers\KnowledgebaseController;
 
 // Super Admin Controllers
+use App\Http\Controllers\Auth\MagicLoginController;
 use App\Http\Controllers\Admin\OnboardingController;
+use App\Http\Controllers\Student\LeaderboardController;
+use App\Http\Controllers\Student\TaskController as StudentTaskController;
+
+// Student Controllers
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Mentor\ProfileController as MentorProfileController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-
-// Student Controllers
-use App\Http\Controllers\Student\LeaderboardController;
-use App\Http\Controllers\Student\TaskController as StudentTaskController;
 use App\Http\Controllers\Student\ProfileController as StudentProfileController;
-use App\Http\Controllers\Student\ClassroomController as StudentClassroomController;
-use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
+use App\Http\Controllers\Facilitator\TaskController as FacilitatorTaskController;
+use App\Http\Controllers\Student\HelpdeskController as StudentHelpdeskController;
 use App\Http\Controllers\Student\ScheduleController as StudentScheduleController;
 
 // Facilitator Controllers
+use App\Http\Controllers\Student\ClassroomController as StudentClassroomController;
+use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Facilitator\ProfileController as FacilitatorProfileController;
-use App\Http\Controllers\Facilitator\DashboardController as FacilitatorDashboardController;
-use App\Http\Controllers\Facilitator\ClassRoomController as FacilitatorClassRoomController;
 use App\Http\Controllers\Facilitator\ScheduleController as FacilitatorScheduleController;
-use App\Http\Controllers\Facilitator\TaskController as FacilitatorTaskController;
+use App\Http\Controllers\Facilitator\ClassRoomController as FacilitatorClassRoomController;
+use App\Http\Controllers\Facilitator\DashboardController as FacilitatorDashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -60,12 +62,21 @@ Route::prefix('v1')->group(function(){
     // Protected Routes
     Route::middleware('auth:sanctum')->group(function(){
 
-        Route::get("auth/notifications", function() {
-            return response()->json([
-                'success' => true,
-                "notifications" => getAuthenticatedUser()->notifications,
-            ]);
+        Route::prefix('auth')->group(function(){
+            // system wide notifications
+            Route::get("notifications", function() {
+                return response()->json([
+                    'success' => true,
+                    'data' => [
+                        "notifications" => getAuthenticatedUser()->notifications,
+                    ]
+                ]);
+            });
+
+            // knowledgebase resource
+            Route::get('knowledgebase/resources', KnowledgebaseController::class);
         });
+
 
         Route::post('password/change', [PasswordController::class, 'changePassword']); 
         
@@ -97,6 +108,10 @@ Route::prefix('v1')->group(function(){
             Route::get('tasks', [StudentTaskController::class, 'index']);
             // Submit Task
             Route::post('tasks/{task}', [StudentTaskController::class, 'submit']);
+            // Helpdesk route
+            Route::get('helpdesk', [StudentHelpdeskController::class, 'index']);
+            // Report a problem
+            Route::post('issues/report', [StudentHelpdeskController::class, 'report']);
         });
 
         // Admin Routes

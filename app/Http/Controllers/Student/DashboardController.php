@@ -27,6 +27,7 @@ class DashboardController extends Controller
                 'schedule' => ScheduleService::getSchedule($user),
                 'submissions' => $user->submissions,
                 'leaderboard' => LeaderboardService::getTrackBoard(getAuthenticatedUser())->take(5),
+                'total_enrolled_students' => $user->course->students->count(),
             ],
         ]);
     }

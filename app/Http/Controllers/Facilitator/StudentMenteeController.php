@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Facilitator;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Mentor;
+use App\Models\Mentees;
 
 class StudentMenteeController extends Controller
 {
@@ -16,11 +18,13 @@ class StudentMenteeController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data' => $mentors
+            'data' => [
+                'mentees' => $mentors->mentees
+            ]
         ]);
     }
 
-    public function assignMentee($mentor){
+    public function assignMenteeToMentor(Mentor $mentor, ){
         $user = getAuthenticatedUser();
 
         if($mentor->mentees <= 5){

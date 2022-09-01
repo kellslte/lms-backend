@@ -20,7 +20,6 @@ class DashboardController extends Controller
             'pending_tasks' => TaskService::getTasksSubmittedButNotYetApproved($user),
             'live_classes' => 21,
             'schedule' => $user->schedule,
-            'notifications' => $user->notifications,
             'enrolled_students' => $user->course->students,
         ];
 

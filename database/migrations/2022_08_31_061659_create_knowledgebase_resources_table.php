@@ -13,12 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('mentees', function (Blueprint $table) {
-            $table->id();
-            $table->uuid('mentor_id');
-            $table->string('mentor_type');
-            $table->uuid('mentorable_id');
-            $table->string('mentorable_type');
+        Schema::create('knowledgebase_resources', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->enum('tag', ['students', 'facilitators', 'admins', 'mentors'])->default('students');
+            $table->string('title');
+            $table->string('moderator');
+            $table->string('resource_link');
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('mentees');
+        Schema::dropIfExists('knowledgebase_resources');
     }
 };

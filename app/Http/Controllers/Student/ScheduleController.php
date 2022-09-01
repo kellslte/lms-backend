@@ -13,7 +13,9 @@ class ScheduleController extends Controller
         
         return response()->json([
             'status' => 'success',
-            'data' => $user->schedule
+            'data' => [
+                "schedule" => json_decode($user->schedule->meetings, true)
+            ]
         ]);
     }
 }

@@ -92,4 +92,8 @@ class Facilitator extends Authenticatable
     {
         return $this->morphMany(Schedule::class, 'schedules');
     }
+
+    public function socials(){
+        return $this->morphOne(Social::class, 'sociable');
+    }
 }

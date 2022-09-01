@@ -6,6 +6,7 @@ use App\Models\Admin;
 use App\Models\Course;
 use App\Models\Mentor;
 use Illuminate\Database\Seeder;
+use App\Models\CommunityManager;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class TestUserTableSeeder extends Seeder
@@ -23,6 +24,16 @@ class TestUserTableSeeder extends Seeder
             'recovery_email' => 'maxotif@gmail.com',
             'password' => bcrypt('password'),
         ])->settings()->create();
+
+        CommunityManager::create([
+            'name' => 'Bell Omoboye',
+            'avatar' => 'https://www.forbes.com/sites/angelicamarideoliveira/2021/07/06/meet-the-entrepreneurs-ushering-black-women-into-ux-careers-in-brazil/'
+        ])->socials()->create([
+            'linkedin' => 'https://linkedin.com/in/bellomoboye',
+            'twitter' => 'https://twitter.com/omobells',
+            'facebook' => 'https://facebook.com/omoboyebell',
+            'mail' => 'bellomoboye@gmail.com'
+        ]);
 
         Mentor::create([
             'name' => 'Chidera Max-Oti',

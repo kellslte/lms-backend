@@ -13,12 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('mentees', function (Blueprint $table) {
+        Schema::create('reports', function (Blueprint $table) {
             $table->id();
-            $table->uuid('mentor_id');
-            $table->string('mentor_type');
-            $table->uuid('mentorable_id');
-            $table->string('mentorable_type');
+            $table->uuid('reporter_id');
+            $table->string('reporter_type');
+            $table->string('subject');
+            $table->string('details');
+            $table->enum('status', ['open', 'resolved'])->default('open');
             $table->timestamps();
         });
     }
@@ -30,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('mentees');
+        Schema::dropIfExists('reports');
     }
 };

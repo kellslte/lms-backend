@@ -171,10 +171,14 @@ class User extends Authenticatable
     }
 
     public function mentor(){
-        return $this->morphOne(Mentee::class, 'mentorable');
+        return $this->morphOne(Mentees::class, 'mentorable');
     }
 
     public function curriculum(){
         return $this->morphOne(Curriculum::class, 'plannable');
+    }
+
+    public function reports(){
+        return $this->morphMany(Report::class, 'reporter');
     }
 }
