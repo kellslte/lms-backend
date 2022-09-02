@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('video_link');
             $table->string('thumbnail');
             $table->string('transcript');
-            $table->string('youtube_vide_id');
+            $table->string('youtube_video_id');
             $table->timestamps();
         });
     }

@@ -1,9 +1,11 @@
 <?php
 namespace App\Services;
 
+use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Facilitator;
 use App\Services\TaskService;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\CreateLessonRequest;
 
 class LessonsService {
@@ -32,16 +34,55 @@ class LessonsService {
         return collect($user->course->lessons)->reject(fn($lesson) => $lesson->status === 'published');
     }
 
-    public static function createLesson(CreateLessonRequest $request){
-        // TODO first upload the video then return the id
+    public static function createLesson($request, $user){
+        $course = Course::firstWhere("title", $user->course->title);
 
-        // TODO create the lessons and attatch the video id as a media
+        // create lesson
+        $lesson = $course->lessons()->create([
+            "title" => $request->title,
+            "description" => $request->description,
+            "tutor" => $user->name,
+        ]);
 
-        // TODO if lesson has a transcript upload the transcript to storage then put the link to the transcript as a media
+        $request->merge([
+            "tags" => $course->title
+        ]);
 
-        // TODO if the lesson has external resources then create the lesson resource too
+        // upload video by calling youtube service
+        $youtubeVideoDetails = getYoutubeVideoDetails($request);
 
-        // TODO return json response once transaction is done
+        // upload transacript
+        $tanscriptUrl = $request->file("lessonTranscript")->store("/" . $user->id, "public");
+
+        // TODO: send notification that a new lesson has been uploaded
+
+
+        // use returned video details to create video resource
+        $lesson->media()->create([
+            "video_link" => $youtubeVideoDetails["videoLink"],
+            "thumbnail" => $youtubeVideoDetails["thumbnail"],
+            "transcript" => Storage::url($tanscriptUrl),
+            "youtube_video_id" => $youtubeVideoDetails["videoId"],
+        ]);
+
+        return response()->json([
+            "status" => "success",
+            "message" => "Your lesson has been created successfully.",
+            "data" => [
+                "lesson" => $lesson
+            ],
+        ]);
+        try {
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Something happened and your lesson could not be created"
+            ]);
+        }
+    }
+
+    public static function updateLesson($request, $user, $lesson){
+
     }
 
     public static function getUserCurriculum($user){

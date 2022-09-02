@@ -59,7 +59,8 @@ class LessonsTableSeeder extends Seeder
         $lesson->media()->create([
             'video_link' => 'https://www.youtube.com/watch?v=3RbpQSFdP6A',
             'thumbnail' => 'https://www.youtube.com/watch?v=3RbpQSFdP6A',
-            'transcript' => 'https://www.youtube.com/watch?v=3RbpQSFdP6A'
+            'transcript' => 'https://www.youtube.com/watch?v=3RbpQSFdP6A',
+            'youtube_video_id' => uniqid(),
         ]);
 
         $lesson->task()->create([
