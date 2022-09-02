@@ -38,8 +38,8 @@ class ScheduleController extends Controller
         ]);
 
         // TODO make it attendable
-        $this->attendanceService->attend($class);
-        $this->attendanceService->setDate($request->date);
+        // $this->attendanceService->attend($class);
+        // $this->attendanceService->setDate($request->date);
 
         // TODO attach it to those that should attend
         // TODO attach it to the schedule of the attendees
@@ -50,4 +50,56 @@ class ScheduleController extends Controller
         
         // TODO send notifications that class has been fixed
     }
+
+
+    /*
+    
+    attendance array will now look like this: 
+
+    $attendance = [
+        "september" => [
+            "wk1" => [],
+            "wk2" => [],
+            "wk3" => [],
+            "wk5" => [],
+        ],
+        "october" => [
+            "wk1" => [],
+            "wk2" => [],
+            "wk3" => [],
+            "wk5" => [],
+        ],
+        "november" => [
+            "wk1" => [],
+            "wk2" => [],
+            "wk3" => [],
+            "wk5" => [],
+        ],
+        "december" => [
+            "wk1" => [],
+            "wk2" => [],
+            "wk3" => [],
+            "wk5" => [],
+        ],
+        "january" => [
+            "wk1" => [],
+            "wk2" => [],
+            "wk3" => [],
+            "wk5" => [],
+        ],
+        "february" => [
+            "wk1" => [],
+            "wk2" => [],
+            "wk3" => [],
+            "wk5" => [],
+        ],
+        "march" => [
+            "wk1" => [],
+            "wk2" => [],
+            "wk3" => [],
+            "wk5" => [],
+        ],
+    ];
+    
+    */
 }

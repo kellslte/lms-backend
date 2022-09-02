@@ -19,11 +19,10 @@ class CreateLessonRequest extends FormRequest
         return [
             'title' => 'required|string|min:3',
             'description' => 'required|min:8',
-            'status' => 'required|string',
-            'courseTitle' => 'required|string',
-            'lessonVideo' => 'required|file|mime:mp4,avi,mkv',
-            'lessonThumbnail' => 'required|file|mime:png',
-            'lessonTransacript' => 'required|file|mime:txt'
+            'status' => 'nullable|string',
+            'lessonVideo' => 'required|file|mimes:mp4,avi,mkv',
+            'lessonThumbnail' => 'required|file|mimes:png',
+            // 'lessonTranscript' => 'required|file|mimes:txt'
         ];
     }
 

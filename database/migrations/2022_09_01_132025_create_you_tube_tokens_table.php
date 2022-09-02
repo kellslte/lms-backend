@@ -13,14 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('media', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->uuid('mediaable_id');
-            $table->string('mediaable_type');
-            $table->string('video_link');
-            $table->string('thumbnail');
-            $table->string('transcript');
-            $table->string('youtube_vide_id');
+        Schema::create('you_tube_tokens', function (Blueprint $table) {
+            $table->id();
+            $table->string("token");
             $table->timestamps();
         });
     }
@@ -32,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('media');
+        Schema::dropIfExists('you_tube_tokens');
     }
 };

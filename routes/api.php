@@ -2,29 +2,31 @@
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use App\Services\YoutubeService;
 
 // Authentication and Authorization Controllers
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\PasswordController;
-use App\Http\Controllers\KnowledgebaseController;
 
 // Super Admin Controllers
+use App\Http\Controllers\Auth\PasswordController;
+use App\Http\Controllers\KnowledgebaseController;
 use App\Http\Controllers\Auth\MagicLoginController;
 use App\Http\Controllers\Admin\OnboardingController;
-use App\Http\Controllers\Student\LeaderboardController;
-use App\Http\Controllers\Student\TaskController as StudentTaskController;
 
 // Student Controllers
+use App\Http\Controllers\Student\LeaderboardController;
+use App\Http\Controllers\Student\TaskController as StudentTaskController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Mentor\ProfileController as MentorProfileController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Student\ProfileController as StudentProfileController;
 use App\Http\Controllers\Facilitator\TaskController as FacilitatorTaskController;
-use App\Http\Controllers\Student\HelpdeskController as StudentHelpdeskController;
-use App\Http\Controllers\Student\ScheduleController as StudentScheduleController;
 
 // Facilitator Controllers
+use App\Http\Controllers\Student\HelpdeskController as StudentHelpdeskController;
+use App\Http\Controllers\Student\ScheduleController as StudentScheduleController;
 use App\Http\Controllers\Student\ClassroomController as StudentClassroomController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Facilitator\ProfileController as FacilitatorProfileController;
@@ -42,6 +44,27 @@ use App\Http\Controllers\Facilitator\DashboardController as FacilitatorDashboard
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+Route::post('videos', function (Request $request) {
+    $client = new YoutubeService();
+
+    return $client->uploadVideo($request);
+});
+
+Route::post('transcript', function(Request $request){
+    $file = $request->file("lessonTranscript");
+
+    $fileName = $file->getClientOriginalName();
+    $extension = $file->getClientOriginalExtension();
+
+    $newfilename = $fileName. now().".".$extension;
+
+    $transcript = $request->file()->storeAs("/lessons/transcripts", $newfilename, "public");
+
+    $url = Storage::disk("local")->url($transcript);
+
+    return response()->json($url);
+});
 
 
 Route::prefix('v1')->group(function(){

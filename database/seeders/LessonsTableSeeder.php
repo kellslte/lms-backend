@@ -44,7 +44,8 @@ class LessonsTableSeeder extends Seeder
 
         $lesson = $course->lessons()->create([
             'title' => 'Introduction to Design',
-            'description' => 'Introduction to Design'
+            'description' => 'Introduction to Design',
+            'tutor' => $course->facilitator->name
         ]);
         
         $lesson->resources()->create([

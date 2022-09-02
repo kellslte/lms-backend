@@ -11,6 +11,7 @@ class LessonsService {
     public static function getAllLessons(Facilitator $user){
         return collect($user->course->lessons)->map(function($lesson){
             return [
+                "id" => $lesson->id,
                 'title' => $lesson->title,
                 "description" => $lesson->description,
                 "published_date" => formatDate($lesson->updated_at),
@@ -62,12 +63,13 @@ class LessonsService {
             $lesson = Lesson::find($lesson->lesson_id);
 
             return [
+                "id" => $lesson->id,
                 "title" => $lesson->title,
                 "description" => $lesson->description,
                 "published_date" => formatDate($lesson->updated_at),
                 "status" => $lesson->status,
                 "media" => $lesson->media
             ];
-        })->groupBy('published_date');
+        });
     }
 }

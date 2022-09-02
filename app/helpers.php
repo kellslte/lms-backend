@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\YoutubeService;
 use Laravel\Sanctum\PersonalAccessToken;
 
 function getAuthenticatedUser(){
@@ -42,4 +43,19 @@ function formatDate($date){
 
 function formatTime($time){
     return date_format(date_create($time), 'h:i a');
+}
+
+function jsonResponse(Array $data, Int $code){
+    return response()->json([
+        "status" => $data["status"],
+        "data" => $data["response"],
+    ], $code);
+}
+
+function getYoutubeVideoDetails($request){
+    return (new YoutubeService())->uploadVideo($request);
+}
+
+function updateYoutubeVideoDetails($request){
+    return (new YoutubeService())->updateVideo($request);
 }
