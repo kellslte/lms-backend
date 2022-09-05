@@ -14,10 +14,10 @@ return new class extends Migration
     public function up()
     {
         Schema::create('attendances', function (Blueprint $table) {
-            $table->id();
-            $table->uuid('attendable_id');
-            $table->string('attendable_type');
-            $table->json('record')->nullable();
+            $table->uuid('id')->primary();
+            $table->uuid('attender_id');
+            $table->string('attender_type');
+            $table->json('record');
             $table->timestamps();
         });
     }

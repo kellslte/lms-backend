@@ -44,7 +44,7 @@ class HelpdeskController extends Controller
         $admins = Admin::all();
 
         // create report 
-        $report = $user->report()->create([
+        $report = $user->reports()->create([
             'subject' => $request->subject,
             'details' => $request->details,
         ]);
@@ -54,12 +54,12 @@ class HelpdeskController extends Controller
             Mail::to('theadaproject@enugutechhub.en.gov.ng')->queue(new IssueReportEmail($report));
 
             // notify admin
-            Notification::send($admins, new IssueReportNotification($report));
+            //Notification::send($admins, new IssueReportNotification($report));
 
              // return response
             return response()->json([
                 'status' => 'success',
-                'messgae' => 'Your issue has been filed and the appropriate admmimns notified. You will get a response from them as soon as possible.',
+                'messgae' => 'Your issue has been filed and the appropriate admins notified. You will get a response from them as soon as possible.',
             ]);
         } catch (\Throwable $th) {
             return response()->json([

@@ -12,7 +12,9 @@ class Meeting extends Model
 
     protected $guarded = [];
 
-    public function attendees(){
-        return $this->morphMany(Attendance::class, 'attendable');
-    }
+    protected $hidden = [
+        "id",
+        "created_at",
+        "updated_at",
+    ];
 }

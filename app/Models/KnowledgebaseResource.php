@@ -15,20 +15,8 @@ class KnowledgebaseResource extends Model
         'title',
         'moderator',
         'resource_link',
+        'thumbnail'
     ];
-
-       /**
-     * Interact with the knowledgebase created_at.
-     *
-     * @return \Illuminate\Database\Eloquent\Casts\Attribute
-     */
-    protected function createdAt(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => formatDate($value),
-            set: fn ($value) => formatDate($value),
-        );
-    }
 
     protected $hidden = [
         'id',

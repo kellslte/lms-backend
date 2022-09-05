@@ -18,9 +18,11 @@ return new class extends Migration
             $table->string('caption');
             $table->string('host_name');
             $table->string('link');
-            $table->time('time');
+            $table->time('start_time');
+            $table->time('end_time');
             $table->date('date');
-            $table->enum('type', ['sotu', 'live_class']);
+            $table->enum('type', ['sotu', 'onboarding', 'class']);
+            $table->string('calendarId');
             $table->timestamps();
         });
     }

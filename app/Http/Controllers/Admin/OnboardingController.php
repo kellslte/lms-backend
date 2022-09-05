@@ -30,7 +30,9 @@ class OnboardingController extends Controller
                 'email' => $request->email,
                 'recovery_email' => $request->recoveryEmail,
                 'password' => bcrypt($password),
-            ])->settings()->create();
+            ]);
+            
+            $facilitator->settings()->create();
 
             $facilitator->socials()->create([
                 "twitter" => $request->twitter,
@@ -88,13 +90,19 @@ class OnboardingController extends Controller
                 "email" => $request->email,
                 'recovery_email' => $request->recoveryEmail,
                 'password' => $password,
-            ])->settings()->ceate();
+            ]);
+            
+            $mentor->settings()->ceate();
 
             $mentor->socials()->create([
                 "twitter" => $request->twitter,
                 "linkedin" => $request->linkedin,
                 "facebook" => $request->facebook,
                 "mail" => $request->email,
+            ]);
+
+            $mentor->mentees()->create([
+                "mentees" => json_encode([])
             ]);
 
             Mail::to($mentor->recovery_email)->queue(new UserOnboarded($mentor, $password));

@@ -53,7 +53,7 @@ class LessonsTableSeeder extends Seeder
         ]);
 
         $lesson->views()->create([
-            "views" => 1203
+            "views" => json_encode([])
         ]);
 
         $lesson->media()->create([

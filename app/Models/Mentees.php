@@ -8,13 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Mentees extends Model
 {
-    use HasFactory, HasUuid;
+    use HasFactory;
 
     protected $guarded = [];
-
-    public function mentor(){
-        return $this->belongsTo(Mentor::class);
-    }
 
     public function mentorable(){
         return $this->morphTo();

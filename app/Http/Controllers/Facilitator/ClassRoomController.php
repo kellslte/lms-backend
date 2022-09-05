@@ -26,63 +26,28 @@ class ClassRoomController extends Controller
     public function store(CreateLessonRequest $request){
         $user = getAuthenticatedUser();
 
-        $course = Course::firstWhere("title", $user->course->title);
-        
-            // create lesson
-            $lesson = $course->lessons()->create([
-                "title" => $request->title,
-                "description" => $request->description,
-                "tutor" => $user->name,
-            ]);
-
-            $request->merge([
-                "tags" => $course->title
-            ]);
-
-            // upload video by calling youtube service
-            $youtubeVideoDetails = getYoutubeVideoDetails($request);
-
-            // upload transacript
-            $tanscriptUrl = $request->file("lessonTranscript")->store("/" . $user->id, "public");
-            
-            // TODO: send notification that a new lesson has been uploaded
-
-
-            // use returned video details to create video resource
-            $lesson->media()->create([
-                "video_link" => $youtubeVideoDetails["videoLink"],
-                "thumbnail" => $youtubeVideoDetails["thumbnail"],
-                "transcript" => Storage::url($tanscriptUrl),
-                "youtube_video_id" => $youtubeVideoDetails["videoId"],
-            ]);
-            
-            return response()->json([
-                "status" => "success",
-                "message" => "Your lesson has been created successfully.",
-                "data" => [
-                    "lesson" => $lesson
-                ],
-            ]);
-            try{
-        }catch(\Exception $e){
-            return response()->json([
-                "status" => "error",
-                "message" => "Something happened and your lesson could not be created"
-            ]);
-        }
+        return LessonsService::createLesson($request, $user);
     }
 
     public function update(CreateLessonRequest $request, Lesson $lesson){
         $user = getAuthenticatedUser();
         
-        $lesson->update([
-            "title" => $request->title,
-            "description" => $request->description,
-            "tutor" => $user->name,
-        ]);
-
-        // $
+        return LessonsService::updateLesson($request, $user, $lesson);
     }
 
-    public function delete(Lesson $lesson){}
+    public function delete(Lesson $lesson){
+        $response = LessonsService::deleteLesson($lesson);
+
+        if($response){
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Lesson deleted successfully.'
+            ], 204);
+        }
+
+        return response()->json([
+            'status' => 'error',
+            'message' => 'Lesson could not be deleted successfully'
+        ], 400);
+    }
 }

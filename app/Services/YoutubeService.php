@@ -2,13 +2,13 @@
 namespace App\Services;
 
 use Google\Client;
-use App\Models\YouTubeToken;
+use App\Models\GoogleToken;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use Google\Service\YouTube\VideoSnippet;
-use Google\Service\YouTube\VideoStatus;
-use Google\Service\YouTube\Video;
 use Google\Http\MediaFileUpload;
+use Google\Service\YouTube\Video;
+use Illuminate\Support\Facades\Cache;
+use Google\Service\YouTube\VideoStatus;
+use Google\Service\YouTube\VideoSnippet;
 
 class YoutubeService {
     protected $client;
@@ -61,7 +61,7 @@ class YoutubeService {
         }
 
         if($this->client->isAccessTokenExpired()){
-            $refreshToken = YouTubeToken::all()->last();
+            $refreshToken = GoogleToken::all()->last();
 
             $tokens = collect($this->client->refreshToken($refreshToken->token));
 
@@ -79,7 +79,7 @@ class YoutubeService {
         Cache::put("access_token", $collection["access_token"], 1800);
 
         // TODO store refresh token in database
-        YouTubeToken::create([
+        GoogleToken::create([
             "token" => $collection['refresh_token'],
         ]);
 
@@ -174,8 +174,7 @@ class YoutubeService {
             //$snippet->setCategory(28);
 
             $status = new VideoStatus();
-            $status->privacyStatus = "private";
-
+            $status->privacyStatus = "unlisted";
             $video = new Video();
 
             $video->setSnippet($snippet);
@@ -186,7 +185,6 @@ class YoutubeService {
 
             return [
                 "videoId" => $response['id'],
-                "snippet" => $response['snippet'],
             ];
 
         }  catch (\Google_Service_Exception $e) {

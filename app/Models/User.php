@@ -155,21 +155,6 @@ class User extends Authenticatable
         return $this->hasOne(Point::class);
     }
 
-    public function awardPoints(String $field, Int $points){
-
-        return $this->point->update([
-            $field => (int)$this->point->$field + $points, 
-        ]);
-    }
-
-    public function updateUserPoints(){
-        $this->point()->update([
-            'total' =>  ($this->point->attendance_points + $this->point->bonus_points + $this->point->task_points),
-        ]);
-
-        return $this->point->total;
-    }
-
     public function mentor(){
         return $this->morphOne(Mentees::class, 'mentorable');
     }

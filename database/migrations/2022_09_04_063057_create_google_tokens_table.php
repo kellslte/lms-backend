@@ -13,9 +13,9 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('you_tube_tokens', function (Blueprint $table) {
+        Schema::create('google_tokens', function (Blueprint $table) {
             $table->id();
-            $table->string("token");
+            $table->text("token");
             $table->timestamps();
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('you_tube_tokens');
+        Schema::dropIfExists('google_tokens');
     }
 };

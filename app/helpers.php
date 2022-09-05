@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\EventService;
 use App\Services\YoutubeService;
 use Laravel\Sanctum\PersonalAccessToken;
 
@@ -41,6 +42,18 @@ function formatDate($date){
     return date_format(date_create($date), 'jS M, Y');
 }
 
+function getDay($date){
+    return date_format(date_create($date), 'D');
+}
+
+function getWeek($date){
+    return date_format(date_create($date), 'W');
+}
+
+function getMonth($date){
+    return date_format(date_create($date), 'M');
+}
+
 function formatTime($time){
     return date_format(date_create($time), 'h:i a');
 }
@@ -58,4 +71,8 @@ function getYoutubeVideoDetails($request){
 
 function updateYoutubeVideoDetails($request){
     return (new YoutubeService())->updateVideo($request);
+}
+
+function createEvent(Array $details){
+    return (new EventService)->createEvent($details);
 }

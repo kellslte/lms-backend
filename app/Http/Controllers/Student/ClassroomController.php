@@ -10,10 +10,14 @@ use Illuminate\Http\Request;
 class ClassroomController extends Controller
 {
     public function index(){
+
+        return response()->json(getAuthenticatedUser()->course->lessons);
+
         return response()->json([
             'status' => 'success',
             'data' => [
                 'lessons' => LessonsService::getClassroomData(getAuthenticatedUser()),
+                'attendance' => json_decode(getAuthenticatedUser()->attendance->record, true)
             ]
         ]);
     }

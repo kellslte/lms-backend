@@ -1,36 +1,36 @@
 <?php
 namespace App\Services;
 
+use Carbon\Carbon;
 use App\Models\Course;
 use App\Models\Lesson;
-use App\Models\Facilitator;
 use App\Services\TaskService;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\CreateLessonRequest;
 
 class LessonsService {
 
-    public static function getAllLessons(Facilitator $user){
+    public static function getAllLessons($user){
         return collect($user->course->lessons)->map(function($lesson){
             return [
                 "id" => $lesson->id,
                 'title' => $lesson->title,
                 "description" => $lesson->description,
                 "published_date" => formatDate($lesson->updated_at),
-                "tutor" => $lesson->course->facilitator->name,
+                "tutor" => $lesson->tutor,
                 "student_views" => $lesson->views->views,
                 "task_submitted" => TaskService::getSubmissions($lesson->task)
             ];
         });
     }
 
-    public static function getPublishedLessons(Facilitator $user){
+    public static function getPublishedLessons($user){
         return collect($user->course->lessons)->reject(fn($lesson) => $lesson->status === 'unpublished')->map(function($lesson){
             return $lesson->load('views');
         });
     }
 
-    public static function getUnpublishedLessons(Facilitator $user){
+    public static function getUnpublishedLessons($user){
         return collect($user->course->lessons)->reject(fn($lesson) => $lesson->status === 'published');
     }
 
@@ -81,8 +81,42 @@ class LessonsService {
         }
     }
 
-    public static function updateLesson($request, $user, $lesson){
+    public static function updateLesson($request, $lesson){
+        try {
+            $lesson->update([
+                "title" => $request->title,
+                "description" => $request->description,
+            ]);
 
+            $request->merge([
+                "tags" => $lesson->course->title,
+                "videoId" => $lesson->media->youtube_video_id,
+            ]);
+
+            if ($request->file('lessonVideo')) {
+                $response = updateYoutubeVideoDetails($request);
+            }
+
+            if ($response) {
+                return response()->json([
+                    "status" => "success",
+                    "message" => "Your video has been updated successfully",
+                    "data" => [
+                        "response" => $response
+                    ]
+                ], 200);
+            }
+
+            return response()->json([
+                "status" => "success",
+                "message" => "Your lesson has been updated successfully",
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => "error",
+                'message' => "An error has occurred while updating the lesson.",
+            ], 400);        
+        }
     }
 
     public static function getUserCurriculum($user){
@@ -109,8 +143,19 @@ class LessonsService {
                 "description" => $lesson->description,
                 "published_date" => formatDate($lesson->updated_at),
                 "status" => $lesson->status,
-                "media" => $lesson->media
+                "media" => $lesson->media,
+                "views" => json_decode($lesson->views, true),
             ];
-        });
+        })->groupBy(fn ($val) => Carbon::parse($val->updated_at)->format('D'));
+    }
+
+    public static function getUpcoming(){}
+
+    public static function deleteLesson($lesson){
+        // video from YouTube
+        (new YouTubeService)->deleteVideo($lesson->media->youtube_video_id);
+
+        // delete lesson from database
+        return  $lesson->delete();
     }
 }

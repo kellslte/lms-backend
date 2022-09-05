@@ -23,6 +23,7 @@ class LeaderboardService {
     }
 
     public static function getTotalLeaderBoard(){
+        //$users = $user->course->students;
         // pull alll courses
 
         // puul students too

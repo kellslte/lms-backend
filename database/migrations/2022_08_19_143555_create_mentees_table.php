@@ -15,8 +15,7 @@ return new class extends Migration
     {
         Schema::create('mentees', function (Blueprint $table) {
             $table->id();
-            $table->uuid('mentor_id');
-            $table->string('mentor_type');
+            $table->json('mentees');
             $table->uuid('mentorable_id');
             $table->string('mentorable_type');
             $table->timestamps();

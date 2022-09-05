@@ -10,6 +10,12 @@ class Attendance extends Model
 {
     use HasFactory, HasUuid;
 
+    protected $hidden = [
+        "attender_id",
+        "attender_type",
+        "id"
+    ];
+
     public function attendable(){
         return $this->morphTo();
     }

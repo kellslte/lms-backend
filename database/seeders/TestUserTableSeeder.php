@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Admin;
 use App\Models\Course;
 use App\Models\Mentor;
+use App\Models\Meeting;
 use Illuminate\Database\Seeder;
 use App\Models\CommunityManager;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -35,12 +36,18 @@ class TestUserTableSeeder extends Seeder
             'mail' => 'bellomoboye@gmail.com'
         ]);
 
-        Mentor::create([
+        $mentor = Mentor::create([
             'name' => 'Chidera Max-Oti',
             'email' => 'deramaxoti.mentor@gmail.com',
             'recovery_email' => 'deramaxoti@gmail.com',
             'password' => bcrypt('mental'),
-        ])->settings()->create();
+        ]);
+        
+        $mentor->settings()->create();
+
+        $mentor->mentees()->create([
+            "mentees" => json_encode([])
+        ]);
 
         $this->createFacilitators();
 
@@ -62,6 +69,20 @@ class TestUserTableSeeder extends Seeder
             'bonus_points' => 100,
         ]);
 
+        $meetings = Meeting::whereCaption("General Onboarding")->get();
+
+        $scheduled = [];
+
+        foreach($meetings as $meeting) {
+            $scheduled[] = $meeting;
+        }
+
+        if($course->title = "Product Design"){
+            $student->schedule()->create([
+                "meetings" => json_encode($scheduled),
+            ]);
+        }
+
         $lessons = [];
 
         foreach ($course->lessons as $lesson){
@@ -75,8 +96,8 @@ class TestUserTableSeeder extends Seeder
             "viewables" => json_encode($lessons),
         ]);
 
-        $student->schedule()->create([
-            "meetings" => json_encode($lessons)
+        $student->attendance()->create([
+            "record" => json_encode([])
         ]);
     }
 

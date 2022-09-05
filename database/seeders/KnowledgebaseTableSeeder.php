@@ -20,6 +20,7 @@ class KnowledgebaseTableSeeder extends Seeder
                 'tag' => 'students',
                 'title' => 'How to navigate your LMS',
                 'moderator' => 'Kosi Aghadinuno',
+                'thumbnail' => 'https://thumbs.dreamstime.com/b/african-american-businesswoman-holding-digital-tablet-giving-presentation-to-business-colleagues-modern-office-216881865.jpg',
                 'resourceLink' => 'https://www.youtube.com/watch?v=Hv6EMd8dlQk'
             ]);
         }
@@ -29,6 +30,7 @@ class KnowledgebaseTableSeeder extends Seeder
                 'tag' => 'facilitators',
                 'title' => 'How to navigate your LMS',
                 'moderator' => 'Kosi Aghadinuno',
+                'thumbnail' => 'https://thumbs.dreamstime.com/b/african-american-businesswoman-holding-digital-tablet-giving-presentation-to-business-colleagues-modern-office-216881865.jpg',
                 'resourceLink' => 'https://www.youtube.com/watch?v=Hv6EMd8dlQk'
             ]);
         }
@@ -38,6 +40,7 @@ class KnowledgebaseTableSeeder extends Seeder
                 'tag' => 'mentors',
                 'title' => 'How to navigate your LMS',
                 'moderator' => 'Kosi Aghadinuno',
+                'thumbnail' => 'https://thumbs.dreamstime.com/b/african-american-businesswoman-holding-digital-tablet-giving-presentation-to-business-colleagues-modern-office-216881865.jpg',
                 'resourceLink' => 'https://www.youtube.com/watch?v=Hv6EMd8dlQk'
             ]);
         }
@@ -47,6 +50,7 @@ class KnowledgebaseTableSeeder extends Seeder
                 'tag' => 'admins',
                 'title' => 'How to navigate your LMS',
                 'moderator' => 'Kosi Aghadinuno',
+                'thumbnail' => 'https://thumbs.dreamstime.com/b/african-american-businesswoman-holding-digital-tablet-giving-presentation-to-business-colleagues-modern-office-216881865.jpg',
                 'resourceLink' => 'https://www.youtube.com/watch?v=Hv6EMd8dlQk'
             ]);
         }
@@ -58,7 +62,8 @@ class KnowledgebaseTableSeeder extends Seeder
             "tag" => $data['tag'],
             "title" => $data['title'],
             "moderator" => $data['moderator'],
-            "resource_link" => $data["resourceLink"]
+            "resource_link" => $data["resourceLink"],
+            "thumbnail" => $data['thumbnail'],
         ]);
     }
 }

@@ -81,7 +81,7 @@ class Mentor extends Authenticatable
     }
 
     public function mentees(){
-        return $this->morphMany(Mentees::class, 'mentorable');
+        return $this->morphOne(Mentees::class, 'mentorable');
     }
 
     public function socials(){

@@ -33,6 +33,8 @@ use App\Http\Controllers\Facilitator\ProfileController as FacilitatorProfileCont
 use App\Http\Controllers\Facilitator\ScheduleController as FacilitatorScheduleController;
 use App\Http\Controllers\Facilitator\ClassRoomController as FacilitatorClassRoomController;
 use App\Http\Controllers\Facilitator\DashboardController as FacilitatorDashboardController;
+use App\Http\Controllers\Facilitator\StudentPerformanceController as FacilitatorsStudentPerformanceControler;
+use App\Http\Controllers\Facilitator\StudentMentorsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,20 +53,20 @@ Route::post('videos', function (Request $request) {
     return $client->uploadVideo($request);
 });
 
-Route::post('transcript', function(Request $request){
-    $file = $request->file("lessonTranscript");
+// Route::post('transcript', function(Request $request){
+//     $file = $request->file("lessonTranscript");
 
-    $fileName = $file->getClientOriginalName();
-    $extension = $file->getClientOriginalExtension();
+//     $fileName = $file->getClientOriginalName();
+//     $extension = $file->getClientOriginalExtension();
 
-    $newfilename = $fileName. now().".".$extension;
+//     $newfilename = $fileName. now().".".$extension;
 
-    $transcript = $request->file()->storeAs("/lessons/transcripts", $newfilename, "public");
+//     $transcript = $request->file()->storeAs("/lessons/transcripts", $newfilename, "public");
 
-    $url = Storage::disk("local")->url($transcript);
+//     $url = Storage::disk("local")->url($transcript);
 
-    return response()->json($url);
-});
+//     return response()->json($url);
+// });
 
 
 Route::prefix('v1')->group(function(){
@@ -141,8 +143,8 @@ Route::prefix('v1')->group(function(){
         Route::prefix('auth/admin')->group(function(){
             // Admin Logout
             Route::post('logout', fn() => (new LoginController)->logout('admin'));
-            // Admin Token Refresh
-            Route::post('password/create', [PasswordController::class, 'createPassword']);
+            // Change password Route
+            Route::post('password/change', [PasswordController::class, 'changePassword']);
             // Profile Route
             Route::get('profile', [AdminProfileController::class, 'index']);
             // Change Proflie Settings Route
@@ -157,39 +159,42 @@ Route::prefix('v1')->group(function(){
         // Facilitator Routes
         Route::prefix('auth/facilitator')->group(function(){
             Route::post('logout', fn() => (new LoginController)->logout('facilitator'));
-            // Create Password Route
-            Route::post('password/create', [PasswordController::class, 'createPassword']);
+            // Change Password Route
+            Route::post('password/change', [PasswordController::class, 'changePassword']);
             // Profile Route
             Route::get('profile', [FacilitatorProfileController::class, 'index']);
             // Change Proflie Settings Route
             Route::post('profile', [FacilitatorProfileController::class, 'storeSettings']);
-
             // Class Room Routes
             Route::get('dashboard', FacilitatorDashboardController::class);
-
+            // Classroom data route
             Route::get('classroom', [FacilitatorClassroomController::class, 'index']);
-
+            // Create lesson route
             Route::post('classroom', [FacilitatorClassroomController::class, 'store']);
-
+            // Get facilitator schedule
             Route::get('schedule', [FacilitatorScheduleController::class, 'index']);
-
+            // Create a meeting or live event
             Route::post('schedule', [FacilitatorScheduleController::class, 'fixLiveClass']);
-
-            // Task Route
+            // Get Tasks Route
             Route::get('tasks', [FacilitatorTaskController::class, 'index']);
-
+            // Get particular task with students that have submitted theirs
             Route::get('tasks/{task}', [FacilitatorTaskController::class, 'viewSubmissions']);
-            
+            // create lesson task route
             Route::post('tasks/{lesson}', [FacilitatorTaskController::class, 'store']); 
-
+            // update lesson task route
             Route::put('tasks/{task}', [FacilitatorTaskController::class, 'update']);
-
-            Route::post('tasks/{task}/grade/{user}', [FacilitatorTaskController::class, 'gradeTask']);
-
-            //Route::post();
-
-            // Mentor Area Routes
-            //Route::get('mentors', []);
+            // grade lesson task
+            Route::put('tasks/{task}/grade/{user}', [FacilitatorTaskController::class, 'gradeTask']);
+            // Student Leaderboard route
+            Route::get('students/leaderboard', [FacilitatorsStudentPerformanceControler::class, 'index']);
+            // Add bonus point to student
+            Route::put('students/leaderboard/{user}/points/bonus', [FacilitatorsStudentPerformanceControler::class, 'addBonusPointToStudent']);
+            // Student mentor route
+            Route::get('mentors', [StudentMentorsController::class, 'index']);
+            // Assign mentee to mentor
+            Route::post('mentors/{mentor}/mentees/{user}', [StudentMentorsController::class, 'assignMenteeToMentor']);
+            // Remove mentee from mentor
+            Route::delete('mentors/{mentor}/mentees/{user}', [StudentMentorsController::class, 'removeMenteeFromMentor']);
         });
 
         // Mentor Routes

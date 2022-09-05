@@ -18,6 +18,7 @@ return new class extends Migration
             $table->enum('tag', ['students', 'facilitators', 'admins', 'mentors'])->default('students');
             $table->string('title');
             $table->string('moderator');
+            $table->string('thumbnail');
             $table->string('resource_link');
             $table->timestamps();
         });

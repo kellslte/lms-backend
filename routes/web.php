@@ -34,7 +34,7 @@ Route::middleware('guest')->get('auth/magiclink/{token}', fn($token) => response
     'token' => $token,
 ]))->name('verify-login');
 
-Route::get('youtube', function(){
+Route::get('auth', function(){
     $client = new YoutubeService();
 
     return $client->getGoogleAuth();
