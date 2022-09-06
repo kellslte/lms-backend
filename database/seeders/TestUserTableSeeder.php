@@ -51,6 +51,8 @@ class TestUserTableSeeder extends Seeder
 
         $this->createFacilitators();
 
+        $this->call(LessonsTableSeeder::class);
+
         $this->createStudents();
     }
     
@@ -84,6 +86,10 @@ class TestUserTableSeeder extends Seeder
         }
 
         $lessons = [];
+
+        $student->submissions()->create([
+            "tasks" => json_encode([]),
+        ]);
 
         foreach ($course->lessons as $lesson){
             $lessons[] = [

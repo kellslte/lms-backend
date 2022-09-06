@@ -3,13 +3,10 @@
 namespace App\Http\Controllers\Student;
 
 use App\Models\User;
-use App\Models\Lesson;
-use Illuminate\Http\Request;
 use App\Services\ScheduleService;
 use App\Http\Controllers\Controller;
 use App\Services\LeaderboardService;
 use App\Services\LessonsService;
-use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
