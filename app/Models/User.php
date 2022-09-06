@@ -111,16 +111,16 @@ class User extends Authenticatable
     public function completedTasks(){
         $tasks  = json_decode($this->submissions->tasks, true);
 
-        return collect($tasks)->map(function($task){
-            return ($task["status"] === "submitted")? $task : null;
-        })->filter();
+        return collect($tasks)->reject(function($task){
+            return $task["status"] !== "submitted";
+        });
     }
 
     public function pendingTasks(){
         $submittedTasks = collect($this->submissions->tasks, true);
 
         return collect($this->lessons())->filter(function ($lesson) use ($submittedTasks) {
-            return !in_array($lesson->task, $submittedTasks->toArray());
+            return !in_array($lesson->task->id, $submittedTasks->toArray());
         })->map(fn($lesson)=> $lesson->task);
     }
 
