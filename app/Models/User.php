@@ -121,7 +121,7 @@ class User extends Authenticatable
 
         return collect($this->lessons())->filter(function ($lesson) use ($submittedTasks) {
             return !in_array($lesson->task, $submittedTasks->toArray());
-        })->filter();
+        })->map(fn($lesson)=> $lesson->task);
     }
 
     public function expiredTasks(){
