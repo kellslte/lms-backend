@@ -93,7 +93,7 @@ class User extends Authenticatable
     }
 
     public function submissions(){
-        return $this->morphMany(Submission::class, 'taskable');
+        return $this->morphOne(Submission::class, 'taskable');
     }
 
     public function schedule(){
@@ -109,27 +109,19 @@ class User extends Authenticatable
     }
 
     public function completedTasks(){
-        $tasks  = $this->submissions()->whereStatus('submitted')->get();
+        $tasks  = json_decode($this->submissions->tasks, true);
 
         return collect($tasks)->map(function($task){
-            return Task::find($task->submittable_id);
-        });
+            return ($task["status"] === "submitted")? $task : null;
+        })->filter();
     }
 
     public function pendingTasks(){
-        $tasks = collect($this->submissions)->map(function($submission){
-            return Task::find($submission->submittable_id);
-        });
+        $submittedTasks = collect($this->submissions->tasks, true);
 
-        $allTasks = collect($this->course->lessons)->map(function ($lesson) {
-            return $lesson->task;
-        })->filter(function ($lesson) {
-            return $lesson->status == 'pending' || $lesson->status == 'graded';
-        })->flatten();
-
-        return collect($allTasks)->map(function($task) use ($tasks){
-            return !$tasks->contains($task) ? $task: null;
-        })->filter()->flatten();
+        return collect($this->lessons())->filter(function ($lesson) use ($submittedTasks) {
+            return !in_array($lesson->task, $submittedTasks->toArray());
+        })->filter();
     }
 
     public function expiredTasks(){
