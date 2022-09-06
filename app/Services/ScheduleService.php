@@ -2,19 +2,18 @@
 namespace App\Services;
 
 use App\Models\Lesson;
+use App\Models\Meeting;
 use Illuminate\Database\Eloquent\Model;
 
 class ScheduleService {
 
     public static function getSchedule($user){
         return collect(json_decode($user->schedule->meetings))->map(function ($schedule) {
-            $lesson = Lesson::find($schedule->lesson_id);
-
             return [
-                "title" => $lesson->title,
-                "tutor" => $lesson->course->facilitator->name,
-                "date" => formatDate($lesson->updated_at),
-                "time" => formatTime($lesson->updated_at),
+                "title" => $schedule->caption,
+                "tutor" => $schedule->host_name,
+                "date" => formatDate($schedule->date),
+                "time" => formatTime($schedule->start_time),
             ];
         });
     }
