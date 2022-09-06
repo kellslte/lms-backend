@@ -10,9 +10,6 @@ use Illuminate\Http\Request;
 class ClassroomController extends Controller
 {
     public function index(){
-
-        return response()->json(getAuthenticatedUser()->course->lessons);
-
         return response()->json([
             'status' => 'success',
             'data' => [
@@ -29,17 +26,7 @@ class ClassroomController extends Controller
         ], 200);
     }
 
-    public function getStudentLessons(){
+    public function markLessonAsCopmleted(Request $request){
         
     }
 }
-
-/* 
-
-user lessons will now be called via get student lessons. As the the lesosns are being created the lesson ids are set in the student curriculum and it iwll look like this:
-
-[
-    ["lesson_id" => "id", "lesson_status" => "completed"],
-]
-
-*/

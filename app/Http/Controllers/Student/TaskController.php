@@ -17,6 +17,17 @@ class TaskController extends Controller
             return $lesson->task;
         });
 
+        $submittedTasks = collect(json_decode($user->submissions->tasks, true));
+
+        $pendingTasks = collect($user->lessons())->reject(function() use($submittedTasks))->map(function ($lesson) use ($submittedTasks) {
+            return $lesson->task;
+        });
+
+        return response()->json([
+            "submissions" => $submittedTasks, 
+            "pending" => $pendingTasks
+        ]);
+
         return response()->json([
             'status' => 'success',
             'data' => [
@@ -38,17 +49,28 @@ class TaskController extends Controller
             ], 400);
         }
 
-        if($task->submissions()->where('taskable_id', $user->id)->first()){
+        $submissions = $user->submissions;
+
+        $submittedTasks = collect(json_decode($submissions->tasks, true));
+
+        if($submittedTasks->contains($task->id)){
             return response()->json([
                 'status' => 'failed',
                 "messaged" => 'You can only submit a task once',
             ], 400);
         }
 
-        $user->submissions()->create([
-            'link_to_resource' => $request->linkToResource,
-            'submittable_id' => $task->id,
-            'submittable_type' => 'App\\Models\\Task',
+        $submittedTasks[] = [
+            "id" => $task->id,
+            "linkToResource" => $request->linkToResource,
+            "status" => "submitted",
+            "title" => $task->title,
+            "description" => $task->description,
+            "date_submitted" => today()
+        ];
+
+        $user->submissions->update([
+            "tasks" => $submittedTasks
         ]);
 
         // TODO add notification for task submission

@@ -120,17 +120,17 @@ class LessonsService {
     }
 
     public static function getUserCurriculum($user){
-        return collect(json_decode($user->curriculum->viewables))->map(function ($lesson) {
-            $lesson = Lesson::find($lesson->lesson_id);
+        return collect(json_decode($user->curriculum->viewables))->map(function ($viweable) {
+            $lesson = Lesson::find($viweable->lesson_id);
 
-            return [
+            return ($viweable->lesson_status === "uncompleted")? [
                 "title" => $lesson->title,
                 "description" => $lesson->description,
                 "published_date" => formatDate($lesson->updated_at),
                 "media" => $lesson->media,
                 "status" => $lesson->status,
-            ];
-        });
+            ]: null;
+        })->filter();
     }
 
     public static function getClassroomData($user){
