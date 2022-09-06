@@ -17,17 +17,6 @@ class TaskController extends Controller
             return $lesson->task;
         });
 
-        $submittedTasks = collect(json_decode($user->submissions->tasks, true));
-
-        $pendingTasks = collect($user->lessons())->reject(function() use($submittedTasks))->map(function ($lesson) use ($submittedTasks) {
-            return $lesson->task;
-        });
-
-        return response()->json([
-            "submissions" => $submittedTasks, 
-            "pending" => $pendingTasks
-        ]);
-
         return response()->json([
             'status' => 'success',
             'data' => [
@@ -66,7 +55,8 @@ class TaskController extends Controller
             "status" => "submitted",
             "title" => $task->title,
             "description" => $task->description,
-            "date_submitted" => today()
+            "date_submitted" => today(),
+            "grade" => 0
         ];
 
         $user->submissions->update([
