@@ -13,16 +13,15 @@ class DashboardController extends Controller
     public function index(){
         $user = User::find(getAuthenticatedUser()->id);
 
-        $user->load(['schedule', 'notifications', 'submissions']);
+        $user->load(['schedule', 'submissions']);
 
         return response()->json([
             'status' => 'success',
             'data' => [
                 'lessons' => LessonsService::getUserCurriculum($user),
                 'leaderboard_position' => 2,
-                'total_tasks_done' => 21,
+                'total_tasks_done' => count($user->completedTasks()),
                 'schedule' => ScheduleService::getSchedule($user),
-                'submissions' => $user->submissions,
                 'leaderboard' => LeaderboardService::getTrackBoard(getAuthenticatedUser())->take(5),
                 'total_enrolled_students' => $user->course->students->count(),
             ],

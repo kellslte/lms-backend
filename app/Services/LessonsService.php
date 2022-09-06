@@ -146,7 +146,7 @@ class LessonsService {
                 "media" => $lesson->media,
                 "views" => json_decode($lesson->views, true),
             ];
-        })->groupBy(fn ($val) => Carbon::parse($val->updated_at)->format('D'));
+        })->orderBy(fn ($val) => Carbon::parse($val->created_at)->format('D'));
     }
 
     public static function getUpcoming(){}
