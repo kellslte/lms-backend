@@ -15,13 +15,9 @@ return new class extends Migration
     {
         Schema::create('submissions', function (Blueprint $table) {
             $table->id();
-            $table->uuid('submittable_id');
-            $table->string('submittable_type');
             $table->uuid('taskable_id');
             $table->string('taskable_type');
-            $table->enum('status', ['submitted', 'graded'])->default('submitted');
-            $table->unsignedBigInteger('grade')->default(0);
-            $table->string('link_to_resource');
+            $table->json('tasks');
             $table->timestamps();
         });
     }
