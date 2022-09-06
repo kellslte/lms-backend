@@ -119,8 +119,8 @@ class User extends Authenticatable
     public function pendingTasks(){
         $submittedTasks = collect($this->submissions->tasks, true);
 
-        return collect($this->lessons())->filter(function ($lesson) use ($submittedTasks) {
-            return !in_array($lesson->task->id, $submittedTasks->toArray());
+        return collect($this->lessons())->except(function ($lesson) use ($submittedTasks) {
+            return $submittedTasks->where("id", $lesson->task->id);
         })->map(fn($lesson)=> $lesson->task);
     }
 
@@ -157,5 +157,9 @@ class User extends Authenticatable
 
     public function reports(){
         return $this->morphMany(Report::class, 'reporter');
+    }
+
+    public function progress(){
+        return $this->hasOne(Progress::class);
     }
 }
