@@ -143,10 +143,9 @@ class LessonsService {
                 "description" => $lesson->description,
                 "published_date" => formatDate($lesson->updated_at),
                 "status" => $lesson->status,
-                "media" => $lesson->media,
-                "views" => json_decode($lesson->views, true),
+                "media" => $lesson->media
             ];
-        })->orderBy(fn ($val) => Carbon::parse($val->created_at)->format('D'));
+        });
     }
 
     public static function getUpcoming(){}

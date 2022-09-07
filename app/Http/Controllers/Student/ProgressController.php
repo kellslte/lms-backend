@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class ProgressController extends Controller
 {
-    public function getUpcomingLessons(){
+    public function getStudentProgress(){
         $lessons = ProgressService::upcomingLessons();
 
         return response()->json([

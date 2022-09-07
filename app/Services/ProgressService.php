@@ -7,14 +7,18 @@ class ProgressService {
     public static function upcomingLessons(){
         $user = getAuthenticatedUser();
 
-        $lessons = $user->lessons();
+        $lessons = collect($user->lessons());
 
-        return collect(json_decode($user->progress->course_progress, true))->map(function($lesson){            
-            $returnedLesson = Lesson::find($lesson->id);
+        return collect(json_decode($user->progress->course_progress, true))->map(function($lesson) use ($lessons){            
+            $returnedlesson = $lessons->where("id", $lesson["lesson_id"])->first();
 
-            return ($lesson["percentage"] >= 0) ? $returnedLesson->with('resources', 'media') : null;
+            return($lesson["percentage"] >= 0)? [
+                "lesson" => $returnedlesson,
+                "media" => $returnedlesson->media,
+                "resource" => $returnedlesson->resources,
+            ]: null;
 
-        })->filter()->take(2);
+        })->filter();
     }
 
     public static function updateLessonProgress($lessonId){
