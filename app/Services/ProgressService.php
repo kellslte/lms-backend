@@ -16,8 +16,8 @@ class ProgressService {
                 "lesson" => $returnedlesson,
                 "media" => $returnedlesson->media,
                 "resource" => $returnedlesson->resources,
+                "percentage" => $lesson["percentage"]
             ]: null;
-
         })->filter();
     }
 
