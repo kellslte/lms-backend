@@ -11,6 +11,7 @@ use App\Http\Requests\CreateLessonRequest;
 class LessonsService {
 
     public static function getAllLessons($user){
+
         return collect($user->course->lessons)->map(function($lesson){
             return [
                 "id" => $lesson->id,
@@ -134,18 +135,28 @@ class LessonsService {
     }
 
     public static function getClassroomData($user){
-        return collect(json_decode($user->curriculum->viewables))->map(function ($lesson) {
+        $progress = collect(json_decode($user->progress->course_progress, true));
+
+        return collect(json_decode($user->curriculum->viewables))->map(function ($lesson) use($progress) {
+            $lessonProgress = $progress->where("lesson_id", $lesson->lesson_id)->first();
             $lesson = Lesson::find($lesson->lesson_id);
 
-            return [
+            return ($lessonProgress["percentage"] === 100) ? [
                 "id" => $lesson->id,
                 "title" => $lesson->title,
                 "description" => $lesson->description,
                 "published_date" => formatDate($lesson->updated_at),
-                "status" => $lesson->status,
+                "status" => "completed",
+                "media" => $lesson->media
+            ]: [
+                "id" => $lesson->id,
+                "title" => $lesson->title,
+                "description" => $lesson->description,
+                "published_date" => formatDate($lesson->updated_at),
+                "status" => "uncompleted",
                 "media" => $lesson->media
             ];
-        });
+        })->filter();
     }
 
     public static function getUpcoming(){}
