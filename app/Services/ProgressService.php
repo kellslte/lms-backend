@@ -9,8 +9,6 @@ class ProgressService {
 
         $lessons = collect($user->lessons());
 
-        return collect(json_decode($user->progress->course_progress, true));
-
         return collect(json_decode($user->progress->course_progress, true))->map(function($lesson) use ($lessons){            
             $returnedlesson = $lessons->where("id", $lesson["lesson_id"])->first();
             
