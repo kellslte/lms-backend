@@ -136,7 +136,7 @@ Route::prefix('v1')->group(function(){
             // Get Single Lesson from classroom
             Route::get('classroom/lessons/{lesson}', [StudentClassroomController::class, 'getLesson']);
             // Mark attendance for a meeting
-            Route::put('classroom/meeting/{meeting}', [StudentClassroomController::class, 'markAttendance']);
+            Route::put('classroom/meeting/{meeting}/student/{userId}', [StudentClassroomController::class, 'markAttendance']);
             // State of the union meeting routes
             Route::get('classroom/sotu', [StudentClassroomController::class, 'getSotu']);
             // Task Routes
