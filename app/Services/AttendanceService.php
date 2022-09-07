@@ -6,39 +6,23 @@ use Illuminate\Database\Eloquent\Model;
 
 class AttendanceService {
 
-    public function mark($date){
-        $user = getAuthenticatedUser();
-
+    public static function mark(Array $data, $user){
         $record = json_decode($user->attendance->record, true);
 
         $dateAttended = [
-            "date" => formatDate($date),
+            "meetingId" => $data["meetingId"],
+            "date" => $data["date"],
             "present" => true,
         ];
 
         array_push($record, $dateAttended);
 
-        $user->attendance->update([
+        return $user->attendance->update([
             "record" => $record,
         ]);
-
-        return $user;
     }
 
-    public function createRecord(){
-        $user = getAuthenticatedUser();
-
-        $data = [
-            [
-                "date" => formatDate(today()),
-                "present" => true,
-            ],
-        ];
-
-        $user->attendance()->create([
-            "record" => json_encode($data),
-        ]);
-
-        return $user;
+    public static function getRecord($user){
+        return json_decode($user->attendance->record, true);
     }
 }
