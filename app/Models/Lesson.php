@@ -32,7 +32,7 @@ class Lesson extends Model
     }
 
     public function media(){
-        return $this->morphMany(Media::class, 'mediaable');
+        return $this->morphOne(Media::class, 'mediaable');
     }
 
     public function views(){

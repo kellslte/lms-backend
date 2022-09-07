@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\LessonResource;
 use App\Models\Lesson;
 use App\Services\LessonsService;
 use Illuminate\Http\Request;
@@ -20,13 +21,13 @@ class ClassroomController extends Controller
     }
 
     public function getLesson(Lesson $lesson){
+        $resource = new LessonResource($lesson);
+        
         return response()->json([
             'status' => 'success',
-            'lesson' => $lesson
+            'data' => [
+                "lesson" => $resource,
+            ]
         ], 200);
-    }
-
-    public function markLessonAsCopmleted(Request $request){
-        
     }
 }
