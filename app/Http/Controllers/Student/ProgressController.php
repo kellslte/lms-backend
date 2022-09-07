@@ -18,4 +18,22 @@ class ProgressController extends Controller
             ]
         ]);
     }
+
+    public function incrementStudentProgress(Request $request, $lesson){
+        $user = getAuthenticatedUser();
+
+        $update = ProgressService::incrementStudentProgress($user, $request, $lesson);
+
+        if($update){
+            return response()->json([
+                "status" => "success",
+                "message" => "Lesson Updated Successfully",
+            ]);
+        }
+
+        return response()->json([
+            "status" => "failed",
+            "message" => "Lesson Update Failed",
+        ]); //
+    }
 }

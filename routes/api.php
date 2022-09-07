@@ -128,8 +128,12 @@ Route::prefix('v1')->group(function(){
             Route::get('classroom/lessons', [StudentClassroomController::class, 'getStudentLessons']);
             // Get Classroom Progress
             Route::get('classroom/progress', [ProgressController::class, 'getStudentProgress']);
+            // Increment lesson progress
+            Route::put('classroom/progress/{lesson}', [ProgressController::class, 'incrementStudentProgress']);
             // Get Single Lesson from classroom
             Route::get('classroom/lessons/{lesson}', [StudentClassroomController::class, 'getLessons']);
+            // Mark attendance for a meeting
+            
             // Task Routes
             Route::get('tasks', [StudentTaskController::class, 'index']);
             // Submit Task
