@@ -10,6 +10,8 @@ class Attendance extends Model
 {
     use HasFactory, HasUuid;
 
+    protected $guarded = [];
+
     protected $hidden = [
         "attender_id",
         "attender_type",
