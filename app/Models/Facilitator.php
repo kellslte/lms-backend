@@ -90,7 +90,7 @@ class Facilitator extends Authenticatable
 
     public function schedule()
     {
-        return $this->morphMany(Schedule::class, 'schedules');
+        return $this->morphOne(Schedule::class, 'schedulable');
     }
 
     public function socials(){

@@ -23,6 +23,6 @@ class Timeline extends Model
     ];
 
     public function duration(){
-        return formatDate($this->start_date)." - ".formatDate($this->end_date);
+        return formatToMonth($this->start_date)." - ".formatDate($this->end_date);
     }
 }

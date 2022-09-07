@@ -36,22 +36,14 @@ class TaskService {
     // These methods will be called by the facilitator
 
     // Get tasks related to the lessons the facilitator is handling
-    public static function getTasksCompletedByStudents(Facilitator  $user){
+    public static function getTasksCompletedByStudents(){
         // get tasks related to the lessons that have been submitted
-        $submittedTasks = self::getSubmittedTasks($user);
-
-        return (collect($submittedTasks)->every(function ($value, $key) {
-            return $value->count() > 0;
-        })) ? collect($submittedTasks)->map(fn ($task) => ($task->status === 'approved') ? $task->submittable : []) : [] ;
+        return is_null(self::getAllSubmissionsForTasks()) ? []: self::getAllSubmissionsForTasks();
     }
 
     public static function getTasksSubmittedButNotYetApproved(Facilitator $user){
         // get tasks related to the lessons that have been submitted
-        $submittedTasks = self::getSubmittedTasks($user);
-
-        return ((collect($submittedTasks)->every(function ($value, $key) {
-            return $value->count() > 0;
-        }))) ? collect($submittedTasks)->map(fn($task) => ($task->status === 'submitted') ? $task->submittable : []) : [];
+        return is_null(self::getAllSubmissionsForTasks()) ? []: self::getAllSubmissionsForTasks();
     }
 
     public static function getRunningTasks(Facilitator $user){
@@ -72,19 +64,36 @@ class TaskService {
         return collect($lessons)->map(fn ($lesson) => ($lesson->task->status === 'unpublished') ? $lesson->task : []);
     }
 
-    protected static function getSubmittedTasks($user){
-        $lessons = $user->course->lessons;
+    protected static function getAllSubmissionsForTasks(){
+        $facilitator = getAuthenticatedUser();
 
-        // load lesson tasks
-        $lessons->load('task');
+        $lessons = $facilitator->course->lessons;
 
-        // get tasks related to the lessons that have been submitted
-        return collect($lessons)->map(function ($lesson) {
-            return $lesson->task->submissions;
-        });
+       $tasks = collect($lessons)->map(function($lesson){
+        return $lesson->task;
+       });
+
+       $students = User::all();
+
+       // Get all submissions for tasks    
+       $submissions = collect($tasks)->map(function($task) use ($students){
+            return collect($students)->map(function($student) use ($task){
+                return [
+                    $student->id => collect(json_decode($student->submissions->tasks, true))->reject(function ($item) use ($task) {
+                        return $item["id"] !== $task->id;
+                    })
+                ];
+            });
+       });
     }
 
     public static function getSubmissions($task){
-        return $task->submissions->taskable;
+        $users = User::all();
+
+        return collect($users)->map(function($user) use ($task) {
+            return collect(json_decode($user->submissions->tasks, true))->reject(function($item) use ($task){
+                return $item["id"] !== $task->id;
+            });
+        });
     }
 }

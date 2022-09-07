@@ -54,6 +54,10 @@ function getMonth($date){
     return date_format(date_create($date), 'M');
 }
 
+function formatToMonth($date){
+    return date_format(date_create($date), 'j M');
+}
+
 function formatTime($time){
     return date_format(date_create($time), 'h:i a');
 }

@@ -120,7 +120,7 @@ class TestUserTableSeeder extends Seeder
     }
 
     protected function createFacilitators(){
-        $this->createFacilitator([
+       $this->createFacilitator([
             'name' => 'Signs Madueke',
             'email' => 'signs.facilitator@gmail.com',
             'recovery_email' => 'signsmaduaeke@gmail.com',
@@ -134,6 +134,7 @@ class TestUserTableSeeder extends Seeder
             'password' => bcrypt('fascille'),
         ], 'Product Design');
 
+
         $this->createFacilitator([
             'name' => 'Sophia Ahuoyiza',
             'email' => 'sophia.facilitator@gmail.com',
@@ -145,7 +146,20 @@ class TestUserTableSeeder extends Seeder
     protected function createFacilitator(array $data, String $courseTitle){
         $course = Course::whereTitle($courseTitle)->firstOrFail();
 
-        $course->facilitator()->create($data)->settings()->create();
+        $facilitator = $course->facilitator()->create($data);
+
+        $facilitator->settings()->create();
+
+        $facilitator->schedule()->create([
+            "meetings" => json_encode([])
+        ]);
+
+        $facilitator->socials()->create([
+            'linkedin' => 'https://linkedin.com/in/'.$data["name"],
+            'twitter' => 'https://twitter.com/' . $data["name"],
+            'facebook' => 'https://facebook.com/' . $data["name"],
+            'mail' => $data["recovery_email"]
+        ]);
     }
 
     protected function createStudents(){
@@ -155,6 +169,7 @@ class TestUserTableSeeder extends Seeder
             'email' => 'ujuchibuoke@gmail.com',
             'current_education_level' => 'B.Sc',
             'access_to_laptop' => 'Yes',
+            'password' => bcrypt('student'),
         ], 'Frontend Engineering');
 
         $this->createStudent([
@@ -162,6 +177,7 @@ class TestUserTableSeeder extends Seeder
             'email' => 'mbadiweesther@gmail.com',
             'current_education_level' => 'HND',
             'access_to_laptop' => 'Yes',
+            'password' => bcrypt('student'),
         ], 'Backend Engineering');
 
         $this->createStudent([
@@ -169,6 +185,7 @@ class TestUserTableSeeder extends Seeder
             'email' => 'olaagnes@gmail.com',
             'current_education_level' => 'Others',
             'access_to_laptop' => 'No',
+            'password' => bcrypt('student'),
         ], 'Cloud Engineering');
 
         $this->createStudent([
@@ -176,6 +193,7 @@ class TestUserTableSeeder extends Seeder
             'email' => 'camilaagirl@gmail.com',
             'current_education_level' => 'B.Sc',
             'access_to_laptop' => 'Yes',
+            'password' => bcrypt('student'),
         ], 'Android Application Development');
 
         $this->createStudent([
@@ -183,6 +201,7 @@ class TestUserTableSeeder extends Seeder
             'email' => 'odinmabee@gmail.com',
             'current_education_level' => 'Others',
             'access_to_laptop' => 'Yes',
+            'password' => bcrypt('student'),
         ], 'iOS Application Development');
 
         $this->createStudent([
@@ -190,6 +209,7 @@ class TestUserTableSeeder extends Seeder
             'email' => 'emremadnie@gmail.com',
             'current_education_level' => 'B.Sc',
             'access_to_laptop' => 'Yes',
+            'password' => bcrypt('student'),
         ], 'Flutter Application Development');
 
         $this->createStudent([
@@ -197,6 +217,7 @@ class TestUserTableSeeder extends Seeder
             'email' => 'wellsbibi@gmail.com',
             'current_education_level' => 'Others',
             'access_to_laptop' => 'Yes',
+            'password' => bcrypt('student'),
         ], 'Product Design');
 
         $this->createStudent([
@@ -204,6 +225,7 @@ class TestUserTableSeeder extends Seeder
             'email' => 'artwellt@gmail.com',
             'current_education_level' => 'Higher',
             'access_to_laptop' => 'No',
+            'password' => bcrypt('student'),
         ], 'Product Management');
 
         $this->createStudent([
@@ -211,6 +233,7 @@ class TestUserTableSeeder extends Seeder
             'email' => 'onyemadarlene@gmail.com',
             'current_education_level' => 'B.Sc',
             'access_to_laptop' => 'Yes',
+            'password' => bcrypt('student'),
         ], 'Data Science');
 
         $this->createStudent([
@@ -218,6 +241,7 @@ class TestUserTableSeeder extends Seeder
             'email' => 'ogbatac@gmail.com',
             'current_education_level' => 'Others',
             'access_to_laptop' => 'No',
+            'password' => bcrypt('student'),
         ], 'Data Analysis');
 
         $this->createStudent([
@@ -225,6 +249,7 @@ class TestUserTableSeeder extends Seeder
             'email' => 'bellachris@gmail.com',
             'current_education_level' => 'OND',
             'access_to_laptop' => 'Yes',
+            'password' => bcrypt('student'),
         ], 'Cloud Engineering');
     }
 }

@@ -32,6 +32,19 @@ class MeetingsTableSeeder extends Seeder
 
             $this->createMeeting("onboarding", $data, $date);
         }
+
+        for($i = 0; $i < 5; $i++) {
+            $date = Carbon::today()->addDay($i);
+
+            $data = [
+                "caption" => "State of The Union",
+                "link" => url(Str::random()),
+                "start_time" => now(),
+                "end_time" => now()->addMinutes(45),
+            ];
+
+            $this->createMeeting("sotu", $data, $date);
+        }
     }
 
     private function createMeeting($type, $data, $date){

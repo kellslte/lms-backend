@@ -23,7 +23,17 @@ class ClassroomController extends Controller
         ], 200);
     }
 
-    public function getLesson(Lesson $lesson){
+    public function getLesson($lesson){
+
+        $lesson = Lesson::where('id',$lesson)->first();
+
+        if(!$lesson){
+            return response()->json([
+                "status" => "error",
+                "message" => "Lesson not found"
+            ], 404);
+        }
+
         $resource = new LessonResource($lesson);
         
         return response()->json([
@@ -56,5 +66,9 @@ class ClassroomController extends Controller
             "status" => "failed",
             "message" => "attendance record could not be marked",
         ], 400);
+    }
+
+    public function getSotu(){
+        return collect(json_decode(getAuthenticatedUser()->schedule->meetings, true));
     }
 }

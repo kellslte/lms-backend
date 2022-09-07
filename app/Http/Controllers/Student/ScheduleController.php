@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Student;
 
 use Carbon\Carbon;
+use App\Models\Meeting;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -11,6 +12,8 @@ class ScheduleController extends Controller
     public function __invoke()
     {
         $user = getAuthenticatedUser();
+
+        $sotu = Meeting::whereCaption("State of The Union")->get();
 
         $schedule = [];
 
@@ -33,6 +36,8 @@ class ScheduleController extends Controller
         $schedule["happening_this_week"] = $week[getWeek(today())]->take(4);
 
         $schedule["happening_this_month"] = $month[getMonth(today())]->take(4);
+
+        $schedule["sotu"] = $sotu;
         
         return response()->json([
             'status' => 'success',

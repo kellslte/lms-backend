@@ -36,6 +36,7 @@ use App\Http\Controllers\Facilitator\ScheduleController as FacilitatorScheduleCo
 use App\Http\Controllers\Facilitator\ClassRoomController as FacilitatorClassRoomController;
 use App\Http\Controllers\Facilitator\DashboardController as FacilitatorDashboardController;
 use App\Http\Controllers\Facilitator\StudentPerformanceController as FacilitatorsStudentPerformanceControler;
+use App\Http\Controllers\TimelineController;
 
 /*
 |--------------------------------------------------------------------------
@@ -88,6 +89,8 @@ Route::prefix('v1')->group(function(){
     // Protected Routes
     Route::middleware('auth:sanctum')->group(function(){
 
+        Route::get('timeline', TimelineController::class);
+
         Route::prefix('auth')->group(function(){
             // system wide notifications
             Route::get("notifications", function() {
@@ -133,7 +136,9 @@ Route::prefix('v1')->group(function(){
             // Get Single Lesson from classroom
             Route::get('classroom/lessons/{lesson}', [StudentClassroomController::class, 'getLesson']);
             // Mark attendance for a meeting
-            
+            Route::put('classroom/meeting/{meeting}', [StudentClassroomController::class, 'markAttendance']);
+            // State of the union meeting routes
+            Route::get('classroom/sotu', [StudentClassroomController::class, 'getSotu']);
             // Task Routes
             Route::get('tasks', [StudentTaskController::class, 'index']);
             // Submit Task
@@ -156,9 +161,14 @@ Route::prefix('v1')->group(function(){
             Route::post('profile', [AdminProfileController::class, 'storeSettings']);
 
             // Onboarding Routes
-            Route::post('onboard', [OnboardingController::class, 'facilitator']);
+            Route::post('onboard/facilitator', [OnboardingController::class, 'facilitator']);
+            Route::post('onboard/students', [OnboardingController::class, 'students']);
+            Route::post('onboard/mentors', [OnboardingController::class, 'mentors']);
 
             Route::post('onboad/send-login-link', [OnboardingController::class, 'sendMagicLinkToStudents']);
+
+            // Create SOTU meeting
+            //Route::post('meetings/{sotu}', [MeetingController::class, 'createSotu']);
         });
 
         // Facilitator Routes
@@ -200,6 +210,8 @@ Route::prefix('v1')->group(function(){
             Route::post('mentors/{mentor}/mentees/{user}', [StudentMentorsController::class, 'assignMenteeToMentor']);
             // Remove mentee from mentor
             Route::delete('mentors/{mentor}/mentees/{user}', [StudentMentorsController::class, 'removeMenteeFromMentor']);
+            // Create a new meeting
+            Route::post('meetings', [MentorController::class, 'store']);
         });
 
         // Mentor Routes

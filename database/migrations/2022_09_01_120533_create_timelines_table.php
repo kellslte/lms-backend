@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('timelines', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->enum('status', ['done', 'undone'])->default('undone');
+            $table->boolean('done')->default(false);
             $table->date('start_date');
             $table->date('end_date');
             $table->timestamps();

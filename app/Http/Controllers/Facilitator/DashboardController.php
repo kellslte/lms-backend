@@ -19,8 +19,9 @@ class DashboardController extends Controller
             'completed_tasks' => TaskService::getTasksCompletedByStudents($user),
             'pending_tasks' => TaskService::getTasksSubmittedButNotYetApproved($user),
             'live_classes' => 21,
-            'schedule' => $user->schedule,
-            'enrolled_students' => $user->course->students,
+            'schedule' => json_decode($user->schedule->meetings, true),
+            'course' => $user->course->title,
+            'total_enrolled_students' => $user->course->students->count(),
         ];
 
         return response()->json([
