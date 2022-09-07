@@ -14,6 +14,10 @@ class LessonResource extends JsonResource
      */
     public function toArray($request)
     {
+        $percentage = collect(json_decode(getAuthenticatedUser()->progress->course_progress, true));
+
+        $lessonPercentage = $percentage->where("lesson_id", $this->id)->first();
+
         return [
             "id" => $this->id,
             "title" => $this->title,
@@ -22,7 +26,8 @@ class LessonResource extends JsonResource
             "thumbnail" => $this->media->thumbnail,
             "transcript" => null,
             "task" => $this->task,
-            "resources" => $this->resources
+            "resources" => $this->resources,
+            "percentage" => $lessonPercentage["percentage"]
         ];
     }
 }
