@@ -17,11 +17,21 @@ class TaskController extends Controller
             return $lesson->task;
         });
 
+        $pending = $user->pendingTasks();
+        $completed = $user->completedTasks();
+        $expired = $user->expiredTasks();
+       
+       $newPending =  $pending->filter(function($task) use ($completed){
+            $taskToRemove = $completed->where("id", $task->id)->first();
+
+            return $task !== $taskToRemove;
+        })->flatten();
+
         return response()->json([
             'status' => 'success',
             'data' => [
                 'completed_tasks' => $user->completedTasks(),
-                'pending_tasks' => $user->pendingTasks(),
+                'pending_tasks' => $newPending,
                 'expired_tasks' => $user->expiredTasks(),
                 'tasks' => $tasks,
             ]

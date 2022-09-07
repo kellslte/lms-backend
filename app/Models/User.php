@@ -117,11 +117,13 @@ class User extends Authenticatable
     }
 
     public function pendingTasks(){
-        $submittedTasks = collect($this->submissions->tasks, true);
+        $submittedTasks = collect(json_decode($this->submissions->tasks, true));
 
-        return collect($this->lessons())->except(function ($lesson) use ($submittedTasks) {
-            return $submittedTasks->where("id", $lesson->task->id);
-        })->map(fn($lesson)=> $lesson->task);
+        $tasks = collect($this->lessons())->map(fn($lesson)=> $lesson->task);
+
+        return $tasks->filter(function ($task) use ($submittedTasks) {
+            return !in_array($task->id, $submittedTasks->toArray());
+        });
     }
 
     public function expiredTasks(){

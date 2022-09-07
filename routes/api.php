@@ -16,15 +16,17 @@ use App\Http\Controllers\Auth\MagicLoginController;
 use App\Http\Controllers\Admin\OnboardingController;
 
 // Student Controllers
+use App\Http\Controllers\Student\ProgressController;
 use App\Http\Controllers\Student\LeaderboardController;
+use App\Http\Controllers\Facilitator\StudentMentorsController;
 use App\Http\Controllers\Student\TaskController as StudentTaskController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Mentor\ProfileController as MentorProfileController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Student\ProfileController as StudentProfileController;
-use App\Http\Controllers\Facilitator\TaskController as FacilitatorTaskController;
 
 // Facilitator Controllers
+use App\Http\Controllers\Student\ProfileController as StudentProfileController;
+use App\Http\Controllers\Facilitator\TaskController as FacilitatorTaskController;
 use App\Http\Controllers\Student\HelpdeskController as StudentHelpdeskController;
 use App\Http\Controllers\Student\ScheduleController as StudentScheduleController;
 use App\Http\Controllers\Student\ClassroomController as StudentClassroomController;
@@ -34,7 +36,6 @@ use App\Http\Controllers\Facilitator\ScheduleController as FacilitatorScheduleCo
 use App\Http\Controllers\Facilitator\ClassRoomController as FacilitatorClassRoomController;
 use App\Http\Controllers\Facilitator\DashboardController as FacilitatorDashboardController;
 use App\Http\Controllers\Facilitator\StudentPerformanceController as FacilitatorsStudentPerformanceControler;
-use App\Http\Controllers\Facilitator\StudentMentorsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -119,14 +120,14 @@ Route::prefix('v1')->group(function(){
             Route::post('profile', [StudentProfileController::class, 'storeSettings']);
             // Leaderboard
             Route::get('leaderboard', LeaderboardController::class);
-
             // Schedule
             Route::get('schedule', StudentScheduleController::class);
-
             // Classroom Routes
             Route::get('classroom', [StudentClassroomController::class, 'index']);
             // Get Student Lessons
             Route::get('classroom/lessons', [StudentClassroomController::class, 'getStudentLessons']);
+            // Get Classroom Progress
+            Route::get('classroom/progress', [ProgressController::class, 'getStudentProgress']);
             // Get Single Lesson from classroom
             Route::get('classroom/lessons/{lesson}', [StudentClassroomController::class, 'getLessons']);
             // Task Routes
