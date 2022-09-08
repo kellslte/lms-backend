@@ -37,7 +37,25 @@ class ScheduleController extends Controller
 
         $schedule["happening_this_month"] = $month[getMonth(today())]->take(4);
 
-        $schedule["sotu"] = $sotu;
+        $schedule["sotu"] = collect($sotu)->map(function($meeting){
+            return ($meeting->date < today()) ? [
+                "caption" => $meeting->captions,
+                "host" => $meeting->host_name,
+                "date" => $meeting->date,
+                "start_time" => $meeting->start_time,
+                "end_time" => $meeting->end_time,
+                "link" => $meeting->link,
+                "done" => true,
+            ]: [
+                "caption" => $meeting->captions,
+                "host" => $meeting->host_name,
+                "date" => $meeting->date,
+                "start_time" => $meeting->start_time,
+                "end_time" => $meeting->end_time,
+                "link" => $meeting->link,
+                "done" => false,
+            ];
+        });
         
         return response()->json([
             'status' => 'success',
