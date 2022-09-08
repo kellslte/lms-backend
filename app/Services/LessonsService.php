@@ -147,14 +147,18 @@ class LessonsService {
                 "description" => $lesson->description,
                 "published_date" => formatDate($lesson->updated_at),
                 "status" => "completed",
-                "media" => $lesson->media
+                "media" => $lesson->media,
+                "tutor" => $lesson->course->facilitator->name,
+                "percentage" => $lessonProgress["percentage"]
             ]: [
                 "id" => $lesson->id,
                 "title" => $lesson->title,
                 "description" => $lesson->description,
                 "published_date" => formatDate($lesson->updated_at),
                 "status" => "uncompleted",
-                "media" => $lesson->media
+                "media" => $lesson->media,
+                "tutor" => $lesson->course->facilitator->name,
+                "percentage" => $lessonProgress["percentage"]
             ];
         })->filter();
     }
