@@ -130,6 +130,7 @@ class LessonsService {
                 "published_date" => formatDate($lesson->updated_at),
                 "media" => $lesson->media,
                 "status" => $lesson->status,
+                "tutor" => $lesson->course->facilitator->name,
             ]: null;
         })->filter();
     }
