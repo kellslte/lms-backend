@@ -50,7 +50,7 @@ class LessonsTableSeeder extends Seeder
         
         $lesson->resources()->create([
             'title' => 'Design Cheatsheet',
-            'resource' => 'https://www.youtube.com/redirect?event=video_description&redir_token=QUFFLUhqa2tvZkpjM0Jla0lublo3dm9mRE5Tc3MwTXYwZ3xBQ3Jtc0tsQmphMEQ5aERGb2lvUWhuOHo4THhGcnBSLVBJaXZvT0s1WkZ1aGs3c2RSZGJhQ2FQQThWSVg0c3ZSU1BnN0p3X1dLcEtPUXVHRzRsWERDLWhrVW4yb0xjT0xTVFpYVDFKSHlRcURHaGRsZHVheTA2MA&q=https%3A%2F%2Fwww.skillshare.com%2Fprofile%2FShawn-Barry%2F1750071&v=mHb2-3dsuic'
+            'resource' => 'https://drive.google.com/file/d/1bxQqth8Lph3RQLnFr-1DrjziupM0v_RD/view?usp=sharing'
         ]);
 
         $lesson->views()->create([
@@ -59,7 +59,7 @@ class LessonsTableSeeder extends Seeder
 
         $lesson->media()->create([
             'video_link' => 'https://www.youtube.com/watch?v=3RbpQSFdP6A',
-            'thumbnail' => 'https://i.pinimg.com/736x/77/d8/cd/77d8cd166b2d9ba801211087f765c25d.jpg',
+            'thumbnail' => 'https://st2.depositphotos.com/1350793/8441/i/600/depositphotos_84416316-stock-photo-hand-pointing-to-online-course.jpg',
             'transcript' => 'https://drive.google.com/file/d/1bxQqth8Lph3RQLnFr-1DrjziupM0v_RD/view?usp=sharing',
             'youtube_video_id' => uniqid(),
         ]);
