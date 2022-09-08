@@ -1,12 +1,10 @@
 <?php
 namespace App\Services;
 
-use Carbon\Carbon;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Services\TaskService;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Requests\CreateLessonRequest;
 
 class LessonsService {
 
