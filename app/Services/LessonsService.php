@@ -119,8 +119,11 @@ class LessonsService {
     }
 
     public static function getUserCurriculum($user){
-        return collect(json_decode($user->curriculum->viewables))->map(function ($viweable) {
+        $progress = collect(json_decode($user->progress->course_progress, true));
+
+        return collect(json_decode($user->curriculum->viewables))->map(function ($viweable) use ($progress) {
             $lesson = Lesson::find($viweable->lesson_id);
+            $lessonProgress = $progress->where("lesson_id", $lesson->lesson_id)->first();
 
             return ($viweable->lesson_status === "uncompleted")? [
                 "title" => $lesson->title,
@@ -129,6 +132,7 @@ class LessonsService {
                 "media" => $lesson->media,
                 "status" => $lesson->status,
                 "tutor" => $lesson->course->facilitator->name,
+                "percentageWatched" => $lessonProgress["percentage"]
             ]: null;
         })->filter();
     }
