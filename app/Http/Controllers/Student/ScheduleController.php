@@ -17,9 +17,21 @@ class ScheduleController extends Controller
 
         $schedule = [];
 
-        $week = collect(json_decode($user->schedule->meetings, true))->groupBy(function($val){
+        $week = collect(json_decode($user->schedule->meetings, true))->map(function ($val) {
+            return [
+                "caption" => $val['caption'],
+                "host" => $val['host_name'],
+                "date" => $val['date'],
+                "start_time" => formatTime($val['start_time']),
+                "end_time" => formatTime($val['end_time']),
+                "link" => $val['link'],
+                "id" => $val['id'],
+            ];
+        })->groupBy(function($val){
             return Carbon::parse($val['date'])->format('W');
-        })->map(function ($val) {
+        });
+
+        $month = collect(json_decode($user->schedule->meetings, true))->map(function ($val) {
             return [
                 "caption" => $val['caption'],
                 "host" => $val['host_name'],
@@ -29,25 +41,11 @@ class ScheduleController extends Controller
                 "link" => $val['link'],
                 "id" => $val['id'],
             ];
-        });
-
-        $month = collect(json_decode($user->schedule->meetings, true))->groupBy(function($val){
+        })->groupBy(function($val){
             return Carbon::parse($val['date'])->format('M');
-        })->map(function ($val) {
-            return [
-                "caption" => $val['caption'],
-                "host" => $val['host_name'],
-                "date" => $val['date'],
-                "start_time" => formatTime($val['start_time']),
-                "end_time" => formatTime($val['end_time']),
-                "link" => $val['link'],
-                "id" => $val['id'],
-            ];
         });
 
-        $day = collect(json_decode($user->schedule->meetings, true))->groupBy(function($val){
-            return Carbon::parse($val['date'])->format('D');
-        })->map(function ($val) {
+        $day = collect(json_decode($user->schedule->meetings, true))->map(function ($val) {
             return [
                 "caption" => $val['caption'],
                 "host" => $val['host_name'],
@@ -57,6 +55,8 @@ class ScheduleController extends Controller
                 "link" => $val['link'],
                 "id" => $val['id'],
             ];
+        })->groupBy(function($val){
+            return Carbon::parse($val['date'])->format('D');
         });
 
         $schedule["happening_today"] = $day[getDay(today())]->reject(function($val){
