@@ -39,7 +39,7 @@ class ScheduleController extends Controller
 
         $schedule["sotu"] = collect($sotu)->map(function($meeting){
             return ($meeting->date < today()) ? [
-                "caption" => $meeting->captions,
+                "caption" => $meeting->caption,
                 "host" => $meeting->host_name,
                 "date" => $meeting->date,
                 "start_time" => $meeting->start_time,
@@ -47,7 +47,7 @@ class ScheduleController extends Controller
                 "link" => $meeting->link,
                 "done" => true,
             ]: [
-                "caption" => $meeting->captions,
+                "caption" => $meeting->caption,
                 "host" => $meeting->host_name,
                 "date" => $meeting->date,
                 "start_time" => $meeting->start_time,
