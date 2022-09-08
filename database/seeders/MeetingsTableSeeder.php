@@ -25,7 +25,7 @@ class MeetingsTableSeeder extends Seeder
 
             $data = [
                 "caption" => "General Onboarding",
-                "link" => url(Str::random()),
+                "link" => "https://meet.google.com/eus-igre-byi",
                 "start_time" => now(),
                 "end_time" => now()->addMinutes(45),
             ];
