@@ -123,7 +123,7 @@ class LessonsService {
 
         return collect(json_decode($user->curriculum->viewables))->map(function ($viweable) use ($progress) {
             $lesson = Lesson::find($viweable->lesson_id);
-            $lessonProgress = $progress->where("lesson_id", $lesson->lesson_id)->first();
+            $lessonProgress = $progress->where("lesson_id", $viweable->lesson_id)->first();
 
             return ($viweable->lesson_status === "uncompleted")? [
                 "title" => $lesson->title,
