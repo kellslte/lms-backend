@@ -9,6 +9,14 @@ class Point extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        "total",
+        "attendance_points",
+        "bonus_points",
+        "task_points",
+        "history"
+    ];
+
     public function getHistory(){
         return $this->history;
     }

@@ -121,13 +121,15 @@ class User extends Authenticatable
 
         $tasks = collect($this->lessons())->map(fn($lesson)=> $lesson->task);
 
-        return $tasks->filter(function ($task) use ($submittedTasks) {
-            return !in_array($task->id, $submittedTasks->toArray());
+        return $tasks->reject(function ($task) use ($submittedTasks) {
+            return $submittedTasks->where('task_id', $task->id);
         });
     }
 
     public function expiredTasks(){
        $lessons = $this->course->lessons;
+
+       $lessons->load('tasks');
         
        return collect($lessons)->map(function($lesson){
             return $lesson->task;

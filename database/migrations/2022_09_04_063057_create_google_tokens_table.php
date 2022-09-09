@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('google_tokens', function (Blueprint $table) {
             $table->id();
-            $table->text("token");
+            $table->string("token")->unique();
             $table->timestamps();
         });
     }

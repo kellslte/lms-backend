@@ -71,4 +71,19 @@ class ClassroomController extends Controller
     public function getSotu(){
         return collect(json_decode(getAuthenticatedUser()->schedule->meetings, true));
     }
+
+    public function incrementViewCount($lesson){
+        if($studentLesson = Lesson::find($lesson)){
+            $count = $studentLesson->views->count;
+
+            $studentLesson->views->update([
+                "count" => $count + 1,
+            ]);
+
+            return response()->json([
+                "status" => "success",
+                "messaged" => "View count updated successfully",
+            ]);
+        }
+    }
 }

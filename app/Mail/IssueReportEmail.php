@@ -17,10 +17,7 @@ class IssueReportEmail extends Mailable
      *
      * @return void
      */
-    public function __construct(public Report $report)
-    {
-        //
-    }
+    public function __construct(public Report $report){}
 
     /**
      * Build the message.

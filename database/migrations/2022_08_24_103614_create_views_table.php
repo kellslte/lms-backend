@@ -17,7 +17,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->uuid('viewable_id');
             $table->string('viewable_type');
-            $table->json('views');
+            $table->unsignedBiginteger('count')->default(0);
             $table->timestamps();
         });
     }

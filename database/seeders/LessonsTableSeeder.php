@@ -53,9 +53,7 @@ class LessonsTableSeeder extends Seeder
             'resource' => 'https://drive.google.com/file/d/1bxQqth8Lph3RQLnFr-1DrjziupM0v_RD/view?usp=sharing'
         ]);
 
-        $lesson->views()->create([
-            "views" => json_encode([])
-        ]);
+        $lesson->views()->create();
 
         $lesson->media()->create([
             'video_link' => 'https://www.youtube.com/watch?v=3RbpQSFdP6A',

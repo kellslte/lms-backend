@@ -88,6 +88,10 @@ class Facilitator extends Authenticatable
         return $this->belongsTo(Course::class);
     }
 
+    public function lessons(){
+        return $this->course->lessons;
+    }
+
     public function schedule()
     {
         return $this->morphOne(Schedule::class, 'schedulable');

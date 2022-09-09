@@ -52,3 +52,14 @@ Route::get('token', function(){
     dd($client->listVideos("r_l2SgphnOI"));
 });
 
+Route::get('playlist', function(Request $request){
+    $playlistId = Http::post("localhost:8000/api/playlist", [
+        "title" => "Product Design"
+    ]);
+
+    dd($playlistId);
+});
+
+Route::get('token', fn()=> response()->json([
+    "token" => Cache::get('access_token')
+]));

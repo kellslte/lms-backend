@@ -6,19 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class AttendanceService {
 
-    public static function mark(Array $data, $user){
-        $record = json_decode($user->attendance->record, true);
+    public static function mark($user){
+        $records = collect(json_decode($user->attendance->record, true));
 
-        $dateAttended = [
-            "meetingId" => $data["meetingId"],
-            "date" => $data["date"],
+        $month = today()->format('M')."/".today()->format('Y');
+
+        $date = today()->format('j')."/".$month;
+        
+        $records[] = [
+            "day" => $date,
             "present" => true,
         ];
 
-        array_push($record, $dateAttended);
-
-        return $user->attendance->update([
-            "record" => $record,
+        return $user->attendance->update([ 
+            "record" => json_encode($records),
         ]);
     }
 

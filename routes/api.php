@@ -5,39 +5,42 @@ use Illuminate\Http\Request;
 use App\Services\YoutubeService;
 
 // Authentication and Authorization Controllers
+use App\Services\AttendanceService;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Controllers\Auth\LoginController;
 
 // Super Admin Controllers
+use App\Http\Controllers\TimelineController;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\KnowledgebaseController;
-use App\Http\Controllers\Auth\MagicLoginController;
-use App\Http\Controllers\Admin\OnboardingController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 
 // Student Controllers
+use App\Http\Controllers\Auth\MagicLoginController;
+use App\Http\Controllers\Admin\OnboardingController;
 use App\Http\Controllers\Student\ProgressController;
 use App\Http\Controllers\Student\LeaderboardController;
 use App\Http\Controllers\Facilitator\StudentMentorsController;
 use App\Http\Controllers\Student\TaskController as StudentTaskController;
-use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
-use App\Http\Controllers\Mentor\ProfileController as MentorProfileController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-
-// Facilitator Controllers
 use App\Http\Controllers\Student\ProfileController as StudentProfileController;
-use App\Http\Controllers\Facilitator\TaskController as FacilitatorTaskController;
-use App\Http\Controllers\Student\HelpdeskController as StudentHelpdeskController;
 use App\Http\Controllers\Student\ScheduleController as StudentScheduleController;
+use App\Http\Controllers\Student\HelpdeskController as StudentHelpdeskController;
 use App\Http\Controllers\Student\ClassroomController as StudentClassroomController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
+
+// Facilitator Controllers
+use App\Http\Controllers\Facilitator\PointController;
+use App\Http\Controllers\Facilitator\TaskController as FacilitatorTaskController;
 use App\Http\Controllers\Facilitator\ProfileController as FacilitatorProfileController;
 use App\Http\Controllers\Facilitator\ScheduleController as FacilitatorScheduleController;
 use App\Http\Controllers\Facilitator\ClassRoomController as FacilitatorClassRoomController;
 use App\Http\Controllers\Facilitator\DashboardController as FacilitatorDashboardController;
 use App\Http\Controllers\Facilitator\StudentPerformanceController as FacilitatorsStudentPerformanceControler;
-use App\Http\Controllers\TimelineController;
 
+// Mentor Controllers
+use App\Http\Controllers\Mentor\ProfileController as MentorProfileController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -50,10 +53,20 @@ use App\Http\Controllers\TimelineController;
 */
 
 Route::post('videos', function (Request $request) {
-    $client = new YoutubeService();
-
-    return $client->uploadVideo($request);
+    //return (new YoutubeService)->uploadVideo($request);
 });
+
+Route::post('playlist', function(Request $request){
+    return (new YoutubeService)->createPlaylist($request->title);
+});
+
+Route::get('analytics', function(){
+    return (new YoutubeService)->getVideosViews();
+});
+
+Route::get('days', fn()=> response()->json([
+    "record" => AttendanceService::mark(User::first()) 
+]));
 
 // Route::post('transcript', function(Request $request){
 //     $file = $request->file("lessonTranscript");
@@ -135,6 +148,8 @@ Route::prefix('v1')->group(function(){
             Route::put('classroom/progress/{lesson}', [ProgressController::class, 'incrementStudentProgress']);
             // Get Single Lesson from classroom
             Route::get('classroom/lessons/{lesson}', [StudentClassroomController::class, 'getLesson']);
+            // Increment View Count for a partitcular lesson
+            Route::put('classroom/lessons/{lesson}/views', [StudentClassroomController::class, 'incrementViewCount']);
             // Mark attendance for a meeting
             Route::put('classroom/meeting/{meeting}/student/{userId}', [StudentClassroomController::class, 'markAttendance']);
             // State of the union meeting routes
@@ -147,8 +162,6 @@ Route::prefix('v1')->group(function(){
             Route::get('helpdesk', [StudentHelpdeskController::class, 'index']);
             // Report a problem
             Route::post('issues/report', [StudentHelpdeskController::class, 'report']);
-            // Award points to the user
-            //Route::put('points/')
         });
 
         // Admin Routes
@@ -214,6 +227,8 @@ Route::prefix('v1')->group(function(){
             Route::delete('mentors/{mentor}/mentees/{user}', [StudentMentorsController::class, 'removeMenteeFromMentor']);
             // Create a new meeting
             Route::post('meetings', [MentorController::class, 'store']);
+            // Award points to the user
+            Route::post("points/{user}", [PointController::class, 'awardPoints']);
         });
 
         // Mentor Routes

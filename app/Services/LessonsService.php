@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Storage;
 class LessonsService {
 
     public static function getAllLessons($user){
-
         return collect($user->course->lessons)->map(function($lesson){
             return [
                 "id" => $lesson->id,
@@ -174,5 +173,34 @@ class LessonsService {
 
         // delete lesson from database
         return  $lesson->delete();
+    }
+
+    public function lessonViews($user){
+        $lessons = $user->course->lessons->orderDesc()->take(2);       
+    }
+
+    // Facilitator Methods
+    public static function myLessons(){
+        // array should look like this:
+        /* 
+        [
+            {
+                "id": 1,
+                "title": "Lesson",
+                "description": "Lesson",
+                "thumbnail" => "lesson.jpg",
+                "published_date": "2020-01-01",
+                "tutor" => "Prince Chijioke",
+                "views" => 1203,
+                "taskSubmissions" => 504
+            }
+        ]
+        */
+
+        $lessons = getAuthenticatedUser()->lessons();
+        $lessons->load('task');
+
+        $myLessons = collect($lessons)->sortBy('updated_at');
+        
     }
 }

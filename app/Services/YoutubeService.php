@@ -2,13 +2,22 @@
 namespace App\Services;
 
 use Google\Client;
+use App\Models\Course;
 use App\Models\GoogleToken;
+use Google\Service\YouTube;
 use Illuminate\Http\Request;
 use Google\Http\MediaFileUpload;
 use Google\Service\YouTube\Video;
+use Google\Service\YouTube\Playlist;
 use Illuminate\Support\Facades\Cache;
 use Google\Service\YouTube\VideoStatus;
+use Google\Service\YouTube\PlaylistItem;
 use Google\Service\YouTube\VideoSnippet;
+use Google\Service\YouTube\PlaylistStatus;
+use Google\Service\YouTube\PlaylistSnippet;
+use Google\Service\AnalyticsReporting\Report;
+use Google\Service\YouTube\PlaylistItemSnippet;
+use Google\Service\AnalyticsReporting\ReportData;
 
 class YoutubeService {
     protected $client;
@@ -16,7 +25,11 @@ class YoutubeService {
     protected $scope = [
         'https://www.googleapis.com/auth/youtube',
         'https://www.googleapis.com/auth/youtube.upload',
-        'https://www.googleapis.com/auth/youtube.readonly'
+        'https://www.googleapis.com/auth/youtube.readonly',
+        'https://www.googleapis.com/auth/youtube.force-ssl',
+        'https://www.googleapis.com/auth/youtubepartner',
+        'https://www.googleapis.com/auth/yt-analytics.readonly'
+
     ];
 
     protected $service;
@@ -37,7 +50,8 @@ class YoutubeService {
 
         $this->client->setAccessType("offline");
 
-        $this->service = new \Google_Service_YouTube($this->client);
+        $this->service = new YouTube($this->client);
+        $this->analytics = new 
     }
     
     public function getGoogleAuth(){
@@ -78,10 +92,12 @@ class YoutubeService {
         // TODO store access token in cache
         Cache::put("access_token", $collection["access_token"], 1800);
 
-        // TODO store refresh token in database
-        GoogleToken::create([
-            "token" => $collection['refresh_token'],
-        ]);
+        // check if token exists in database
+        if(!$token = GoogleToken::where("token", $collection['refresh_token'])->first()){
+            GoogleToken::create([
+                "token" => $collection['refresh_token'],
+            ]);
+        }
 
         return Cache::get("access_token");
     }
@@ -98,7 +114,7 @@ class YoutubeService {
         return substr(explode(" ", $response->items[0]['player']['embedHtml'])[3], 7);
     }
 
-    public function uploadVideo(Request $request){
+    private function uploadVideo(Request $request){
         $this->refreshToken();
 
         try{
@@ -155,9 +171,9 @@ class YoutubeService {
                 "thumbnail" => $thumbnail,
             ];
 
-         }  catch (\Google_Service_Exception $e) {
+         }  catch (\Google\Service\Exception $e) {
             throw new \Exception($e->getMessage());
-        } catch (\Google_Exception $e) {
+        } catch (\Google\Exception $e) {
             throw new \Exception($e->getMessage());
         }
     }
@@ -237,5 +253,83 @@ class YoutubeService {
         } catch (\Google_Exception $e) {
             throw new \Exception($e->getMessage());
         }       
+    }
+
+    public function createPlaylist($title){
+        $this->refreshToken();
+
+        $path = "id,snippet,status";
+
+        $snippet = new PlaylistSnippet();
+        
+        $snippet->setTitle($title);
+        $track = strtolower($title);
+        $snippet->setDescription("A collection of the videos for the {$track} track on the ADA LMS");
+
+        $status = new PlaylistStatus();
+        $status->setPrivacyStatus("unlisted");
+
+        $playlist = new Playlist();
+        $playlist->setStatus($status);
+        $playlist->setSnippet($snippet);
+
+        $response = $this->service->playlists->insert($path, $playlist);
+
+        return response()->json([
+            "playlistId" => $response["id"]
+        ]);
+    }
+
+    public function uploadVideoToPlaylist(Request $request){
+        $this->refreshToken();
+
+        $request->validate([
+            "courseTitle" => 'required|string',
+            "title" => 'required|string',
+            'description' => 'required|string',
+            'tags' => 'required|string',
+            'video' => 'required|file',
+            'thumbnail' => 'required|string'
+        ]);
+
+        // upload vide and get video id
+        $videoDetails = $this->uploadVideo($request);
+
+        // setup params for playlist 
+        $course = Course::whereTitle($request->courseTitle)->first();
+        $playlistId = $course->playlistId;
+
+        $parts = "id,snippet";
+        $snippet = new PlaylistItemSnippet();
+        $snippet->setPlaylistId($playlistId);
+        $snippet->setResourceId($videoDetails["videoId"]); 
+        $item = new PlaylistItem();
+        $item->setSnippet($snippet);
+
+        $response = $this->service->playlistItem->insert($parts, $item);
+
+        return response()->json([
+            "response" => $response
+        ]);
+    }
+
+    public function getVideosViews(){
+        $this->refreshToken();
+
+        $reportData = new ReportData([
+            "endDate" => today()->addWeek()->format("Y-m-d"),
+            "startDate" => today()->format("Y-m-d"),
+            "ids" => "channel==UCtaa9WH19QmP2sIkqQXXDgw",
+            "metrics" => "views"
+        ]);
+        $report = new Report();
+
+        $report->setData($reportData);;
+
+        $response = $this->service->analytics->list($report);
+
+        return response()->json([
+            "response" => $response
+        ]);
     }
 }

@@ -115,7 +115,7 @@ class TestUserTableSeeder extends Seeder
         ]);
 
         $student->attendance()->create([
-            "record" => json_encode([])
+            "record" => json_encode([]),
         ]);
     }
 

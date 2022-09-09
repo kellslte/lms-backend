@@ -41,7 +41,7 @@ class HelpdeskController extends Controller
             'details' => 'required|string',
         ]);
 
-        $admins = Admin::all();
+        //$admins = Admin::all();
 
         // create report 
         $report = $user->reports()->create([
