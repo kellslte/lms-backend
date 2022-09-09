@@ -147,6 +147,8 @@ Route::prefix('v1')->group(function(){
             Route::get('helpdesk', [StudentHelpdeskController::class, 'index']);
             // Report a problem
             Route::post('issues/report', [StudentHelpdeskController::class, 'report']);
+            // Award points to the user
+            //Route::put('points/')
         });
 
         // Admin Routes
