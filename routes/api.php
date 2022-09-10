@@ -110,7 +110,7 @@ Route::prefix('v1')->group(function(){
             // system wide notifications
             Route::get("notifications", [NotificationsController::class, 'index']);
             // Mark notification as read
-            Route::get("notifications/{notificaition}/read", [NotificationsController::class, 'markAsRead']);
+            Route::put("notifications/{notificaition}/read", [NotificationsController::class, 'markAsRead']);
 
             // knowledgebase resource
             Route::get('knowledgebase/resources', KnowledgebaseController::class);

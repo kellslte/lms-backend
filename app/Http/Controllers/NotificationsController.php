@@ -44,6 +44,9 @@ class NotificationsController extends Controller
             ]);
         }
 
-               
+        return response()->json([
+            "success" => false,
+            "message" => "You have not read this notification yet"
+        ]);
     }
 }

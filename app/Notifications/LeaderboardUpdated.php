@@ -41,9 +41,10 @@ class LeaderboardUpdated extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+                    ->subject('Leaderboard Updated!')
+                    ->greeting('Hello,')
+                    ->line('Your leaderboard has been updated! Go to your dashboadr and check it out')
+                    ->line('Happy learning!');
     }
 
     /**
