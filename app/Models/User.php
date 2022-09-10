@@ -35,6 +35,7 @@ class User extends Authenticatable
         'access_to_laptop',
         'current_education_level',
         'phonenumber',
+        'notification_preference',
     ];
 
     /**

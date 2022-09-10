@@ -41,6 +41,8 @@ use App\Http\Controllers\Facilitator\StudentPerformanceController as Facilitator
 
 // Mentor Controllers
 use App\Http\Controllers\Mentor\ProfileController as MentorProfileController;
+use App\Http\Controllers\NotificationsController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -106,14 +108,9 @@ Route::prefix('v1')->group(function(){
 
         Route::prefix('auth')->group(function(){
             // system wide notifications
-            Route::get("notifications", function() {
-                return response()->json([
-                    'success' => true,
-                    'data' => [
-                        "notifications" => getAuthenticatedUser()->notifications,
-                    ]
-                ]);
-            });
+            Route::get("notifications", [NotificationsController::class, 'index']);
+            // Mark notification as read
+            Route::get("notifications/{notificaition}/read", [NotificationsController::class, 'markAsRead']);
 
             // knowledgebase resource
             Route::get('knowledgebase/resources', KnowledgebaseController::class);

@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Events\LeaderboardUpdated;
+use App\Listeners\UpdateStudentsOnLeaderboardUpdate;
 use App\Models\Point;
 use App\Observers\PointObserver;
 use Illuminate\Support\Facades\Event;
@@ -20,8 +22,9 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
-
-       
+        LeaderboardUpdated::class => [
+            UpdateStudentsOnLeaderboardUpdate::class,
+        ]
     ];
 
     /**

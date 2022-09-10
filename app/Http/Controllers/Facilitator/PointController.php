@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Facilitator;
 
+use App\Events\LeaderboardUpdated;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\PointService;
@@ -21,13 +22,17 @@ class PointController extends Controller
 
         $data["key"] = "bonus_points";
 
+
+
         if($course->students->contains($user)){
             if (!$response = PointService::awardPoints($user, $data)) {
                 return response()->json([
                     "status" => "error",
                     "message" => "Points could not be awarded to this user",
-                ]);
+                ], 400);
             }
+
+            LeaderboardUpdated::dispatch($course->students);
 
             return response()->json([
                 "status" => "success",
