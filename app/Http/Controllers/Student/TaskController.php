@@ -14,19 +14,17 @@ class TaskController extends Controller
         $user = getAuthenticatedUser();
 
         $tasks = collect($user->course->lessons)->map(function($lesson){
-            return $lesson->task;
+            return [
+                "id" => $lesson->task->id,
+                "title" => $lesson->task->title,
+                "status" => $lesson->task->status,
+                "description" => $lesson->task->description,
+                "task_deadline_date" => formatDate($lesson->task->task_deadline_date),
+                "task_deadline_time" => formatTime($lesson->task->task_deadline_time)
+            ];
         })->reject(function($task){
             return $task->status === "expired";
         })->flatten();
-
-        $pending = $user->pendingTasks();
-        $completed = $user->completedTasks();
-       
-    //    $newPending =  $pending->filter(function($task) use ($completed){
-    //         $taskToRemove = $completed->where("id", $task->id)->first();
-
-    //         return $task !== $taskToRemove;
-    //     })->flatten();
 
         return response()->json([
             'status' => 'success',
