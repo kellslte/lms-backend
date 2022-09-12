@@ -121,9 +121,9 @@ class User extends Authenticatable
                 "status" => $task["status"],
                 "description" => $task["description"],
                 "date_submitted" => formatDate($task["date_submitted"]),
-                "linkToResource" => $task["linkToResource"]
+                "linkToResource" => formatTime($task["linkToResource"])
             ];
-        })->toArray();
+        });
     }
 
     public function pendingTasks(){
@@ -135,16 +135,7 @@ class User extends Authenticatable
             return $submittedTasks->where('id', $task->id)->first();
         })->filter(function ($task) {
             return $task->status !== 'expired';
-        })->map(function($task){
-            return [
-                "id" => $task->id,
-                "title" => $task->title,
-                "status" => $task->status,
-                "description" => $task->description,
-                "task_deadline_date" => formatDate($task->task_deadline_date),
-                "task_deadline_time" => formatTime($task->task_deadline_time)
-            ];
-        })->toArray();
+        })->flatten();
     }
 
     public function expiredTasks(){
@@ -154,16 +145,7 @@ class User extends Authenticatable
         
        return collect($lessons)->filter(function($lesson){
         return $lesson->status == 'expired';
-       })->map(function($lesson){
-            return [
-                "id" => $lesson->task->id,
-                "title" => $lesson->task->title,
-                "status" => $lesson->task->status,
-                "description" => $lesson->task->description,
-                "task_deadline_date" => formatDate($lesson->task->task_deadline_date),
-                "task_deadline_time" => formatTime($lesson->task->task_deadline_time)
-            ];
-       })->toArray();  
+       })->flatten();  
     }
 
     public function lessons()
