@@ -121,7 +121,7 @@ class User extends Authenticatable
                 "status" => $task["status"],
                 "description" => $task["description"],
                 "date_submitted" => formatDate($task["date_submitted"]),
-                "linkToResource" => formatTime($task["linkToResource"])
+                "linkToResource" => $task["linkToResource"]
             ];
         });
     }
