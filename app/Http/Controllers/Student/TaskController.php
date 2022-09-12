@@ -23,8 +23,8 @@ class TaskController extends Controller
                 "task_deadline_time" => formatTime($lesson->task->task_deadline_time)
             ];
         })->reject(function($task){
-            return $task->status === "expired";
-        })->flatten();
+            return $task["status"] === "expired";
+        });
 
         return response()->json([
             'status' => 'success',

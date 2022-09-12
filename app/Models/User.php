@@ -114,6 +114,15 @@ class User extends Authenticatable
 
         return collect($tasks)->reject(function($task){
             return $task["status"] !== "submitted";
+        })->map(function($task){
+            return [
+                "id" => $task["id"],
+                "title" => $task["title"],
+                "status" => $task["status"],
+                "description" => $task["description"],
+                "date_submitted" => formatDate($task["date_submitted"]),
+                "linkToResource" => $task["linkToResource"]
+            ];
         });
     }
 
@@ -135,7 +144,7 @@ class User extends Authenticatable
                 "task_deadline_date" => formatDate($task->task_deadline_date),
                 "task_deadline_time" => formatTime($task->task_deadline_time)
             ];
-        })->flatten();
+        });
     }
 
     public function expiredTasks(){
@@ -154,7 +163,7 @@ class User extends Authenticatable
                 "task_deadline_date" => formatDate($lesson->task->task_deadline_date),
                 "task_deadline_time" => formatTime($lesson->task->task_deadline_time)
             ];
-       })->flatten();  
+       });  
     }
 
     public function lessons()
