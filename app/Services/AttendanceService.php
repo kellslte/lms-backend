@@ -21,10 +21,10 @@ class AttendanceService {
 
         $record["present"] = true;
 
-        return $newRecord->merge([$record]);
+        $newRecord->merge([$record]);
 
         $user->attendance->update([ 
-            "record" => json_encode($records),
+            "record" => json_encode($newRecord),
         ]);
     }
 
