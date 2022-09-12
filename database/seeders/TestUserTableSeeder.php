@@ -114,8 +114,10 @@ class TestUserTableSeeder extends Seeder
             "course_progress" => json_encode($courseProgress),
         ]);
 
+        $record = getDaysInMonth(7);
+
         $student->attendance()->create([
-            "record" => json_encode([]),
+            "record" => json_encode($record),
         ]);
     }
 
