@@ -112,14 +112,21 @@ class User extends Authenticatable
     public function completedTasks(){
         $tasks  = json_decode($this->submissions->tasks, true);
 
+        $taskInDb = Task::all();
+
         return collect($tasks)->reject(function($task){
             return $task["status"] !== "submitted";
-        })->map(function($task){
+        })->map(function($task) use ($taskInDb){
+
+            $tasks = $taskInDb->where("id", $task["id"])->first();
+
             return [
                 "id" => $task["id"],
                 "title" => $task["title"],
                 "status" => $task["status"],
                 "description" => $task["description"],
+                "task_deadline_date" => formatDate($tasks->task_deadline_date),
+                "task_deadline_time" => formatTime($tasks->task_deadline_time),
                 "date_submitted" => formatDate($task["date_submitted"]),
                 "linkToResource" => $task["linkToResource"]
             ];
