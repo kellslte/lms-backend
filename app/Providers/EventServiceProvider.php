@@ -3,10 +3,15 @@
 namespace App\Providers;
 
 use App\Events\LeaderboardUpdated;
+use App\Events\LessonCreated;
+use App\Events\TaskSubmitted;
+use App\Listeners\NotifyFacilitatorAboutSubmission;
+use App\Listeners\NotifyStudentsAboutTaskGrade;
+use App\Listeners\NotifyStudentsOfLessonCreation;
 use App\Listeners\UpdateStudentsOnLeaderboardUpdate;
 use App\Models\Point;
+use App\Notifications\NotifyStudentsOnTaskCreation;
 use App\Observers\PointObserver;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -24,7 +29,19 @@ class EventServiceProvider extends ServiceProvider
         ],
         LeaderboardUpdated::class => [
             UpdateStudentsOnLeaderboardUpdate::class,
-        ]
+        ],
+        TaskCreated::class => [
+            NotifyStudentsOnTaskCreation::class,
+        ],
+        TaskGraded::class => [
+            NotifyStudentsAboutTaskGrade::class,
+        ],
+        TaskSubmitted::class => [
+            NotifyFacilitatorAboutSubmission::class,
+        ],
+        LessonCreated::class => [
+            NotifyStudentsOfLessonCreation::class,
+        ],
     ];
 
     /**

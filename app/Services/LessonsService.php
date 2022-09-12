@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Models\Course;
 use App\Models\Lesson;
+use App\Events\LessonCreated;
 use App\Services\TaskService;
 use Illuminate\Support\Facades\Storage;
 
@@ -53,7 +54,7 @@ class LessonsService {
         $tanscriptUrl = $request->file("lessonTranscript")->store("/" . $user->id, "public");
 
         // TODO: send notification that a new lesson has been uploaded
-
+        LessonCreated::dispatch($course->students);
 
         // use returned video details to create video resource
         $lesson->media()->create([
@@ -62,6 +63,17 @@ class LessonsService {
             "transcript" => Storage::url($tanscriptUrl),
             "youtube_video_id" => $youtubeVideoDetails["videoId"],
         ]);
+
+        /* 
+        resource array will look like this
+        [
+            "title" => "Youtube Video",
+            "resource => "https://linktoresource.com/resource",
+            "type" => "video",
+         ]
+        */
+
+        $lesson->resources()->create($request->resources);
 
         return response()->json([
             "status" => "success",

@@ -14,6 +14,7 @@ class ProfileController extends Controller
             'status' => 'success',
             'data' => [
                 'profile' => $user,
+                'track' => $user->course->title,
                 'settings' => $user->settings
             ]
         ]);

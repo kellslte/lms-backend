@@ -109,11 +109,14 @@ class LoginController extends Controller
                 'message' => 'Email or password incorrect',
             ], 400);
 
+            $course = $facilitator->course;
+
             return response()->json([
                     'status' => 'success',
                     'token' => $token->plainTextToken,
                     'data' => [
                         'user' => $facilitator,
+                        'track' => $course->title,
                         'role' => 'facilitator'
                     ],
                 ]);

@@ -45,7 +45,7 @@ class TaskController extends Controller
                 'task_deadline_time' => $request ->taskDeadlineTime,
             ]);
 
-            TaskCreated::dispatch($task);
+            TaskCreated::dispatch($course->users);
 
             return response()->json([
                 'status' => 'success',

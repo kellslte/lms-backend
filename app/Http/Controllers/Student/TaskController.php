@@ -15,23 +15,24 @@ class TaskController extends Controller
 
         $tasks = collect($user->course->lessons)->map(function($lesson){
             return $lesson->task;
-        });
+        })->reject(function($task){
+            return $task->status === "expired";
+        })->flatten();
 
         $pending = $user->pendingTasks();
         $completed = $user->completedTasks();
-        $expired = $user->expiredTasks();
        
-       $newPending =  $pending->filter(function($task) use ($completed){
-            $taskToRemove = $completed->where("id", $task->id)->first();
+    //    $newPending =  $pending->filter(function($task) use ($completed){
+    //         $taskToRemove = $completed->where("id", $task->id)->first();
 
-            return $task !== $taskToRemove;
-        })->flatten();
+    //         return $task !== $taskToRemove;
+    //     })->flatten();
 
         return response()->json([
             'status' => 'success',
             'data' => [
                 'completed_tasks' => $user->completedTasks(),
-                'pending_tasks' => $newPending,
+                'pending_tasks' => $user->pendingTasks(),
                 'expired_tasks' => $user->expiredTasks(),
                 'tasks' => $tasks,
             ]

@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Notification;
 
 class NotificationsController extends Controller
 {
@@ -33,8 +32,9 @@ class NotificationsController extends Controller
     }
 
     public function markAsRead($notification){
-        if($notification  = Notification::find($notification)){
-            getAuthenticatedUser()->notifications->where($notification)->first()->update([
+
+        if($notification = getAuthenticatedUser()->notifications->where("id", $notification)->first()){
+            $notification->update([
                 "read_at" => now(),
             ]);
 
