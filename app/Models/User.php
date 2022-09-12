@@ -123,7 +123,7 @@ class User extends Authenticatable
                 "date_submitted" => formatDate($task["date_submitted"]),
                 "linkToResource" => $task["linkToResource"]
             ];
-        });
+        })->toArray();
     }
 
     public function pendingTasks(){
@@ -144,7 +144,7 @@ class User extends Authenticatable
                 "task_deadline_date" => formatDate($task->task_deadline_date),
                 "task_deadline_time" => formatTime($task->task_deadline_time)
             ];
-        });
+        })->toArray();
     }
 
     public function expiredTasks(){
@@ -163,7 +163,7 @@ class User extends Authenticatable
                 "task_deadline_date" => formatDate($lesson->task->task_deadline_date),
                 "task_deadline_time" => formatTime($lesson->task->task_deadline_time)
             ];
-       });  
+       })->toArray();  
     }
 
     public function lessons()
