@@ -94,23 +94,27 @@ function createEvent(array $details)
     return (new EventService)->createEvent($details);
 }
 
-function getDaysInMonth(Int $monthIn = null, Int $years = null, Int $monthToAdd = 0)
-{
-    $month = $monthIn ?? today()->format('j');
-    $year = $years ?? today()->format('Y');
-
-    $days = cal_days_in_month(CAL_GREGORIAN, $month, $year);
-
+function getDaysInMonth(Int $monthToAdd = 0)
+{   
     $dates = [];
-
-    $monthToShow = today()->addMonths($monthToAdd);
-    $yearToShow = today()->addMonths($monthToAdd)->format('Y');
+    $record = [];
     
-    for ($i = 1; $i <= $days; $i++) {
-        $dates[] = [
-            "present" => false,
-            "day" => ordinal($i)." " . $monthToShow->format('M') . "_" . $yearToShow
-        ];
+    for($w = 0; $w <= $monthToAdd; $w++){
+        $month = today()->addMonths($w)->format('j');
+        $year = today()->addMonths($w)->format('Y');
+        $monthToShow = today()->addMonths($w);
+        $yearToShow = today()->addMonths($w)->format('Y');
+        $days = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+
+        for ($i = 1; $i <= $days; $i++) {
+            $dates[] = [
+                "present" => false,
+                "day" => ordinal($i) . " " . $monthToShow->format('M') . "_" . $yearToShow
+            ];
+        }
+
+        array_push($record, $dates);
     }
-    return $dates;
+
+    return $record[7];
 }

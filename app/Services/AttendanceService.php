@@ -9,20 +9,23 @@ class AttendanceService {
     public static function mark($user){
         $records = collect(json_decode($user->attendance->record, true));
 
-        $month = today()->format('M')."/".today()->format('Y');
+        $month = today()->format('M')."_".today()->format('Y');
 
-        $date = today()->format('j')."/".$month;
+        $date = ordinal(today()->format('j'))." ".$month;
+
+        $record = $records->where("day", $date)->first();
         
-        $records[] = [
-            "day" => $date,
-            "present" => true,
-        ];
+        $newRecord = $records->reject(function($oldrecord) use ($record){
+            return $oldrecord['day'] == $record['day'];
+        });
+
+        $record["present"] = true;
+
+        return $newRecord->merge([$record]);
 
         $user->attendance->update([ 
             "record" => json_encode($records),
         ]);
-
-        
     }
 
     public static function getRecord($user){
