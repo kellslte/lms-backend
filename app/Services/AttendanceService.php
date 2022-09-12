@@ -5,7 +5,6 @@ use App\Models\Attendance;
 use Illuminate\Database\Eloquent\Model;
 
 class AttendanceService {
-
     public static function mark($user){
         $records = collect(json_decode($user->attendance->record, true));
 
@@ -19,7 +18,7 @@ class AttendanceService {
             return $oldrecord['day'] == $record['day'];
         });
 
-        $record["present"] = true;
+        $record["present"] = true;  
 
         $newRecord->merge([$record]);
 
@@ -29,6 +28,6 @@ class AttendanceService {
     }
 
     public static function getRecord($user){
-        return json_decode($user->attendance->record, true);
+        return collect(json_decode($user->attendance->record, true))->flatten();
     }
 }
