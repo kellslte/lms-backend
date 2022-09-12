@@ -24,7 +24,7 @@ class TaskController extends Controller
             ];
         })->reject(function($task){
             return $task["status"] === "expired";
-        })->flatten();
+        });
 
         return response()->json([
             'status' => 'success',

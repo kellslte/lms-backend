@@ -64,14 +64,56 @@ class LessonsService {
             "youtube_video_id" => $youtubeVideoDetails["videoId"],
         ]);
 
-        /* 
-        resource array will look like this
-        [
-            "title" => "Youtube Video",
-            "resource => "https://linktoresource.com/resource",
-            "type" => "video",
-         ]
-        */
+        $resources = $request->resources;
+
+        foreach($resources as $resource){
+            $lesson->resources()->create($resource);
+        }
+
+        return response()->json([
+            "status" => "success",
+            "message" => "Your lesson has been created successfully.",
+            "data" => [
+                "lesson" => $lesson
+            ],
+        ]);
+        try {
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Something happened and your lesson could not be created"
+            ]);
+        }
+    }
+
+    public static function saveDraft($request, $user){
+        $course = Course::firstWhere("title", $user->course->title);
+
+        // create lesson
+        $lesson = $course->lessons()->create([
+            "title" => $request->title,
+            "description" => $request->description,
+            "tutor" => $user->name,
+            "published" => "unpublished",
+        ]);
+
+        $request->merge([
+            "tags" => $course->title
+        ]);
+
+        // upload video by calling youtube service
+        $youtubeVideoDetails = getYoutubeVideoDetails($request);
+
+        // upload transacript
+        $tanscriptUrl = $request->file("lessonTranscript")->store("/" . $user->id, "public");
+
+        // use returned video details to create video resource
+        $lesson->media()->create([
+            "video_link" => $youtubeVideoDetails["videoLink"],
+            "thumbnail" => $youtubeVideoDetails["thumbnail"],
+            "transcript" => Storage::url($tanscriptUrl),
+            "youtube_video_id" => $youtubeVideoDetails["videoId"],
+        ]);
 
         $lesson->resources()->create($request->resources);
 

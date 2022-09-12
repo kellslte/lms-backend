@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->string("tutor");
-            $table->enum('status', ['published', 'unpublished'])->default('unpublished');
+            $table->enum('status', ['published', 'unpublished'])->default('published');
             $table->foreignUuid('course_id')->references('id')->on('courses')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });

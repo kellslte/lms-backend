@@ -18,9 +18,11 @@ class AttendanceService {
             "present" => true,
         ];
 
-        return $user->attendance->update([ 
+        $user->attendance->update([ 
             "record" => json_encode($records),
         ]);
+
+        
     }
 
     public static function getRecord($user){
