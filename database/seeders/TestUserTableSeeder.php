@@ -134,7 +134,6 @@ class TestUserTableSeeder extends Seeder
             'password' => bcrypt('fascille'),
         ], 'Product Design');
 
-
         $this->createFacilitator([
             'name' => 'Sophia Ahuoyiza',
             'email' => 'sophia.facilitator@gmail.com',
@@ -194,7 +193,7 @@ class TestUserTableSeeder extends Seeder
             'current_education_level' => 'B.Sc',
             'access_to_laptop' => 'Yes',
             'password' => bcrypt('student'),
-        ], 'Android Application Development');
+        ], 'Product Design');
 
         $this->createStudent([
             'name' => 'Beatrice Odinma',
@@ -202,7 +201,7 @@ class TestUserTableSeeder extends Seeder
             'current_education_level' => 'Others',
             'access_to_laptop' => 'Yes',
             'password' => bcrypt('student'),
-        ], 'iOS Application Development');
+        ], 'Product Design');
 
         $this->createStudent([
             'name' => 'Andromeda Emerem',
@@ -210,7 +209,7 @@ class TestUserTableSeeder extends Seeder
             'current_education_level' => 'B.Sc',
             'access_to_laptop' => 'Yes',
             'password' => bcrypt('student'),
-        ], 'Flutter Application Development');
+        ], 'Product Design');
 
         $this->createStudent([
             'name' => 'Bibi Wellington',
@@ -226,7 +225,7 @@ class TestUserTableSeeder extends Seeder
             'current_education_level' => 'Higher',
             'access_to_laptop' => 'No',
             'password' => bcrypt('student'),
-        ], 'Product Management');
+        ], 'Product Design');
 
         $this->createStudent([
             'name' => 'Darlene Onyema',
@@ -234,7 +233,7 @@ class TestUserTableSeeder extends Seeder
             'current_education_level' => 'B.Sc',
             'access_to_laptop' => 'Yes',
             'password' => bcrypt('student'),
-        ], 'Data Science');
+        ], 'Product Design');
 
         $this->createStudent([
             'name' => 'Christina Ogbata',
@@ -242,7 +241,7 @@ class TestUserTableSeeder extends Seeder
             'current_education_level' => 'Others',
             'access_to_laptop' => 'No',
             'password' => bcrypt('student'),
-        ], 'Data Analysis');
+        ], 'Product Design');
 
         $this->createStudent([
             'name' => 'Isabella Christian',
@@ -250,6 +249,6 @@ class TestUserTableSeeder extends Seeder
             'current_education_level' => 'OND',
             'access_to_laptop' => 'Yes',
             'password' => bcrypt('student'),
-        ], 'Cloud Engineering');
+        ], 'Product Design');
     }
 }
