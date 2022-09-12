@@ -67,7 +67,7 @@ Route::get('analytics', function(){
 });
 
 Route::get('days', fn()=> response()->json([
-    "record" => AttendanceService::mark(User::first()) 
+    "record" => AttendanceService::mark(User::first())
 ]));
 
 // Route::post('transcript', function(Request $request){
