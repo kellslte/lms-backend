@@ -52,7 +52,7 @@ class TaskController extends Controller
 
         $submittedTasks = collect(json_decode($submissions->tasks, true));
 
-        if($submittedTasks->contains($task->id)){
+        if($submittedTasks->where("id", $task->id)->first()){
             return response()->json([
                 'status' => 'failed',
                 "messaged" => 'You can only submit a task once',
