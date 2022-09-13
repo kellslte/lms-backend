@@ -1,9 +1,17 @@
 <?php
 
+use App\Models\Course;
+use Illuminate\Http\Request;
+use App\Services\YoutubeService;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
 use App\Http\Requests\PaymentGatewayRequest;
 use Unicodeveloper\Paystack\Facades\Paystack;
+use alchemyguy\YoutubeLaravelApi\VideoService;
 use App\Http\Controllers\Auth\PaymentController;
+use App\Http\Controllers\Auth\MagicLoginController;
+use  alchemyguy\YoutubeLaravelApi\AuthenticateService;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,3 +27,39 @@ use App\Http\Controllers\Auth\PaymentController;
 Route::get('/', function () {
     return view('welcome');
 });
+
+// Magic Link Login
+Route::middleware('guest')->get('auth/magiclink/{token}', fn($token) => response()->json([
+    'status' => 'success',
+    'token' => $token,
+]))->name('verify-login');
+
+Route::get('auth', function(){
+    $client = new YoutubeService();
+
+    return $client->getGoogleAuth();
+});
+
+Route::get('redirect', function(Request $request){
+    $client = new YoutubeService();
+
+    return $client->authenticateUser($request);
+});
+
+Route::get('token', function(){
+    $client = new YoutubeService();
+
+    dd($client->listVideos("r_l2SgphnOI"));
+});
+
+Route::get('playlist', function(Request $request){
+    $playlistId = Http::post("localhost:8000/api/playlist", [
+        "title" => "Product Design"
+    ]);
+
+    dd($playlistId);
+});
+
+Route::get('token', fn()=> response()->json([
+    "token" => Cache::get('access_token')
+]));

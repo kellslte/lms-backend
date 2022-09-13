@@ -30,6 +30,6 @@ class SendWelcomeMailToNewUser extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.send-welcome-mail');
+        return $this->markdown('emails.send-welcome-mail')->subject('Welcome Ada! 🥰');
     }
 }

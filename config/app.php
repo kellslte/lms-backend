@@ -54,7 +54,11 @@ return [
     |
     */
 
-    'url' => env('FRONT_URL', 'http://localhost'),
+    'url' => env('FRONT_URL', 'http://localhost:3000'),
+
+    'front' => [
+        'url' => env('FRONT_URL', 'http://localhost:3000'),
+    ],
 
     'asset_url' => env('ASSET_URL'),
 

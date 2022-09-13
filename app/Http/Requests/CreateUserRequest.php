@@ -19,13 +19,12 @@ class CreateUserRequest extends FormRequest
             'fullname' => 'required|string',
             'email' => 'required|email',
             'gender' => 'required|string',
-            'phonenumber' => 'required|string',
+            'phonenumber' => 'nullable|string',
             'accessToLaptop' => 'nullable|string',
             'currentEducationLevel' => 'nullable|string',
             'githubLink' => 'nullable|string',
             'cvDetails' => 'nullable|string',
-            'trackId' => 'required|numeric',
-            'courseId' => 'required|numeric'
+            'courseTitle' => 'required|string'
         ];
     }
 
@@ -35,6 +34,6 @@ class CreateUserRequest extends FormRequest
             'success'   => false,
             'message'   => 'Validation errors',
             'data'      => $validator->errors()
-        ]));
+        ], 400));
     }
 }

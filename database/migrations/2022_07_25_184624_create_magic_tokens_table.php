@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::create('magic_tokens', function (Blueprint $table) {
             $table->id();
-            $table->uuid('user_id');
-            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
+            $table->uuid('tokenable_id');
+            $table->string('tokenable_type');
             $table->string('token')->unique();
             $table->timestamp('consumed_at')->nullable();
-            $table->timestamp('expires_at');
+            $table->timestamp('expires_at')->nullable();
             $table->timestamps();
         });
     }

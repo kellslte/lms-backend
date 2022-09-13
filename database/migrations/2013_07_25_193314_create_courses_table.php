@@ -14,9 +14,10 @@ return new class extends Migration
     public function up()
     {
         Schema::create('courses', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('title');
-            $table->foreignId('track_id')->references('id')->on('tracks')->cascadeOnDelete();
+            $table->string("playlistId");
+            $table->foreignUuid('track_id')->references('id')->on('tracks')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }

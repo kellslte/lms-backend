@@ -14,13 +14,13 @@ return new class extends Migration
     public function up()
     {
         Schema::create('tasks', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('title');
             $table->text('description');
-            $table->boolean('submitted')->default(false);
-            $table->enum('status', ['expired', 'extended', 'running']);
-            $table->string('link')->nullable();
-            $table->foreignId('lesson_id')->references('id')->on('lessons')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->enum('status', ['expired', 'graded', 'pending'])->default('pending');
+            $table->time('task_deadline_time');
+            $table->date('task_deadline_date');
+            $table->foreignUuid('lesson_id')->references('id')->on('lessons')->cascadeOnUpdate()->cascadeOnDelete();
             $table->timestamps();
         });
     }

@@ -34,9 +34,9 @@ class SendMagicLinkToUser extends Mailable
     public function build()
     {
         return $this->markdown('emails.send-magic-link', [
-            'url' => URL::temporarySignedRoute('verify-login', $this->expiresAt, [
+            'url' => config('app.front.url').URL::temporarySignedRoute('verify-login', $this->expiresAt, [
                 'token' => $this->token,
-            ]),
+            ], false),
             'user' => $this->user,
         ])->subject('Your Login Link');
     }

@@ -14,9 +14,12 @@ return new class extends Migration
     public function up()
     {
         Schema::create('lessons', function (Blueprint $table) {
-            $table->id();
-            $table->string('topic');
+            $table->uuid('id')->primary();
+            $table->string('title');
             $table->text('description');
+            $table->string("tutor");
+            $table->enum('status', ['published', 'unpublished'])->default('published');
+            $table->foreignUuid('course_id')->references('id')->on('courses')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }

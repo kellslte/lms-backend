@@ -9,7 +9,7 @@ Click to login
 
 If you cannot see the button click on the link below to login.
 
-[Login]({{ $url }})
+[{{ $url }}]({{ $url }})
 
 Regards,<br>
 {{ config('app.name') }}

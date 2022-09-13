@@ -5,21 +5,20 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Traits\HasUuid;
+use App\Mail\SendMagicLinkToUser;
 use Laravel\Sanctum\HasApiTokens;
 use App\Services\MagicLinkService;
 use App\Mail\SendPasswordResetMail;
 use Illuminate\Support\Facades\Mail;
-use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
-use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
-class User extends
-
-Authenticatable implements JWTSubject
+class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasUuid, HasRoles;
+    use HasFactory, Notifiable, HasUuid, HasApiTokens;
+
+    protected $guard = 'student';
 
     /**
      * The attributes that are mass assignable.
@@ -36,8 +35,7 @@ Authenticatable implements JWTSubject
         'access_to_laptop',
         'current_education_level',
         'phonenumber',
-        'track_id',
-        'course_id'
+        'notification_preference',
     ];
 
     /**
@@ -48,6 +46,8 @@ Authenticatable implements JWTSubject
     protected $hidden = [
         'password',
         'remember_token',
+        'created_at',
+        'updated_at',
     ];
 
     /**
@@ -59,43 +59,20 @@ Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
-    public function tokens()
+    public function magictokens()
     {
-        return $this->hasMany(MagicToken::class);
+        return $this->morphMany(MagicToken::class, 'tokenable');
     }
 
     public function sendMagicLink(){
-        return new MagicLinkService($this);
-    }
+        $data =  MagicLinkService::createToken($this);
 
-    /**
-     * Get the identifier that will be stored in the subject claim of the JWT.
-     *
-     * @return mixed
-     */
-    public function getJWTIdentifier()
-    {
-        return $this->getKey();
-    }
-
-    /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
-     *
-     * @return array
-     */
-    public function getJWTCustomClaims()
-    {
-        return [];
-    }
-
-    public function track()
-    {
-        return $this->hasOne(Track::class);
+        Mail::to($this->email)->queue(new SendMagicLinkToUser($data['token'], $data['expires_at'],  $this));
     }
 
     public function course()
     {
-        return $this->hasOne(Course::class);
+        return $this->belongsTo(Course::class);
     }
 
     public function transaction()
@@ -111,8 +88,99 @@ Authenticatable implements JWTSubject
      */
     public function sendPasswordResetNotification($token)
     {
-        $url = config('app.url') . '/reset-password?token=' . $token.'&email='.$this->email;
+        $url = config('app.front.url') . '/auth/password/students/reset?token=' . $token.'&email='.$this->email;
 
         Mail::to($this->email)->queue(new SendPasswordResetMail($url));
+    }
+
+    public function submissions(){
+        return $this->morphOne(Submission::class, 'taskable');
+    }
+
+    public function schedule(){
+        return $this->morphOne(Schedule::class, 'schedulable');
+    }
+
+    public function attendance(){
+        return $this->morphOne(Attendance::class, 'attender');
+    }
+
+    public function settings(){
+        return $this->morphOne(Setting::class, 'changeable');
+    }
+
+    public function completedTasks(){
+        $tasks  = json_decode($this->submissions->tasks, true);
+
+        $taskInDb = Task::all();
+
+        return collect($tasks)->reject(function($task){
+            return $task["status"] !== "submitted";
+        })->map(function($task) use ($taskInDb){
+
+            $tasks = $taskInDb->where("id", $task["id"])->first();
+
+            return [
+                "id" => $task["id"],
+                "title" => $task["title"],
+                "status" => $task["status"],
+                "description" => $task["description"],
+                "task_deadline_date" => formatDate($tasks->task_deadline_date),
+                "task_deadline_time" => formatTime($tasks->task_deadline_time),
+                "date_submitted" => formatDate($task["date_submitted"]),
+                "linkToResource" => $task["linkToResource"]
+            ];
+        });
+    }
+
+    public function pendingTasks(){
+        $submittedTasks = collect(json_decode($this->submissions->tasks, true));
+
+        $tasks = collect($this->lessons())->map(fn($lesson)=> $lesson->task);
+
+        return $tasks->reject(function ($task) use ($submittedTasks) {
+            return $submittedTasks->where('id', $task->id)->first();
+        })->filter(function ($task) {
+            return $task->status !== 'expired';
+        })->flatten();
+    }
+
+    public function expiredTasks(){
+       $lessons = $this->course->lessons;
+
+       $lessons->load('task');
+        
+       return collect($lessons)->filter(function($lesson){
+        return $lesson->status == 'expired';
+       })->flatten();  
+    }
+
+    public function lessons()
+    {
+        return $this->course->lessons;
+    }
+
+    public function track(){
+        return $this->hasOneThrough(Track::class, Course::class);
+    }
+
+    public function point(){
+        return $this->hasOne(Point::class);
+    }
+
+    public function mentor(){
+        return $this->morphOne(Mentees::class, 'mentorable');
+    }
+
+    public function curriculum(){
+        return $this->morphOne(Curriculum::class, 'plannable');
+    }
+
+    public function reports(){
+        return $this->morphMany(Report::class, 'reporter');
+    }
+
+    public function progress(){
+        return $this->hasOne(Progress::class);
     }
 }

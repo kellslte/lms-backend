@@ -15,9 +15,9 @@ class MagicToken extends Model
         'expires_at', 'consumed_at',
     ];
 
-    public function user()
+    public function tokenable()
     {
-        return $this->belongsTo(User::class);
+        return $this->morphTo();
     }
 
     public function isValid()
@@ -37,7 +37,8 @@ class MagicToken extends Model
 
     public function consume()
     {
-        $this->consumed_at = now();
-        $this->save();
+        return $this->update([
+            "consumed_at" => now()
+        ]);
     }
 }

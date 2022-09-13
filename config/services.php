@@ -31,4 +31,13 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'youtube' => [
+        'id' => env('GOOGLE_CLIENT_ID'),
+        'secret' => env('GOOGLE_CLIENT_SECRET'),
+        'token' => env('GOOGLE_DEVELOPER_TOKEN'),
+        'redirecturi' => env('GOOGLE_REDIRECT_URL'),
+        'language' => env('GOOGLE_LANGUAGE'),
+        'appName' => env('GOOGLE_APP_NAME'),
+    ],
+
 ];
