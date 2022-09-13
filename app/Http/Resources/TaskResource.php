@@ -21,6 +21,7 @@ class TaskResource extends JsonResource
             "task_deadline_date" => formatDate($this->task_deadline_date),
             "task_deadline_time" => formatTime($this->task_deadline_time),
             "lesson_id" => $this->lesson->id,
+            "status" => "pending"
         ];
     }
 }

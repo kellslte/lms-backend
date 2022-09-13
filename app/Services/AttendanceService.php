@@ -15,25 +15,20 @@ class AttendanceService
 
         $date = ordinal(today()->format('j')) . " " . $month;
 
-        $record = $records->where("day", $date)->first();
-
-        if($record){
-            if ($record["present"] !== true) {
-                $newRecord = $records->reject(function ($oldrecord) use ($record) {
-                    return $oldrecord['day'] == $record['day'];
-                });
-
+        $newRecord = $records->map(function($record) use ($date){
+            if($record["day"] === $date){
                 $record["present"] = true;
-
-                $newRecord[] = $record;
-
-                $user->attendance->update([
-                    "record" => json_encode($newRecord),
-                ]);
             }
+            return $record;
+        });
+
+        if ($records !== $newRecord) {
+            $user->attendance->update([
+                "record" => json_encode($newRecord),
+            ]);
         }
 
-        return $records;
+        return $newRecord;
     }
 
     public static function getRecord($user)
