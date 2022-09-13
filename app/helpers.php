@@ -100,8 +100,9 @@ function getDaysInMonth(Int $monthToAdd = 0)
     $record = [];
     
     for($w = 0; $w <= $monthToAdd; $w++){
-        $month = today()->addMonths($w)->format('j');
+        $month = today()->addMonths($w)->format('m');
         $year = today()->addMonths($w)->format('Y');
+
         $monthToShow = today()->addMonths($w);
         $yearToShow = today()->addMonths($w)->format('Y');
         $days = cal_days_in_month(CAL_GREGORIAN, $month, $year);

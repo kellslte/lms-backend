@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\Services\LoginService;
 use App\Services\LogoutService;
 use App\Http\Requests\LoginRequest;
+use App\Services\AttendanceService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -146,6 +147,8 @@ class LoginController extends Controller
                 'status' => 'failed',
                 'message' => 'Email or password incorrect',
             ], 401);
+
+            AttendanceService::mark($user);
     
             return response()->json([
                 'status' => 'success',

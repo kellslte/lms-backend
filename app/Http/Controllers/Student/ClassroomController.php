@@ -56,7 +56,7 @@ class ClassroomController extends Controller
             "meetingId" => $meeting->id,
         ];
 
-        $record = AttendanceService::mark($data, $user);
+        $record = AttendanceService::mark($user);
 
         // return response 
         return ($record) ? response()->json([

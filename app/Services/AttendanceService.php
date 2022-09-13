@@ -17,17 +17,23 @@ class AttendanceService
 
         $record = $records->where("day", $date)->first();
 
-        $newRecord = $records->reject(function ($oldrecord) use ($record) {
-            return $oldrecord['day'] == $record['day'];
-        });
+        if($record){
+            if ($record["present"] !== true) {
+                $newRecord = $records->reject(function ($oldrecord) use ($record) {
+                    return $oldrecord['day'] == $record['day'];
+                });
 
-        $record["present"] = true;
+                $record["present"] = true;
 
-        $newRecord->merge([$record]);
+                $newRecord[] = $record;
 
-        $user->attendance->update([
-            "record" => json_encode($newRecord),
-        ]);
+                $user->attendance->update([
+                    "record" => json_encode($newRecord),
+                ]);
+            }
+        }
+
+        return $records;
     }
 
     public static function getRecord($user)

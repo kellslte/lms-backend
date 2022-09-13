@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Mentor;
 use App\Mail\UserOnboarded;
 use Illuminate\Http\Request;
+use App\Events\SendMagicLink;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Requests\CreateMentorRequest;
@@ -61,9 +62,7 @@ class OnboardingController extends Controller
         $users = User::all();
 
        try {
-            foreach ($users as $user) {
-                $user->sendMagicLink();
-            }
+            SendMagicLink::dispatch($users);
 
             return response()->json([
                 'status' => "success",

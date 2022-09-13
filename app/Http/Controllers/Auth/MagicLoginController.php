@@ -8,6 +8,7 @@ use App\Models\Mentor;
 use App\Models\MagicToken;
 use App\Models\Facilitator;
 use Illuminate\Http\Request;
+use App\Services\AttendanceService;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\Eloquent\Model;
 
@@ -82,6 +83,8 @@ class MagicLoginController extends Controller
         auth()->guard('student')->login($user);
 
         $token = $user->createToken('access_token');
+
+        AttendanceService::mark($user);
 
         return response()->json([
             'token' => $token->plainTextToken,
