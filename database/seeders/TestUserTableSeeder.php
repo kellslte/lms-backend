@@ -60,7 +60,7 @@ class TestUserTableSeeder extends Seeder
 
         // $this->call(LessonsTableSeeder::class);
 
-        //$this->createStudents();
+        $this->createStudents();
     }
     
     protected function createStudent(array $data, String $courseTitle)
@@ -78,19 +78,9 @@ class TestUserTableSeeder extends Seeder
             'bonus_points' => 100,
         ]);
 
-        $meetings = Meeting::whereCaption("General Onboarding")->get();
-
-        $scheduled = [];
-
-        foreach($meetings as $meeting) {
-            $scheduled[] = $meeting;
-        }
-
-        if($course->title = "Product Design"){
-            $student->schedule()->create([
-                "meetings" => json_encode($scheduled),
-            ]);
-        }
+        $student->schedule()->create([
+            "meetings" => json_encode([]),
+        ]);
 
         $lessons = [];
         $courseProgress = [];
@@ -112,13 +102,13 @@ class TestUserTableSeeder extends Seeder
         }
 
         $student->curriculum()->create([
-            "viewables" => json_encode($lessons),
+            "viewables" => json_encode([]),
         ]);
 
 
         $student->progress()->create([
             "course" => $course->title,
-            "course_progress" => json_encode($courseProgress),
+            "course_progress" => json_encode([]),
         ]);
 
         $record = getDaysInMonth(7);
@@ -171,91 +161,10 @@ class TestUserTableSeeder extends Seeder
     }
 
     protected function createStudents(){
-
-        $this->createStudent([
-            'name' => 'Obianuju Chibuokem',
-            'email' => 'ujuchibuoke@gmail.com',
-            'current_education_level' => 'B.Sc',
-            'access_to_laptop' => 'Yes',
-            'password' => bcrypt('student'),
-        ], 'Frontend Engineering');
-
-        $this->createStudent([
-            'name' => 'Esther Mbadiwe',
-            'email' => 'mbadiweesther@gmail.com',
-            'current_education_level' => 'HND',
-            'access_to_laptop' => 'Yes',
-            'password' => bcrypt('student'),
-        ], 'Backend Engineering');
-
-        $this->createStudent([
-            'name' => 'Agnes Wuruola',
-            'email' => 'olaagnes@gmail.com',
-            'current_education_level' => 'Others',
-            'access_to_laptop' => 'No',
-            'password' => bcrypt('student'),
-        ], 'Cloud Engineering');
-
-        $this->createStudent([
-            'name' => 'Camilla Ninioluwa',
-            'email' => 'camilaagirl@gmail.com',
-            'current_education_level' => 'B.Sc',
-            'access_to_laptop' => 'Yes',
-            'password' => bcrypt('student'),
-        ], 'Product Design');
-
-        $this->createStudent([
-            'name' => 'Beatrice Odinma',
-            'email' => 'odinmabee@gmail.com',
-            'current_education_level' => 'Others',
-            'access_to_laptop' => 'Yes',
-            'password' => bcrypt('student'),
-        ], 'Product Design');
-
-        $this->createStudent([
-            'name' => 'Andromeda Emerem',
-            'email' => 'emremadnie@gmail.com',
-            'current_education_level' => 'B.Sc',
-            'access_to_laptop' => 'Yes',
-            'password' => bcrypt('student'),
-        ], 'Product Design');
-
         $this->createStudent([
             'name' => 'Bibi Wellington',
             'email' => 'wellsbibi@gmail.com',
             'current_education_level' => 'Others',
-            'access_to_laptop' => 'Yes',
-            'password' => bcrypt('student'),
-        ], 'Product Design');
-
-        $this->createStudent([
-            'name' => 'Taylor Artwell',
-            'email' => 'artwellt@gmail.com',
-            'current_education_level' => 'Higher',
-            'access_to_laptop' => 'No',
-            'password' => bcrypt('student'),
-        ], 'Product Design');
-
-        $this->createStudent([
-            'name' => 'Darlene Onyema',
-            'email' => 'onyemadarlene@gmail.com',
-            'current_education_level' => 'B.Sc',
-            'access_to_laptop' => 'Yes',
-            'password' => bcrypt('student'),
-        ], 'Product Design');
-
-        $this->createStudent([
-            'name' => 'Christina Ogbata',
-            'email' => 'ogbatac@gmail.com',
-            'current_education_level' => 'Others',
-            'access_to_laptop' => 'No',
-            'password' => bcrypt('student'),
-        ], 'Product Design');
-
-        $this->createStudent([
-            'name' => 'Isabella Christian',
-            'email' => 'bellachris@gmail.com',
-            'current_education_level' => 'OND',
             'access_to_laptop' => 'Yes',
             'password' => bcrypt('student'),
         ], 'Product Design');
