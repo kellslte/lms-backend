@@ -54,18 +54,18 @@ class HelpdeskController extends Controller
             'details' => $request->details,
         ]);
 
+        // send mail to adaproject
+        Mail::to('theadaproject@enugutechhub.en.gov.ng')->send(new IssueReportEmail($report));
+
+        // notify admin
+        //Notification::send($admins, new IssueReportNotification($report));
+
+         // return response
+        return response()->json([
+            'status' => 'success',
+            'messgae' => 'Your issue has been filed and the appropriate admins notified. You will get a response from them as soon as possible.',
+        ]);
         try {
-            // send mail to adaproject
-            Mail::to('theadaproject@enugutechhub.en.gov.ng')->queue(new IssueReportEmail($report));
-
-            // notify admin
-            //Notification::send($admins, new IssueReportNotification($report));
-
-             // return response
-            return response()->json([
-                'status' => 'success',
-                'messgae' => 'Your issue has been filed and the appropriate admins notified. You will get a response from them as soon as possible.',
-            ]);
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => 'error',
