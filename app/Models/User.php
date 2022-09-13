@@ -9,6 +9,7 @@ use App\Mail\SendMagicLinkToUser;
 use Laravel\Sanctum\HasApiTokens;
 use App\Services\MagicLinkService;
 use App\Mail\SendPasswordResetMail;
+use App\Http\Resources\TaskResource;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -138,11 +139,15 @@ class User extends Authenticatable
 
         $tasks = collect($this->lessons())->map(fn($lesson)=> $lesson->task);
 
-        return $tasks->reject(function ($task) use ($submittedTasks) {
+        $pending = $tasks->reject(function ($task) use ($submittedTasks) {
             return $submittedTasks->where('id', $task->id)->first();
         })->filter(function ($task) {
             return $task->status !== 'expired';
         })->flatten();
+
+        return $pending->map(function($task){
+            return new TaskResource($task);
+        });
     }
 
     public function expiredTasks(){
