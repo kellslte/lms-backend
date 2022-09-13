@@ -17,8 +17,9 @@ use App\Http\Requests\CreateFacilitatorRequest;
 
 class OnboardingController extends Controller
 {
-    public function facilitator(CreateFacilitatorRequest $request){
-        try{
+    public function facilitator(CreateFacilitatorRequest $request)
+    {
+        try {
             $course = Course::whereTitle($request->course_title)->first();
 
             if (!$course) return response()->json([
@@ -34,7 +35,7 @@ class OnboardingController extends Controller
                 'recovery_email' => $request->recoveryEmail,
                 'password' => bcrypt($password),
             ]);
-            
+
             $facilitator->settings()->create();
 
             $facilitator->socials()->create([
@@ -46,13 +47,12 @@ class OnboardingController extends Controller
 
             Mail::to($facilitator->recovery_email)->queue(new UserOnboarded($facilitator, $password));
 
-    
+
             return response()->json([
                 'status' => 'success',
                 'message' => 'Facilitator account has been created and email has been sent successfully'
             ], 201);
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Facilitator account could not be created'
@@ -60,28 +60,40 @@ class OnboardingController extends Controller
         }
     }
 
-    public function students(Request $request){
+    public function students(Request $request)
+    {
         $usersSheet = $request->file('users');
 
         return Excel::import(new UsersImport, $usersSheet);
     }
 
-    public function sendMagicLink(string $student){
-        if($student = User::find($student)){
-            return $student->sendMagicLink();
+    public function sendMagicLink(string $student)
+    {
+        try {
+            if ($student = User::find($student)) {
+                return $student->sendMagicLink();
+            }
+
+            return response()->json([
+                "status" => "success",
+                "message" => "Magic link has been sent successfully"
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => "error",
+                "message" => "Could not send link",
+            ]);
         }
-        
-        return response()->json([
-            "status" => "success",
-            "message" => "Magic link has been sent successfully"
-        ]);
     }
 
-    public function sendMagicLinkToStudents(){
+    public function sendMagicLinkToStudents()
+    {
         $users = User::all();
 
-       try {
-            SendMagicLink::dispatch($users);
+        try {
+            foreach ($users as $user) {
+                $user->sendMagicLink();
+            }
 
             return response()->json([
                 'status' => "success",
@@ -89,18 +101,19 @@ class OnboardingController extends Controller
                     'message' => 'students have been onboarded and magic links have been sent to them.'
                 ]
             ], 200);
-       } catch (\Throwable $th) {
-        return response()->json([
-            'status' => 'failed',
-            'data' => [
-                'message' => 'magic links could not be sen to the students, please contact your administrator.',
-            ]
-        ], 400);
-       }
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 'failed',
+                'data' => [
+                    'message' => 'magic links could not be sen to the students, please contact your administrator.',
+                ]
+            ], 400);
+        }
     }
 
-    public function mentor(CreateMentorRequest $request){
-        try{
+    public function mentor(CreateMentorRequest $request)
+    {
+        try {
             $password = generatePassword(7);
 
             $mentor = Mentor::create([
@@ -109,7 +122,7 @@ class OnboardingController extends Controller
                 'recovery_email' => $request->recoveryEmail,
                 'password' => $password,
             ]);
-            
+
             $mentor->settings()->ceate();
 
             $mentor->socials()->create([
@@ -129,8 +142,7 @@ class OnboardingController extends Controller
                 'status' => 'success',
                 'message' => 'Mentor account has been created and email has been sent successfully'
             ], 201);
-
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'Mentor account could not be created'
