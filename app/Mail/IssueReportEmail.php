@@ -26,6 +26,6 @@ class IssueReportEmail extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.problem-report')->from($this->report->reporter->email)->subject($this->report->subject);
+        return $this->markdown('emails.problem-report')->subject($this->report->subject);
     }
 }
