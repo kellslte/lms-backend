@@ -115,11 +115,20 @@ class PasswordController extends Controller
 
         $details = $request->only(['old_password', 'password']);
 
-        if(Hash::check($details['old_password'], $user->password)){
-            $user->update([
-                'password' => Hash::make($details['password']),
-            ]);
+        // if(Hash::check($details['old_password'], $user->password)){
+        //     $user->update([
+        //         'password' => Hash::make($details['password']),
+        //     ]);
 
+        //     return response()->json([
+        //         'status' => 'success',
+        //         'message' => 'Password changed successfully.'
+        //     ]);
+        // }
+
+        if($user->update([
+            'password' => Hash::make($details['password']),
+        ])){
             return response()->json([
                 'status' => 'success',
                 'message' => 'Password changed successfully.'
