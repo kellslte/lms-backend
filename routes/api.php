@@ -174,7 +174,7 @@ Route::prefix('v1')->group(function(){
 
             // Onboarding Routes
             Route::post('onboard/facilitator', [OnboardingController::class, 'facilitator']);
-            Route::post('onboard/students', [OnboardingController::class, 'students']);
+            Route::post('onboard/students/magic', [OnboardingController::class, 'students']);
             Route::post('onboard/mentors', [OnboardingController::class, 'mentors']);
 
             Route::post('onboad/send-login-link', [OnboardingController::class, 'sendMagicLinkToStudents']);
