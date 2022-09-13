@@ -66,6 +66,17 @@ class OnboardingController extends Controller
         return Excel::import(new UsersImport, $usersSheet);
     }
 
+    public function sendMagicLink(string $student){
+        if($student = User::find($student)){
+            return $student->sendMagicLink();
+        }
+        
+        return response()->json([
+            "status" => "success",
+            "message" => "Magic link has been sent successfully"
+        ]);
+    }
+
     public function sendMagicLinkToStudents(){
         $users = User::all();
 

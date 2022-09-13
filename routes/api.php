@@ -179,6 +179,8 @@ Route::prefix('v1')->group(function(){
 
             Route::post('onboad/send-login-link', [OnboardingController::class, 'sendMagicLinkToStudents']);
 
+            Route::post('onboard/students/{student}', [OnboardingController::class, 'sendMagicLink']);
+
             // Create SOTU meeting
             //Route::post('meetings/{sotu}', [MeetingController::class, 'createSotu']);
         });

@@ -19,19 +19,19 @@ class TestUserTableSeeder extends Seeder
      */
     public function run()
     {
-        // Admin::create([
-        //     'name' => 'Favour Max-Oti',
-        //     'email' => 'maxotif.admin@gmail.com',
-        //     'recovery_email' => 'maxotif@gmail.com',
-        //     'password' => bcrypt('password'),
-        // ])->settings()->create();
+        Admin::create([
+            'name' => 'Favour Max-Oti',
+            'email' => 'maxotif.admin@gmail.com',
+            'recovery_email' => 'maxotif@gmail.com',
+            'password' => bcrypt('password'),
+        ])->settings()->create();
         
-        // Admin::create([
-        //     'name' => 'Sophia Abubaka',
-        //     'email' => 'sophia.admin@gmail.com',
-        //     'recovery_email' => 'sophia.ahuoyiza@gmail.com',
-        //     'password' => bcrypt('password'),
-        // ])->settings()->create();
+        Admin::create([
+            'name' => 'Sophia Abubaka',
+            'email' => 'sophia.admin@gmail.com',
+            'recovery_email' => 'sophia.ahuoyiza@gmail.com',
+            'password' => bcrypt('password'),
+        ])->settings()->create();
 
         // CommunityManager::create([
         //     'name' => 'Bell Omoboye',
@@ -163,7 +163,7 @@ class TestUserTableSeeder extends Seeder
     protected function createStudents(){
         $this->createStudent([
             'name' => 'Bibi Wellington',
-            'email' => 'wellsbibi@gmail.com',
+            'email' => 'maxotif@gmail.com',
             'current_education_level' => 'Others',
             'access_to_laptop' => 'Yes',
             'password' => bcrypt('student'),
