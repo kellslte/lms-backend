@@ -23,10 +23,15 @@ class HelpdeskController extends Controller
             $detail = $user->mentor->mentor->with('socials');
         }
 
+        if($facilitator = $user->course->facilitator){
+            $facilitator->load('socials');
+        }
+
+
         return response()->json([
             'status' => 'success',
             'data' => [
-                'facilitator' => $user->course->facilitator->load('socials'),
+                'facilitator' => $facilitator,
                 'mentor' => $mentor,
                 'community_manager' => CommunityManager::with('socials')->first(),
             ],
