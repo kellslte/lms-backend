@@ -6,10 +6,12 @@ use App\Models\User;
 use App\Models\Course;
 use App\Models\Mentor;
 use App\Mail\UserOnboarded;
+use App\Imports\UsersImport;
 use Illuminate\Http\Request;
 use App\Events\SendMagicLink;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
+use Maatwebsite\Excel\Facades\Excel;
 use App\Http\Requests\CreateMentorRequest;
 use App\Http\Requests\CreateFacilitatorRequest;
 
@@ -56,6 +58,12 @@ class OnboardingController extends Controller
                 'message' => 'Facilitator account could not be created'
             ], 400);
         }
+    }
+
+    public function students(Request $request){
+        $usersSheet = $request->file('users');
+
+        return Excel::import(new UsersImport, $usersSheet);
     }
 
     public function sendMagicLinkToStudents(){

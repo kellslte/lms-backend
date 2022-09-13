@@ -25,35 +25,42 @@ class TestUserTableSeeder extends Seeder
             'recovery_email' => 'maxotif@gmail.com',
             'password' => bcrypt('password'),
         ])->settings()->create();
-
-        CommunityManager::create([
-            'name' => 'Bell Omoboye',
-            'avatar' => 'https://www.forbes.com/sites/angelicamarideoliveira/2021/07/06/meet-the-entrepreneurs-ushering-black-women-into-ux-careers-in-brazil/'
-        ])->socials()->create([
-            'linkedin' => 'https://linkedin.com/in/bellomoboye',
-            'twitter' => 'https://twitter.com/omobells',
-            'facebook' => 'https://facebook.com/omoboyebell',
-            'mail' => 'bellomoboye@gmail.com'
-        ]);
-
-        $mentor = Mentor::create([
-            'name' => 'Chidera Max-Oti',
-            'email' => 'deramaxoti.mentor@gmail.com',
-            'recovery_email' => 'deramaxoti@gmail.com',
-            'password' => bcrypt('mental'),
-        ]);
         
-        $mentor->settings()->create();
+        Admin::create([
+            'name' => 'Sophia Abubaka',
+            'email' => 'sophia.admin@gmail.com',
+            'recovery_email' => 'sophia.ahuoyiza@gmail.com',
+            'password' => bcrypt('password'),
+        ])->settings()->create();
 
-        $mentor->mentees()->create([
-            "mentees" => json_encode([])
-        ]);
+        // CommunityManager::create([
+        //     'name' => 'Bell Omoboye',
+        //     'avatar' => 'https://www.forbes.com/sites/angelicamarideoliveira/2021/07/06/meet-the-entrepreneurs-ushering-black-women-into-ux-careers-in-brazil/'
+        // ])->socials()->create([
+        //     'linkedin' => 'https://linkedin.com/in/bellomoboye',
+        //     'twitter' => 'https://twitter.com/omobells',
+        //     'facebook' => 'https://facebook.com/omoboyebell',
+        //     'mail' => 'bellomoboye@gmail.com'
+        // ]);
 
-        $this->createFacilitators();
+        // $mentor = Mentor::create([
+        //     'name' => 'Chidera Max-Oti',
+        //     'email' => 'deramaxoti.mentor@gmail.com',
+        //     'recovery_email' => 'deramaxoti@gmail.com',
+        //     'password' => bcrypt('mental'),
+        // ]);
+        
+        // $mentor->settings()->create();
 
-        $this->call(LessonsTableSeeder::class);
+        // $mentor->mentees()->create([
+        //     "mentees" => json_encode([])
+        // ]);
 
-        $this->createStudents();
+        // $this->createFacilitators();
+
+        // $this->call(LessonsTableSeeder::class);
+
+        //$this->createStudents();
     }
     
     protected function createStudent(array $data, String $courseTitle)
