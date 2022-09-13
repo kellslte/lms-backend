@@ -23,7 +23,9 @@ class DashboardController extends Controller
                 'total_tasks_done' => count($user->completedTasks()),
                 'schedule' => ScheduleService::getSchedule($user),
                 'leaderboard' => LeaderboardService::getTrackBoard(getAuthenticatedUser())->take(5),
-                'total_enrolled_students' => $user->course->students->count(),
+                'total_enrolled_students' => collect($user->course->students)->map(function($student){
+                    return $student->email;
+                }),
             ],
         ]);
     }
