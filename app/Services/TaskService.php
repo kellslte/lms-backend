@@ -64,6 +64,22 @@ class TaskService {
         return collect($lessons)->map(fn ($lesson) => ($lesson->task->status === 'unpublished') ? $lesson->task : []);
     }
 
+    protected static function getAllPendingTasksForStudents(){
+        $submissions = self::getAllSubmissionsForTasks();
+
+        $facilitator = getAuthenticatedUser();
+
+        $lessons = $facilitator->course->lessons;
+
+        $tasks = collect($lessons)->map(function ($lesson) {
+            return $lesson->task;
+        });
+
+        $students = $facilitator->course->students;
+        
+        
+    }
+
     protected static function getAllSubmissionsForTasks(){
         $facilitator = getAuthenticatedUser();
 
@@ -73,18 +89,24 @@ class TaskService {
         return $lesson->task;
        });
 
-       $students = User::all();
+       $students = $facilitator->course->students;
 
        // Get all submissions for tasks    
-       $submissions = collect($tasks)->map(function($task) use ($students){
-            return collect($students)->map(function($student) use ($task){
-                return [
-                    $student->id => collect(json_decode($student->submissions->tasks, true))->reject(function ($item) use ($task) {
-                        return $item["id"] !== $task->id;
-                    })
-                ];
-            });
-       });
+       return collect($tasks)->map(function($task) use ($students){
+            foreach($students as $student){
+                $submission = collect(json_decode($student->submissions->tasks, true))->where("id", $task->id)->first();
+
+                return ($submission) ? [
+                    "student_id" => $student->id,
+                    "task_id" => $submission["id"],
+                    "title" => $submission["title"],
+                    "description" => $submission["description"],
+                    "linkToResource" => $submission["linkToResource"],
+                    "grade" => $submission["grade"],
+                    "submission_date" => $submission["date_submitted"],
+                ] : null;
+            }
+       })->filter()->groupBy("student_id");
     }
 
     public static function getSubmissions($task){
