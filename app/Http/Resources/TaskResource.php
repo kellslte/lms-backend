@@ -20,6 +20,7 @@ class TaskResource extends JsonResource
             "description" => $this->description,
             "task_deadline_date" => formatDate($this->task_deadline_date),
             "task_deadline_time" => formatTime($this->task_deadline_time),
+            "lesson_id" => $this->lesson->id,
         ];
     }
 }
