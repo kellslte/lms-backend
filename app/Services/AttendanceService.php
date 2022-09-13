@@ -38,6 +38,8 @@ class AttendanceService
 
     public static function getRecord($user)
     {
-        return collect(json_decode($user->attendance->record, true))->toArray();
+        $records = collect(json_decode($user->attendance->record, true))->toArray();
+
+        return [...$records];
     }
 }
