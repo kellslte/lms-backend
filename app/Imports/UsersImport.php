@@ -5,8 +5,9 @@ namespace App\Imports;
 use App\Models\Course;
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class UsersImport implements ToModel
+class UsersImport implements ToModel, WithHeadingRow
 {
     /**
      * @param array $row

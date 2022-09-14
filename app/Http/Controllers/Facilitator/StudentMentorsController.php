@@ -16,15 +16,13 @@ class StudentMentorsController extends Controller
 
         $students = $user->course->students;
 
-        $mentors  = collect($students)->map(function($student){
-            return $student->mentor->mentor;
-        });
-
-        return response()->json($mentors);
+        $mentors  = $user->course->mentors;
 
         $data = collect($mentors)->map(function($mentor){
             return [
-                $mentor->name = $mentor->mentees->mentorable
+                $mentor->name = collect($mentor->mentees)->map(function($mentee){
+                    return $mentee;
+                })
             ];
         });
 
