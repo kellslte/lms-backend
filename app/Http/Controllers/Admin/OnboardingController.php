@@ -72,7 +72,7 @@ class OnboardingController extends Controller
     {
         try {
             if ($student = User::find($student)) {
-                return $student->sendMagicLink();
+                $student->sendMagicLink();
             }
 
             return response()->json([
@@ -92,10 +92,6 @@ class OnboardingController extends Controller
         $users = User::all();
 
         try {
-            // foreach ($users as $user) {
-            //     $user->sendMagicLink();
-            // 
-
             SendMagicLink::dispatch($users, Admin::all());
 
             return response()->json([
