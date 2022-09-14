@@ -32,6 +32,13 @@ class TestUserTableSeeder extends Seeder
             'recovery_email' => 'sophia.ahuoyiza@gmail.com',
             'password' => bcrypt('password'),
         ])->settings()->create();
+        
+        Admin::create([
+            'name' => 'Ihuoma Agbaru',
+            'email' => 'ihuoma.admin@gmail.com',
+            'recovery_email' => 'theadaproject@enugutechhub.en.gov.ng',
+            'password' => bcrypt('password'),
+        ])->settings()->create();
 
         // CommunityManager::create([
         //     'name' => 'Bell Omoboye',

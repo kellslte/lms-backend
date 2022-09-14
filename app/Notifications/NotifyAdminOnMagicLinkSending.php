@@ -42,7 +42,7 @@ class NotifyAdminOnMagicLinkSending extends Notification
     {
         return (new MailMessage)
                     ->subject('Magic Links Dispatched')
-                    ->line('The magic links on the LMS have been send out')
+                    ->line('The magic links on the LMS have been sent out successfully.')
                     ->line('Thank you for using our application!');
     }
 
