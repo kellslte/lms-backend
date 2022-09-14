@@ -173,10 +173,6 @@ class User extends Authenticatable
         return $this->hasOne(Point::class);
     }
 
-    public function mentor(){
-        return $this->morphOne(Mentees::class, 'mentorable');
-    }
-
     public function curriculum(){
         return $this->morphOne(Curriculum::class, 'plannable');
     }

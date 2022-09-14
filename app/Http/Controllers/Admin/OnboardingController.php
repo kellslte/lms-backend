@@ -136,6 +136,7 @@ class OnboardingController extends Controller
         }
         try {
             $student->sendMagicLink();
+            
             return response()->json([
                 "status" => "success",
                 "message" => "Magic link has been sent successfully"

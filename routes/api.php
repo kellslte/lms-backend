@@ -122,7 +122,7 @@ Route::prefix('v1')->group(function(){
         // Student Routes
         Route::prefix('auth/user')->group(function(){
             // User Logout
-            Route::post('logout', fn() => (new LoginController)->logout('student'));
+            Route::post('logout', fn() => (new LoginController)->logout());
             // Create New User Password
             Route::post('password/create', [PasswordController::class, 'createPassword']);
             // Dashboard Route
@@ -164,7 +164,7 @@ Route::prefix('v1')->group(function(){
         // Admin Routes
         Route::prefix('auth/admin')->group(function(){
             // Admin Logout
-            Route::post('logout', fn() => (new LoginController)->logout('admin'));
+            Route::post('logout', fn() => (new LoginController)->logout());
             // Change password Route
             Route::post('password/change', [PasswordController::class, 'changePassword']);
             // Profile Route
@@ -187,7 +187,7 @@ Route::prefix('v1')->group(function(){
 
         // Facilitator Routes
         Route::prefix('auth/facilitator')->group(function(){
-            Route::post('logout', fn() => (new LoginController)->logout('facilitator'));
+            Route::post('logout', fn() => (new LoginController)->logout());
             // Change Password Route
             Route::post('password/change', [PasswordController::class, 'changePassword']);
             // Profile Route
@@ -232,7 +232,7 @@ Route::prefix('v1')->group(function(){
 
         // Mentor Routes
         Route::prefix('auth/mentor')->group(function(){
-            Route::post('auth/logout', fn() => (new LoginController)->logout('mentor'));
+            Route::post('auth/logout', fn() => (new LoginController)->logout());
         
             // Create Password Route
             Route::post('auth/mentor/password/create', [PasswordController::class, 'createPassword']);

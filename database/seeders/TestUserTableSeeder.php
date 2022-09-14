@@ -82,7 +82,7 @@ class TestUserTableSeeder extends Seeder
             'history' => json_encode([
                 'user created|'
             ]),
-            'bonus_points' => 100,
+            'bonus_points' => 10,
         ]);
 
         $student->schedule()->create([
