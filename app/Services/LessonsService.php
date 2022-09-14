@@ -35,40 +35,53 @@ class LessonsService {
 
     public static function createLesson($request, $user){
         $course = Course::firstWhere("title", $user->course->title);
-
-        // create lesson
-        $lesson = $course->lessons()->create([
-            "title" => $request->title,
-            "description" => $request->description,
-            "tutor" => $user->name,
-        ]);
-
+        
+        
         $request->merge([
             "tags" => $course->title
         ]);
 
+        try {
         // upload video by calling youtube service
-        $youtubeVideoDetails = getYoutubeVideoDetails($request);
+      if
+        (
+            $youtubeVideoDetails = getYoutubeVideoDetails($request)
+        ){
+            // upload transacript
+            $tanscriptUrl = $request->file("lessonTranscript")->store("/" . $user->id, "public");
+            
+            // create lesson
+            $lesson = $course->lessons()->create([
+                "title" => $request->title,
+                "description" => $request->description,
+                "tutor" => $user->name,
+            ]);
+            
+            // use returned video details to create video resource
+            $lesson->media()->create([
+                "video_link" => $youtubeVideoDetails["videoLink"],
+                "thumbnail" => $youtubeVideoDetails["thumbnail"],
+                "transcript" => Storage::url($tanscriptUrl),
+                "youtube_video_id" => $youtubeVideoDetails["videoId"],
+            ]);
+            
+            $resources = $request->resources;
+            
+            foreach($resources as $resource){
+                $lesson->resources()->create($resource);
+            }
 
-        // upload transacript
-        $tanscriptUrl = $request->file("lessonTranscript")->store("/" . $user->id, "public");
-
-        // TODO: send notification that a new lesson has been uploaded
-        LessonCreated::dispatch($course->students);
-
-        // use returned video details to create video resource
-        $lesson->media()->create([
-            "video_link" => $youtubeVideoDetails["videoLink"],
-            "thumbnail" => $youtubeVideoDetails["thumbnail"],
-            "transcript" => Storage::url($tanscriptUrl),
-            "youtube_video_id" => $youtubeVideoDetails["videoId"],
-        ]);
-
-        $resources = $request->resources;
-
-        foreach($resources as $resource){
-            $lesson->resources()->create($resource);
+            
+            // TODO: send notification that a new lesson has been uploaded
+            LessonCreated::dispatch($course->students);
+    
+            // TODO add lesson to students curriculum
+    
+            // TODO add lesson to student progress 
+    
+            // TODO create lesson views table
         }
+        
 
         return response()->json([
             "status" => "success",
@@ -77,7 +90,6 @@ class LessonsService {
                 "lesson" => $lesson
             ],
         ]);
-        try {
         } catch (\Exception $e) {
             return response()->json([
                 "status" => "error",
@@ -174,7 +186,9 @@ class LessonsService {
     public static function getUserCurriculum($user){
         $progress = collect(json_decode($user->progress->course_progress, true));
 
-        return collect(json_decode($user->curriculum->viewables))->map(function ($viweable) use ($progress) {
+        return [];
+
+        collect(json_decode($user->curriculum->viewables))->map(function ($viweable) use ($progress) {
             $lesson = Lesson::find($viweable->lesson_id);
             $lessonProgress = $progress->where("lesson_id", $viweable->lesson_id)->first();
 
@@ -192,6 +206,8 @@ class LessonsService {
 
     public static function getClassroomData($user){
         $progress = collect(json_decode($user->progress->course_progress, true));
+
+        return [];
 
         return collect(json_decode($user->curriculum->viewables))->map(function ($lesson) use($progress) {
             $lessonProgress = $progress->where("lesson_id", $lesson->lesson_id)->first();
