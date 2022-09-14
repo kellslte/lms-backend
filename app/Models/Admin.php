@@ -79,4 +79,10 @@ class Admin extends Authenticatable
     {
         return $this->morphOne(Setting::class, 'changeable');
     }
+
+    public function routeNotificationForMail()
+    {
+        return $this->recovery_email;
+    }
+
 }

@@ -100,4 +100,9 @@ class Facilitator extends Authenticatable
     public function socials(){
         return $this->morphOne(Social::class, 'sociable');
     }
+
+    public function routeNotificationForMail()
+    {
+        return $this->recovery_email;
+    }
 }

@@ -92,4 +92,9 @@ class Mentor extends Authenticatable
     {
         return $this->morphMany(Report::class, 'reporter');
     }
+
+    public function routeNotificationForMail()
+    {
+        return $this->recovery_email;
+    }
 }

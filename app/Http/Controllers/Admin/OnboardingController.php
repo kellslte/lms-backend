@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
+use App\Models\Admin;
 use App\Models\Course;
 use App\Models\Mentor;
 use App\Mail\UserOnboarded;
@@ -91,9 +92,11 @@ class OnboardingController extends Controller
         $users = User::all();
 
         try {
-            foreach ($users as $user) {
-                $user->sendMagicLink();
-            }
+            // foreach ($users as $user) {
+            //     $user->sendMagicLink();
+            // 
+
+            SendMagicLink::dispatch($users, Admin::all());
 
             return response()->json([
                 'status' => "success",

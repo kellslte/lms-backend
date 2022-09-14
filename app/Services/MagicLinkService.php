@@ -11,7 +11,7 @@ class MagicLinkService {
     public static function createToken($user){
         $plaintext = Str::random(32);
 
-        $expiresAt = now()->addMinutes(15);
+        $expiresAt = now()->addHours(24);
         
         $user->magictokens()->create([
             'token' => hash('sha256', $plaintext),

@@ -51,7 +51,6 @@ class YoutubeService {
         $this->client->setAccessType("offline");
 
         $this->service = new YouTube($this->client);
-        $this->analytics = new 
     }
     
     public function getGoogleAuth(){

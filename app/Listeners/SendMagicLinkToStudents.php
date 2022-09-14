@@ -3,8 +3,10 @@
 namespace App\Listeners;
 
 use App\Events\SendMagicLink;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\NotifyAdminOnMagicLinkSending;
 
 class SendMagicLinkToStudents
 {
@@ -29,5 +31,7 @@ class SendMagicLinkToStudents
         foreach($event->users as $user){
             $user->sendMagicLink();
         }
+
+        Notification::send($event->admins, new NotifyAdminOnMagicLinkSending);
     }
 }
