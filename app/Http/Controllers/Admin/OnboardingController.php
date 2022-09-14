@@ -128,11 +128,14 @@ class OnboardingController extends Controller
 
     public function sendMagicLink(Request $request)
     {
+        if ($student = User::whereEmail($request->email)->first()) {
+            return response()->json([
+                "status" => "failed",
+                "message" => "User record could not be found"
+            ], 404);
+        }
         try {
-            if ($student = User::whereEmail($request->email)->first()) {
-                $student->sendMagicLink();
-            }
-
+            $student->sendMagicLink();
             return response()->json([
                 "status" => "success",
                 "message" => "Magic link has been sent successfully"
@@ -141,7 +144,7 @@ class OnboardingController extends Controller
             return response()->json([
                 "status" => "error",
                 "message" => "Could not send link",
-            ]);
+            ], 400);
         }
     }
 
