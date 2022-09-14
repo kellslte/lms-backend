@@ -19,7 +19,7 @@ class SendMagicLink
      *
      * @return void
      */
-    public function __construct(public $users)
+    public function __construct(public $users, public $admins)
     {
         //
     }
