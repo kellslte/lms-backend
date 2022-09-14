@@ -36,7 +36,6 @@ class LessonsService {
     public static function createLesson($request, $user){
         $course = Course::firstWhere("title", $user->course->title);
         
-        
         $request->merge([
             "tags" => $course->title
         ]);

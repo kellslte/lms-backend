@@ -60,6 +60,11 @@ class UsersImport implements ToModel
             "meetings" => json_encode([]),
         ]);
 
+        // create user curriculum
+        $student->curriculum()->create([
+            "viewables" => json_encode([])
+        ]);
+
         return $student;
 
     }

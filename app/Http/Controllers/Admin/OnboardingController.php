@@ -48,7 +48,6 @@ class OnboardingController extends Controller
 
             Mail::to($facilitator->recovery_email)->queue(new UserOnboarded($facilitator, $password));
 
-
             return response()->json([
                 'status' => 'success',
                 'message' => 'Facilitator account has been created and email has been sent successfully'
@@ -68,10 +67,69 @@ class OnboardingController extends Controller
         return Excel::import(new UsersImport, $usersSheet);
     }
 
-    public function sendMagicLink(string $student)
+    public function changeTrack(Request $request){
+        $data = $request->validate([
+            "newTrack" => '',
+            "oldTrack" => '',
+            "email" => '',
+        ]);
+
+        // get course details
+        $course = Course::whereTitle($data["oldTrack"])->first();
+
+        $oldAccount = $course->students()->where("email", $data["email"])->first();
+
+        $oldAccount->load(['attendance', 'schedule', 'point', 'submissions', 'progress', 'settings', 'curriculum']);
+
+        $newCourse = Course::whereTitle($data["newTrack"])->first();
+
+        $newAccount = $newCourse->students()->create([
+            "name" => $oldAccount->name,
+            "email" => $oldAccount->email,
+            "gender" => $oldAccount->gender,
+            "access_to_laptop" => $oldAccount->access_to_laptop,
+            "current_education_level" => $oldAccount->current_education_level,
+            "phonenumber" => $oldAccount->phonenumber,
+            "github_link" => $oldAccount->github_link,
+            "cv_details" => $oldAccount->cv_details,
+        ]);
+
+        $newAccount->submissions()->create([
+            "tasks" => $oldAccount->submissions->tasks,
+        ]);
+
+        $newAccount->settings()->create([...$oldAccount->settings]);
+
+        $newAccount->progress()->create([
+            "course" => $newCourse->title,
+            "course_progress" => $oldAccount->progress->course_progress,
+        ]);
+
+        $newAccount->schedule()->create([
+            "meetings" => $oldAccount->schedule->meetings
+        ]);
+
+        // lesson videso for the curriculum
+        $viewables = collect($newCourse->lessons)->map(function($lesson){
+            return [
+                "lesson_id" => $lesson->id,
+                "lesson_status" => "uncompleted"
+            ];
+        });
+
+        $newAccount->curriculum()->create([
+            "viewables" => $viewables,
+        ]);
+
+        $newAccount->point()->create([...$oldAccount->points]);
+
+        $newAccount->attendance()->create([...$oldAccount->attendance]);
+    }
+
+    public function sendMagicLink(Request $request)
     {
         try {
-            if ($student = User::find($student)) {
+            if ($student = User::whereEmail($request->email)->first()) {
                 $student->sendMagicLink();
             }
 
