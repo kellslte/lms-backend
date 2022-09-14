@@ -26,7 +26,7 @@ class ClassRoomController extends Controller
     public function store(Request $request){
         $user = getAuthenticatedUser();
 
-        return response()->json($request->file('lessonVideo'));
+        return response()->json($request->all());
 
         return LessonsService::createLesson($request, $user);
     }
