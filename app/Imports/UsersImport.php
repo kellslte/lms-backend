@@ -17,17 +17,17 @@ class UsersImport implements ToModel, WithHeadingRow
      */
     public function model(array $row)
     {
-        $course = $this->getCourseDetails($row[3]);
+        $course = $this->getCourseDetails($row['course']);
         
-        if(!$student = User::whereEmail('')->first()){
+        if(!$student = User::whereEmail($row['email'])->first()){
             // create the user
             $student = $course->students()->create([
-                "name" => $row[0],
-                "email" => $row[1],
-                "gender" => $row[2],
-                "phonenumber" => $row[4],
-                "access_to_laptop" => $row[5],
-                "current_level_of_education" => $row[7],
+                "name" => $row['name'],
+                "email" => $row['email'],
+                "gender" => $row['gender'],
+                "phonenumber" => $row['phonenumber'],
+                "access_to_laptop" => $row['access_to_laptop'],
+                "current_level_of_education" => $row['current_education_level'],
             ]);
 
             // create the user settings
