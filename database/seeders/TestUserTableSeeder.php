@@ -25,14 +25,14 @@ class TestUserTableSeeder extends Seeder
             'recovery_email' => 'maxotif@gmail.com',
             'password' => bcrypt('password'),
         ])->settings()->create();
-        
+
         Admin::create([
             'name' => 'Sophia Abubaka',
             'email' => 'sophia.admin@gmail.com',
             'recovery_email' => 'sophia.ahuoyiza@gmail.com',
             'password' => bcrypt('password'),
         ])->settings()->create();
-        
+
         Admin::create([
             'name' => 'Ihuoma Agbaru',
             'email' => 'ihuoma.admin@gmail.com',
@@ -56,7 +56,7 @@ class TestUserTableSeeder extends Seeder
         //     'recovery_email' => 'deramaxoti@gmail.com',
         //     'password' => bcrypt('mental'),
         // ]);
-        
+
         // $mentor->settings()->create();
 
         // $mentor->mentees()->create([
@@ -69,7 +69,7 @@ class TestUserTableSeeder extends Seeder
 
         $this->createStudents();
     }
-    
+
     protected function createStudent(array $data, String $courseTitle)
     {
         $course = Course::whereTitle($courseTitle)->firstOrFail();
@@ -96,7 +96,7 @@ class TestUserTableSeeder extends Seeder
             "tasks" => json_encode([]),
         ]);
 
-        foreach ($course->lessons as $lesson){
+        foreach ($course->lessons as $lesson) {
             $lessons[] = [
                 "lesson_id" => $lesson->id,
                 "lesson_status" => "uncompleted",
@@ -125,8 +125,9 @@ class TestUserTableSeeder extends Seeder
         ]);
     }
 
-    protected function createFacilitators(){
-       $this->createFacilitator([
+    protected function createFacilitators()
+    {
+        $this->createFacilitator([
             'name' => 'Signs Madueke',
             'email' => 'signs.facilitator@gmail.com',
             'recovery_email' => 'signsmaduaeke@gmail.com',
@@ -148,7 +149,8 @@ class TestUserTableSeeder extends Seeder
         ], 'Backend Engineering');
     }
 
-    protected function createFacilitator(array $data, String $courseTitle){
+    protected function createFacilitator(array $data, String $courseTitle)
+    {
         $course = Course::whereTitle($courseTitle)->firstOrFail();
 
         $facilitator = $course->facilitator()->create($data);
@@ -160,18 +162,35 @@ class TestUserTableSeeder extends Seeder
         ]);
 
         $facilitator->socials()->create([
-            'linkedin' => 'https://linkedin.com/in/'.$data["name"],
+            'linkedin' => 'https://linkedin.com/in/' . $data["name"],
             'twitter' => 'https://twitter.com/' . $data["name"],
             'facebook' => 'https://facebook.com/' . $data["name"],
             'mail' => $data["recovery_email"]
         ]);
     }
 
-    protected function createStudents(){
+    protected function createStudents()
+    {
         $this->createStudent([
             'name' => 'Bibi Wellington',
             'email' => 'maxotif@gmail.com',
             'current_education_level' => 'Others',
+            'access_to_laptop' => 'Yes',
+            'password' => bcrypt('student'),
+        ], 'Product Design');
+
+        $this->createStudent([
+            'name' => 'Temilade Williamson',
+            'email' => 'chrisnonso8@gmail.com',
+            'current_education_level' => 'HND',
+            'access_to_laptop' => 'Yes',
+            'password' => bcrypt('student'),
+        ], 'Product Design');
+
+        $this->createStudent([
+            'name' => 'Chidinma Samson',
+            'email' => 'chibest235@gmail.com',
+            'current_education_level' => 'BSc',
             'access_to_laptop' => 'Yes',
             'password' => bcrypt('student'),
         ], 'Product Design');

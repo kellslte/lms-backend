@@ -111,7 +111,7 @@ Route::prefix('v1')->group(function(){
             Route::get("notifications", [NotificationsController::class, 'index']);
             // Mark notification as read
             Route::put("notifications/{notificaition}/read", [NotificationsController::class, 'markAsRead']);
-
+            // award point to the user 
             // knowledgebase resource
             Route::get('knowledgebase/resources', KnowledgebaseController::class);
         });

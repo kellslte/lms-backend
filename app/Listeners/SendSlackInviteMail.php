@@ -28,8 +28,8 @@ class SendSlackInviteMail
      */
     public function handle(SendSlackInvite $event)
     {
-        foreach($event->students as $student){
-            Mail::to($student->email)->queue(new SlackInviteMail($student));
+        foreach ($event->students as $student) {
+            Mail::to($student->email)->send(new SlackInviteMail($student));
         }
     }
 }

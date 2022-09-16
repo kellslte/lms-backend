@@ -6,6 +6,7 @@ use App\Models\Point;
 use App\Events\LessonCreated;
 use App\Events\SendMagicLink;
 use App\Events\TaskSubmitted;
+use App\Events\SendSlackInvite;
 use App\Observers\PointObserver;
 use App\Events\LeaderboardUpdated;
 use App\Listeners\SendSlackInviteMail;
