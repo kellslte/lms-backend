@@ -22,8 +22,10 @@ class ClassRoomController extends Controller
         ], 200);
     }
 
-    public function store(CreateLessonRequest $request){
+    public function store(Request $request){
         $user = getAuthenticatedUser();
+
+        return response()->json($user);
 
         return LessonsService::createLesson($request, $user);
     }
