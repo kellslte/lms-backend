@@ -39,7 +39,7 @@ class TaskManager{
                     "lesson_id" => $lesson->id,
                     "status" => $lesson->task->status
                 ];
-            });
+            })->toArray();
 
             $published = collect($lessons)->reject(function($lesson){
                 return $lesson->task->status !== "published";
@@ -53,7 +53,7 @@ class TaskManager{
                     "lesson_id" => $lesson->id,
                     "status" => $lesson->task->status
                 ];
-            });
+            })->toArray();
 
             $graded = collect($lessons)->reject(function($lesson){
                 return $lesson->task->status !== "graded";
@@ -67,7 +67,7 @@ class TaskManager{
                     "lesson_id" => $lesson->id,
                     "status" => $lesson->task->status
                 ];
-            });
+            })->toArray();
 
 
             //  tasks that have submissions
@@ -78,14 +78,19 @@ class TaskManager{
                 $task = $lesson->task;
                 $students->load('submissions');
 
-                return self::totalSubmissions($task, $students);
-            });
+                $entry = (self::totalSubmissions($task, $students)->count() > 0) ? self::totalSubmissions($task, $students) : [];
+
+                return [
+                    "task_id" => $task->id,
+                    "submissions" => $entry
+                ];
+            })->filter()->toArray();
 
              return [
-                    "pending_tasks" => $pending->toArray(),
-                    "published_tasks" => $published->toArray(),
-                    "graded_tasks" => $graded->toArray(),
-                    "completed_tasks" => $completed->toArray()
+                    "pending_tasks" => $pending,
+                    "published_tasks" => $published,
+                    "graded_tasks" => $graded,
+                    "completed_tasks" => $completed,
                 ];
         }
         catch(\Exception $e){
