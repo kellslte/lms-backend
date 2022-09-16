@@ -10,6 +10,7 @@ use Google\Http\MediaFileUpload;
 use Google\Service\YouTube\Video;
 use Google\Service\YouTube\Playlist;
 use Illuminate\Support\Facades\Cache;
+use Google\Service\YouTube\ResourceId;
 use Google\Service\YouTube\VideoStatus;
 use Google\Service\YouTube\PlaylistItem;
 use Google\Service\YouTube\VideoSnippet;
@@ -105,7 +106,7 @@ class YoutubeService {
         $token = $this->refreshToken();
     }
 
-    public function listVideos(String $id){
+    private function listVideos(String $id){
         $token = $this->refreshToken();
 
         $response = $this->service->videos->listVideos('player', ["id" => $id]);
@@ -282,15 +283,6 @@ class YoutubeService {
     public function uploadVideoToPlaylist(Request $request){
         $this->refreshToken();
 
-        $request->validate([
-            "courseTitle" => 'required|string',
-            "title" => 'required|string',
-            'description' => 'required|string',
-            'tags' => 'required|string',
-            'video' => 'required|file',
-            'thumbnail' => 'required|string'
-        ]);
-
         // upload vide and get video id
         $videoDetails = $this->uploadVideo($request);
 
@@ -298,17 +290,26 @@ class YoutubeService {
         $course = Course::whereTitle($request->courseTitle)->first();
         $playlistId = $course->playlistId;
 
+        // setup resource
+        $resource = new ResourceId();
+        $resource->setKind("youtube#video");
+        $resource->setVideoId($videoDetails["videoId"]);
+
         $parts = "id,snippet";
         $snippet = new PlaylistItemSnippet();
         $snippet->setPlaylistId($playlistId);
-        $snippet->setResourceId($videoDetails["videoId"]); 
+        $snippet->setResourceId($resource); 
         $item = new PlaylistItem();
         $item->setSnippet($snippet);
 
-        $response = $this->service->playlistItem->insert($parts, $item);
+        $response = $this->service->playlistItems->insert($parts, $item);
 
         return response()->json([
-            "response" => $response
+            "response" => [
+                "videoLink" => $this->listVideos($videoDetails["videoId"]),
+                "thumbnail" => $response["snippet"]["thumbnails"]["default"]["url"],
+                "youtube_video_id" => $videoDetails["videoId"],
+            ]
         ]);
     }
 

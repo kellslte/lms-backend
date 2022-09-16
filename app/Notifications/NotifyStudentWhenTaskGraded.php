@@ -29,7 +29,7 @@ class NotifyStudentWhenTaskGraded extends Notification
      */
     public function via($notifiable)
     {
-        return ['mail'];
+        return [$notifiable->settings->notification_preference];
     }
 
     /**
@@ -41,9 +41,10 @@ class NotifyStudentWhenTaskGraded extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line('The introduction to the notification.')
-                    ->action('Notification Action', url('/'))
-                    ->line('Thank you for using our application!');
+                    ->subject('You task has been graded!')
+                    ->line('Hi'. $notifiable->name)
+                    ->line('You task has been graded!')
+                    ->line('Go to your dashboard to check it out!');
     }
 
     /**
@@ -55,7 +56,9 @@ class NotifyStudentWhenTaskGraded extends Notification
     public function toArray($notifiable)
     {
         return [
-            //
+            "type" => "task_graded",
+            "time" => time(),
+            "message" => "You task has been graded"
         ];
     }
 }

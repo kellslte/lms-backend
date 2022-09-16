@@ -3,8 +3,10 @@
 namespace App\Listeners;
 
 use App\Events\TaskGraded;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\NotifyStudentWhenTaskGraded;
 
 class NotifyStudentAboutTaskGrade
 {
@@ -26,6 +28,6 @@ class NotifyStudentAboutTaskGrade
      */
     public function handle(TaskGraded $event)
     {
-        //
+        Notification::send($event->submissions->taskable, new NotifyStudentWhenTaskGraded());
     }
 }

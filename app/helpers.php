@@ -80,8 +80,7 @@ function jsonResponse(array $data, Int $code)
 
 function getYoutubeVideoDetails($request)
 {
-    $id = $request->id;
-    return (new YoutubeService())->listVideos($id);
+    return (new YoutubeService())->uploadVideoToPlaylist($request);
 }
 
 function updateYoutubeVideoDetails($request)

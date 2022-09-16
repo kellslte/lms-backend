@@ -213,7 +213,9 @@ Route::prefix('v1')->group(function(){
             // update lesson task route
             Route::put('tasks/{task}', [FacilitatorTaskController::class, 'update']);
             // grade lesson task
-            Route::put('tasks/{task}/grade/{user}', [FacilitatorTaskController::class, 'gradeTask']);
+            Route::put('tasks/{task}/grade/{student}', [FacilitatorTaskController::class, 'gradeTask']);
+            // close submission for a particular task
+            Route::put('tasks/{task}/close', [FacilitatorTaskController::class, 'closeSubmission']);
             // Student Leaderboard route
             Route::get('students/leaderboard', [FacilitatorsStudentPerformanceControler::class, 'index']);
             // Add bonus point to student

@@ -7,7 +7,6 @@ use App\Models\Lesson;
 use Illuminate\Http\Request;
 use App\Services\LessonsService;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\CreateLessonRequest;
 
 class ClassRoomController extends Controller
@@ -23,10 +22,8 @@ class ClassRoomController extends Controller
         ], 200);
     }
 
-    public function store(Request $request){
+    public function store(CreateLessonRequest $request){
         $user = getAuthenticatedUser();
-
-        return response()->json($user);
 
         return LessonsService::createLesson($request, $user);
     }

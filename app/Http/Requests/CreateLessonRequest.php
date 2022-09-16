@@ -22,7 +22,8 @@ class CreateLessonRequest extends FormRequest
             'status' => 'nullable|string',
             'lessonVideo' => 'required|file|mimes:mp4,avi,mkv',
             'lessonThumbnail' => 'required|file|mimes:png',
-            'resources' => "required|array"
+            'lessonTranscript' => 'required|file|mimes:txt',
+            'resources.*' => "required|string|min:1"
         ];
     }
 

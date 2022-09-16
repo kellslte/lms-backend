@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 class LessonsService {
 
     public static function getAllLessons($user){
-        return collect($user->course->lessons)->map(function($lesson){
+        return collect($user->course->lessons)->map(function($lesson) use ($user){
             return [
                 "id" => $lesson->id,
                 'title' => $lesson->title,
@@ -18,7 +18,7 @@ class LessonsService {
                 "published_date" => formatDate($lesson->updated_at),
                 "tutor" => $lesson->tutor,
                 "student_views" => $lesson->views->views,
-                "task_submitted" => TaskService::getSubmissions($lesson->task)
+                "task_submitted" => TaskManager::getSubmissions($lesson->task, $user->course->students)
             ];
         });
     }
@@ -37,17 +37,18 @@ class LessonsService {
         $course = Course::firstWhere("title", $user->course->title);
         
         $request->merge([
-            "tags" => $course->title
+            "tags" => $course->title,
+            "courseTitle" => $course->title
         ]);
 
         try {
         // upload video by calling youtube service
-      if
+        if
         (
-            $youtubeVideoDetails = getYoutubeVideoDetails($request)
+            $youtubeVideoDetails = getYoutubeVideoDetails($request)["response"]
         ){
             // upload transacript
-            $tanscriptUrl = $request->file("lessonTranscript")->store("/" . $user->id, "public");
+            $tanscriptUrl = $request->file("lessonTranscript")->store("/transcripts", "public");
             
             // create lesson
             $lesson = $course->lessons()->create([
@@ -55,13 +56,13 @@ class LessonsService {
                 "description" => $request->description,
                 "tutor" => $user->name,
             ]);
-            
+
             // use returned video details to create video resource
             $lesson->media()->create([
                 "video_link" => $youtubeVideoDetails["videoLink"],
                 "thumbnail" => $youtubeVideoDetails["thumbnail"],
                 "transcript" => Storage::url($tanscriptUrl),
-                "youtube_video_id" => $youtubeVideoDetails["videoId"],
+                "youtube_video_id" => $youtubeVideoDetails["youtube_video_id"],
             ]);
             
             $resources = $request->resources;
@@ -75,13 +76,13 @@ class LessonsService {
             LessonCreated::dispatch($course->students);
     
             // TODO add lesson to students curriculum
-    
+            
             // TODO add lesson to student progress 
-    
+            
             // TODO create lesson views table
         }
         
-
+        
         return response()->json([
             "status" => "success",
             "message" => "Your lesson has been created successfully.",

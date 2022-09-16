@@ -63,9 +63,9 @@ class TestUserTableSeeder extends Seeder
         //     "mentees" => json_encode([])
         // ]);
 
-        // $this->createFacilitators();
+        $this->createFacilitators();
 
-        // $this->call(LessonsTableSeeder::class);
+        $this->call(LessonsTableSeeder::class);
 
         $this->createStudents();
     }
