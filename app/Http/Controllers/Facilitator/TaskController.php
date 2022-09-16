@@ -87,9 +87,11 @@ class TaskController extends Controller
         if($dbTask){
            $response = TaskManager::totalSubmissions($dbTask, $user->course->students);
 
-            $code = ($response["status"]) ? 200 : 400;
+            $code = (count($response) > 0) ? 200 : 400;
 
-           return response()->json($response, $code);
+           return response()->json([
+            "data" => [...$response]
+           ], $code);
         }
 
         return response()->json([

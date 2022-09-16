@@ -66,7 +66,8 @@ class TaskController extends Controller
             "title" => $task->title,
             "description" => $task->description,
             "date_submitted" => today(),
-            "grade" => 0
+            "grade" => 0,
+            "date_graded" => null,
         ];
 
         $user->submissions->update([

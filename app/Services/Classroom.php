@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Models\Facilitator;
+use Illuminate\Support\Facades\Storage;
 
 
 
@@ -49,11 +50,32 @@ class Classroom {
         }        
     }
 
-    public static function createLesson($request){
-        // 
+    public static function createLesson($request, $course){
+        // try to upload vide to youtube
+        $response = getYoutubeVideoDetails($request);
+        
+        // upload transcript and return the path
+        $transcript = self::uploadTranscript($request->file('lessonTranscript'));
+        
+        // create lesson
+        $lesson = $course->lessons()->create([
+            "title" => $request->title,
+            "description" => $request->description,
+            "tutor" => $course->facilitator->name,
+        ]);
+        
+        // create lesson media
+        
     }
 
     public static function saveLessonAsDraft(){}
 
     public static function updateLesson(){}
+
+    private static function uploadTranscript($transcript){
+        // upload transacript
+        $file = $transcript->store("/transcripts", "public");
+
+        return Storage::url($file);
+    }
 }

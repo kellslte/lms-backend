@@ -118,3 +118,9 @@ function getDaysInMonth(Int $monthToAdd = 0)
 
     return $record[7];
 }
+
+function checkTaskSubmittionStatus($user, $task){
+    $submission = collect(json_decode($user->submissions->task, true))->where("id", $task->id)->first();
+
+    return is_null($submission["date_graded"]);
+}

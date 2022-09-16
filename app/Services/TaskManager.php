@@ -106,6 +106,7 @@ class TaskManager{
         $newRecord = collect(json_decode($submissions->tasks, true))->map(function($item) use ($task, $grade){
             if($item["id"] === $task->id){
                 $item["grade"] = $grade;
+                $item["date_graded"] = today();
             }
 
             return $item;
