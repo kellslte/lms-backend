@@ -7,8 +7,6 @@ use App\Models\Course;
 use App\Models\Lesson;
 use App\Events\TaskGraded;
 use App\Events\TaskCreated;
-use App\Models\Facilitator;
-use App\Events\LessonCreated;
 
 
 class TaskManager{
@@ -111,19 +109,13 @@ class TaskManager{
         if(!$submissions->update([
             "tasks" => json_encode($newRecord)
         ])){
-            return response()->json([
-                'status' => 'failed',
-                'message' => 'Your task could not be graded successfuully'
-            ], 400);
+            return null;
         }
 
         // TODO send a notification to user once the task has been graded
         TaskGraded::dispatch($submissions);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'You have sucessfully graded this task'
-        ], 200);
+        return true;
     }
 
     public static function createTask(Array $task, Lesson $lesson, $users){
@@ -139,17 +131,16 @@ class TaskManager{
             // TODO send a notification to user once task has been created
             TaskCreated::dispatch($users);
 
-            return response()->json([
-                'status' => 'success',
-                'message' => 'Task has been created successfully',
-                'task' => $task
-            ], 201);
+            return [
+                "status" => true,
+                "task" => $task
+            ];
         }
         catch(\Exception $e){
-            return response()->json([
-                'status' => 'failed',
-                'message' => $e->getMessage()
-            ], 400);
+            return [
+                "status" => false,
+                "task" => $e->getMessage()
+            ];
         }
     }
 
@@ -163,18 +154,16 @@ class TaskManager{
                 "task_deadline_time" => $data["deadline_time"]
             ]);
 
-            return response()->json([
-                "status" => "successful",
-                "data" => [
-                    "task" => $task
-                ]
-            ], 204);
+            return [
+                "status" =>  true,
+                "task" => $task
+            ];
         }
         catch(\Exception $e){
-            return response()->json([
-                "status" => "failed",
-                "message" => $e->getMessage()
-            ], 400);
+            return [
+                "status" =>  false,
+                "task" =>  $e->getMessage()
+            ];
         }
     }
 
@@ -184,18 +173,16 @@ class TaskManager{
                 "status" => "expired"
             ]);
 
-            return response()->json([
-                "status" => "success",
-                "data" => [
-                    "task" => $task
-                ]                
-            ], 204);
+            return [
+                "status" =>  true,
+                "task" => $task
+            ];
         }
         catch(\Exception $e){
-            return response()->json([
-                "status" => "failed",
-                "message" => $e->getMessage()
-            ]);
+            return [
+                "status" =>  false,
+                "task" =>  $e->getMessage()
+            ];
         }
     }
 

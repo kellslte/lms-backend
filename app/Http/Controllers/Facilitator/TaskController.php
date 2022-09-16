@@ -18,7 +18,19 @@ class TaskController extends Controller
     public function index(){
         $user = getAuthenticatedUser();
 
-        return TaskManager::taskStatus($user->course->id);
+        $response = TaskManager::taskStatus($user->course->id);
+
+        if(!$response){
+            return response()->json([
+                "status" => "failed",
+                "message" => "Your data could not be fetched"
+            ], 400);
+        }
+
+        return response()->json([
+            "status" => "successful",
+            "data" => $response
+        ], 200);
     }
 
 
@@ -33,13 +45,17 @@ class TaskController extends Controller
 
         // check that the lesson exists on the course instance
         if($course->lessons->contains($lesson)){
-            return TaskManager::createTask([
+            $response = TaskManager::createTask([
                 "title" => $request->title,
                 "description" => $request->description,
                 "deadline_date" => $request->taskDeadlineDate,
                 "deadline_time" => $request->taskDeadlineTime,
                 "status" => $request->status
             ], $lesson, $user->course->students);
+
+            $code = ($response["status"])? 200 : 400;
+
+            return response()->json($response, $code);
         }
     }
 
@@ -47,13 +63,17 @@ class TaskController extends Controller
         $taskToUpdate = ($task) ? Task::find($task) : null;
 
         if(!is_null($taskToUpdate)){
-            return TaskManager::updateTask([
+             $response = TaskManager::updateTask([
                 "title" => $request->title,
                 "description" => $request->description,
                 "status" => $request->status,
                 "deadline_date" => $request->taskDeadlineDate,
                 "deadline_time" => $request->taskDeadlineTime,
             ], $taskToUpdate);
+
+            $code = ($response["status"]) ? 200 : 400;
+
+            return response()->json($response, $code);
         }
 
         return response()->json([
@@ -68,7 +88,11 @@ class TaskController extends Controller
         $dbTask = Task::find($task);
 
         if($dbTask){
-           return TaskManager::totalSubmissions($dbTask, $user->course->students);
+           $response = TaskManager::totalSubmissions($dbTask, $user->course->students);
+
+            $code = ($response["status"]) ? 200 : 400;
+
+           return response()->json($response, $code);
         }
 
         return response()->json([
@@ -83,10 +107,22 @@ class TaskController extends Controller
         ]);
 
         // TODO get submission data for the task
-       return TaskManager::gradeTask($task, $student, (int)$request->grade);
+       $response = TaskManager::gradeTask($task, $student, (int)$request->grade);
+
+       return ($response)? response()->json([
+        "status" => "successful",
+        "message" => "Task has been graded"
+       ]) : response()->json([
+        "status" => "failed",
+        "message" => "Task could not be successfully graded"
+       ], 400);
     }
 
     public function closeSubmission(Task $task){
-        return TaskManager::closeTasksubmission($task);
+        $response = TaskManager::closeTasksubmission($task);
+
+        $code = ($response["status"]) ? 200 : 400;
+
+        return response()->json($response, $code);
     }
 }
