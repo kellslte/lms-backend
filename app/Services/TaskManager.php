@@ -71,20 +71,27 @@ class TaskManager{
                 ];
             });
 
-            return response()->json([
-                "status" => "successful",
-                "data" => [
+
+            //  tasks that have submissions
+            $completed = collect($lessons)->reject(function($lesson){
+                return $lesson->task->status !== "published";
+            })->map(function($lesson) use ($course){
+                $students = Course::find($course)->students;
+                $task = $lesson->task;
+                $students->load('submissions');
+
+                return self::totalSubmissions($task, $students);
+            });
+
+             return [
                     "pending_tasks" => $pending,
                     "published_tasks" => $published,
-                    "graded_tasks" => $graded
-                ]
-            ], 200);
+                    "graded_tasks" => $graded,
+                    "completed_tasks" => $completed
+                ];
         }
         catch(\Exception $e){
-            return response()->json([
-                "status" => "failed",
-                "message" => "You request could not be successfully completed"
-            ], 400);
+            return null;
         }
     }
 
@@ -194,7 +201,7 @@ class TaskManager{
 
     public static function totalSubmissions(Task $task, $students){
         // get the submissions for each task
-        $response = collect($students)->map(function($student) use ($task){
+        return collect($students)->map(function($student) use ($task){
             $entry =
             collect(json_decode($student->submissions->tasks, true))->reject(function ($item) use ($task) {
                 return $item["id"] !== $task->id;
@@ -205,13 +212,5 @@ class TaskManager{
                 "submission" => $entry
             ]; 
         });
-
-        // return response
-        return response()->json([
-            "status" => "success",
-            "data" => [
-                "submissions" => $response
-            ]
-        ], 200);
     }
 }
