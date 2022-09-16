@@ -37,7 +37,8 @@ class TaskManager{
                     "task_deadline_date" => formatDate($lesson->task_deadline_date),
                     "task_deadline_time" => formatTime($lesson->task_deadline_time),
                     "lesson_id" => $lesson->id,
-                    "status" => $lesson->task->status
+                    "status" => $lesson->task->status,
+                    "submissions" => self::totalSubmissions($lesson->task, $lesson->course->students)
                 ];
             })->toArray();
 
@@ -51,7 +52,8 @@ class TaskManager{
                     "task_deadline_date" => formatDate($lesson->task_deadline_date),
                     "task_deadline_time" => formatTime($lesson->task_deadline_time),
                     "lesson_id" => $lesson->id,
-                    "status" => $lesson->task->status
+                    "status" => $lesson->task->status,
+                    "submissions" => self::totalSubmissions($lesson->task, $lesson->course->students)
                 ];
             })->toArray();
 
@@ -65,32 +67,15 @@ class TaskManager{
                     "task_deadline_date" => formatDate($lesson->task_deadline_date),
                     "task_deadline_time" => formatTime($lesson->task_deadline_time),
                     "lesson_id" => $lesson->id,
-                    "status" => $lesson->task->status
+                    "status" => $lesson->task->status,
+                    "submissions" => self::totalSubmissions($lesson->task, $lesson->course->students)
                 ];
             })->toArray();
-
-
-            //  tasks that have submissions
-            $completed = collect($lessons)->reject(function($lesson){
-                return $lesson->task->status !== "published";
-            })->map(function($lesson) use ($course){
-                $students = Course::find($course)->students;
-                $task = $lesson->task;
-                $students->load('submissions');
-
-                $entry = (self::totalSubmissions($task, $students)->count() > 0) ? self::totalSubmissions($task, $students) : [];
-
-                return [
-                    "task_id" => $task->id,
-                    "submissions" => $entry
-                ];
-            })->filter()->toArray();
 
              return [
                     "pending_tasks" => [...$pending],
                     "published_tasks" => [...$published],
-                    "graded_tasks" => [...$graded],
-                    "completed_tasks" => [...$completed],
+                    "graded_tasks" => [...$graded]
                 ];
         }
         catch(\Exception $e){

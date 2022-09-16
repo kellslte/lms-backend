@@ -47,7 +47,6 @@ class LessonsTableSeeder extends Seeder
         $lesson->task()->create([
             'title' => 'And you\'re off to a start! '. $count,
             'description' => 'Do a write up explaning what you understand from the lesson you have just had',
-            'status' => 'published',
             'task_deadline_date' => Carbon::now()->addDay(5),
             'task_deadline_time' => Carbon::now()->addHours(125),
         ]);

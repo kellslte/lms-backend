@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Services\TaskManager;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateTaskRequest;
+use App\Http\Resources\TaskResource;
 
 class TaskController extends Controller
 {
@@ -87,11 +88,12 @@ class TaskController extends Controller
         if($dbTask){
            $response = TaskManager::totalSubmissions($dbTask, $user->course->students);
 
-            $code = (count($response) > 0) ? 200 : 400;
-
            return response()->json([
-            "data" => [...$response]
-           ], $code);
+            "data" => [
+                "task" => new TaskResource($dbTask),
+                "submissions" => [...$response]
+            ]
+           ], 200);
         }
 
         return response()->json([
