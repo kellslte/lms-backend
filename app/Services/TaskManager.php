@@ -87,10 +87,10 @@ class TaskManager{
             })->filter()->toArray();
 
              return [
-                    "pending_tasks" => $pending,
-                    "published_tasks" => $published,
-                    "graded_tasks" => $graded,
-                    "completed_tasks" => $completed,
+                    "pending_tasks" => [...$pending],
+                    "published_tasks" => [...$published],
+                    "graded_tasks" => [...$graded],
+                    "completed_tasks" => [...$completed],
                 ];
         }
         catch(\Exception $e){
