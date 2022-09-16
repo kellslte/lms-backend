@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Facilitator;
 
 use App\Models\Course;
 use App\Models\Lesson;
+use App\Services\Classroom;
 use Illuminate\Http\Request;
 use App\Services\LessonsService;
 use App\Http\Controllers\Controller;
@@ -13,13 +14,19 @@ class ClassRoomController extends Controller
 {
     public function index(){
        $user = getAuthenticatedUser();
+
+       $response = Classroom::allLessons($user);
+
+       $code = (!is_null($response)) ? 200 : 400;
+
+       $status = (!is_null($response)) ? 'success' : 'failed';
         
         return response()->json([
-            'status' => 'success',
+            'status' => $status,
             'data' => [
-                'lessons' => LessonsService::getAllLessons($user),
+                'lessons' => $response,
             ]
-        ], 200);
+        ], $code);
     }
 
     public function store(Request $request){
@@ -27,7 +34,7 @@ class ClassRoomController extends Controller
 
         return response()->json($user);
 
-        return LessonsService::createLesson($request, $user);
+        return Classroom::createLesson($request, $user);
     }
 
     public function update(CreateLessonRequest $request, Lesson $lesson){

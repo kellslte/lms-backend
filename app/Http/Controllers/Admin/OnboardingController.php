@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Admin;
 use App\Models\Course;
 use App\Models\Mentor;
+use App\Mail\TrackChanged;
 use App\Mail\UserOnboarded;
 use App\Imports\UsersImport;
 use Illuminate\Http\Request;
@@ -70,9 +71,9 @@ class OnboardingController extends Controller
 
     public function changeTrack(Request $request){
         $data = $request->validate([
-            "newTrack" => '',
-            "oldTrack" => '',
-            "email" => '',
+            "newTrack" => 'required|string',
+            "oldTrack" => 'required|string',
+            "email" => 'required|email',
         ]);
 
         // get course details
@@ -80,7 +81,15 @@ class OnboardingController extends Controller
 
         $oldAccount = $course->students()->where("email", $data["email"])->first();
 
-        $oldAccount->load(['attendance', 'schedule', 'point', 'submissions', 'progress', 'settings', 'curriculum']);
+        // check that student account exists
+        if(!$oldAccount){
+            return response()->json([
+                "status" => "error",
+                "message" => "User record not found"
+            ],404);
+        }
+
+        $oldAccount->load(['attendance','course','schedule','point', 'submissions', 'progress', 'settings', 'curriculum']);
 
         $newCourse = Course::whereTitle($data["newTrack"])->first();
 
@@ -103,11 +112,11 @@ class OnboardingController extends Controller
 
         $newAccount->progress()->create([
             "course" => $newCourse->title,
-            "course_progress" => $oldAccount->progress->course_progress,
+            "course_progress" => json_encode([]),
         ]);
 
         $newAccount->schedule()->create([
-            "meetings" => $oldAccount->schedule->meetings
+            "meetings" => json_encode([])
         ]);
 
         // lesson videso for the curriculum
@@ -125,6 +134,13 @@ class OnboardingController extends Controller
         $newAccount->point()->create([...$oldAccount->points]);
 
         $newAccount->attendance()->create([...$oldAccount->attendance]);
+
+       Mail::to($newAccount->email)->queue(new TrackChanged($newAccount, $oldAccount->course));
+
+        return response()->json([
+            'status' => 'successful',
+            'message' => 'Student track change has been processed'
+        ], 200);
     }
 
     public function sendMagicLink(Request $request)

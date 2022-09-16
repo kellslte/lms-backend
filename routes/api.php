@@ -174,13 +174,16 @@ Route::prefix('v1')->group(function(){
 
             // Onboarding Routes
             Route::post('onboard/facilitator', [OnboardingController::class, 'facilitator']);
+            // onboard all students
             Route::post('onboard/students', [OnboardingController::class, 'students']);
+            // onboard mentor
             Route::post('onboard/mentors', [OnboardingController::class, 'mentors']);
-
+            // send magic link to all the users
             Route::post('onboard/send-login-link', [OnboardingController::class, 'sendMagicLinkToStudents']);
-
+            // send magic link to single user
             Route::post('onboard/students/magic-link', [OnboardingController::class, 'sendMagicLink']);
-
+            // send slack invite link to students
+            Route::post('onboard/students/slack-invite', [OnboardingController::class, 'sendSlackInvite']);
             // Create SOTU meeting
             //Route::post('meetings/{sotu}', [MeetingController::class, 'createSotu']);
         });

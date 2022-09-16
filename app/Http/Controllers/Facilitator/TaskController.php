@@ -4,10 +4,7 @@ namespace App\Http\Controllers\Facilitator;
 
 use App\Models\Task;
 use App\Models\User;
-use App\Events\Graded;
 use App\Models\Lesson;
-use App\Events\TaskGraded;
-use App\Events\TaskCreated;
 use Illuminate\Http\Request;
 use App\Services\TaskManager;
 use App\Http\Controllers\Controller;

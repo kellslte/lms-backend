@@ -23,16 +23,6 @@ class LessonsService {
         });
     }
 
-    public static function getPublishedLessons($user){
-        return collect($user->course->lessons)->reject(fn($lesson) => $lesson->status === 'unpublished')->map(function($lesson){
-            return $lesson->load('views');
-        });
-    }
-
-    public static function getUnpublishedLessons($user){
-        return collect($user->course->lessons)->reject(fn($lesson) => $lesson->status === 'published');
-    }
-
     public static function createLesson($request, $user){
         $course = Course::firstWhere("title", $user->course->title);
         

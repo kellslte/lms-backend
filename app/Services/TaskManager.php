@@ -82,10 +82,10 @@ class TaskManager{
             });
 
              return [
-                    "pending_tasks" => $pending,
-                    "published_tasks" => $published,
-                    "graded_tasks" => $graded,
-                    "completed_tasks" => $completed
+                    "pending_tasks" => $pending->toArray(),
+                    "published_tasks" => $published->toArray(),
+                    "graded_tasks" => $graded->toArray(),
+                    "completed_tasks" => $completed->toArray()
                 ];
         }
         catch(\Exception $e){
