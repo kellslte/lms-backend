@@ -26,8 +26,18 @@ class Classroom {
 
             $unpublished = collect($user->course->lessons)->reject(function($lesson){
                 return $lesson->status !== "unpublished";
-            })->map(function($lesson){
-                return 
+            })->map(function($lesson)use ($user){
+                return [
+                    "id" => $lesson->id,
+                    "status" => $lesson->status,
+                    "thumbnail" => $lesson->thumbnail,
+                    "title" => $lesson->title,
+                    "description" => $lesson->description,
+                    "datePublished" => formatDate($lesson->created_at),
+                    "tutor" => $user->name,
+                    "views" => 0,
+                    "taskSubmissions" => TaskManager::getSubmissions($lesson->task, $user->course->students)
+                ];
             });
 
             return [
