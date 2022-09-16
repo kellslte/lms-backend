@@ -207,10 +207,10 @@ class TaskManager{
                 return $item["id"] !== $task->id;
             });
 
-            return [
+            return (count($entry) > 0) ? [
                 "student_id" => $student->id,
                 "submission" => $entry
-            ]; 
-        });
+            ]: null; 
+        })->filter();
     }
 }
