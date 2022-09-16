@@ -8,6 +8,7 @@ use App\Events\SendMagicLink;
 use App\Events\TaskSubmitted;
 use App\Observers\PointObserver;
 use App\Events\LeaderboardUpdated;
+use App\Listeners\SendSlackInviteMail;
 use Illuminate\Auth\Events\Registered;
 use App\Listeners\SendMagicLinkToStudents;
 use App\Listeners\NotifyStudentsAboutTaskGrade;
@@ -46,6 +47,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         SendMagicLink::class => [
             SendMagicLinkToStudents::class,
+        ],
+        SendSlackInvite::class => [
+            SendSlackInviteMail::class,
         ]
     ];
 

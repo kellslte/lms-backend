@@ -10,6 +10,7 @@ use App\Mail\UserOnboarded;
 use App\Imports\UsersImport;
 use Illuminate\Http\Request;
 use App\Events\SendMagicLink;
+use App\Events\SendSlackInvite;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
@@ -207,6 +208,25 @@ class OnboardingController extends Controller
             return response()->json([
                 'status' => 'error',
                 'message' => 'Mentor account could not be created'
+            ], 400);
+        }
+    }
+
+    public function sendSlackInvite(Request $request){
+        $students = User::all();
+
+        try{
+            SendSlackInvite::dispatch($students);
+
+            return response()->json([
+                "status" => "successful",
+                "message" => "Slack invite mail has been sent to the students"
+            ], 200);
+        }
+        catch(\Exception $e){
+            return response()->json([
+                "status" => "failed",
+                "message" => $e->getMessage()
             ], 400);
         }
     }
