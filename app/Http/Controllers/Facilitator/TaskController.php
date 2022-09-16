@@ -26,7 +26,7 @@ class TaskController extends Controller
 
         return response()->json([
             "status" => "successful",
-            "data" => $response
+            "data" => (array)$response
         ], 200);
     }
 
