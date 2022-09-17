@@ -29,7 +29,7 @@ class SendSlackInviteMail
     public function handle(SendSlackInvite $event)
     {
         foreach ($event->students as $student) {
-            Mail::to($student->email)->send(new SlackInviteMail($student));
+            Mail::to($student->email)->send(new SlackInviteMail($student, $event->link));
         }
     }
 }

@@ -151,6 +151,7 @@ class OnboardingController extends Controller
                 "message" => "User record could not be found"
             ], 404);
         }
+
         try {
             $student->sendMagicLink();
             
@@ -231,8 +232,12 @@ class OnboardingController extends Controller
     public function sendSlackInvite(Request $request){
         $students = User::all();
 
+        $request->validate([
+            "link" => "required|string"
+        ]);
+
         try{
-            SendSlackInvite::dispatch($students);
+            SendSlackInvite::dispatch($students, $request->link);
 
             return response()->json([
                 "status" => "successful",

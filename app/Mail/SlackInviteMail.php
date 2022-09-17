@@ -19,7 +19,7 @@ Mailable implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(public User $student){}
+    public function __construct(public User $student, public String $link){}
 
     /**
      * Build the message.

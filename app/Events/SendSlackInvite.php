@@ -19,7 +19,7 @@ class SendSlackInvite
      *
      * @return void
      */
-    public function __construct(public $students)
+    public function __construct(public $students, public $link)
     {
         //
     }
