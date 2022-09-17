@@ -9,7 +9,9 @@ use Illuminate\Queue\SerializesModels;
 use App\Models\Course;
 use App\Models\User;
 
-class TrackChanged extends Mailable
+class TrackChanged extends
+
+Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 

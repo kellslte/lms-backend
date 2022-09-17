@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SendMagicLinkToUser extends Mailable
+class SendMagicLinkToUser extends
+
+Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 

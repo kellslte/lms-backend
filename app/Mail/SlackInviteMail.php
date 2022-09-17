@@ -8,7 +8,9 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use App\Models\User;
 
-class SlackInviteMail extends Mailable
+class SlackInviteMail extends
+
+Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 

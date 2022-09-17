@@ -67,6 +67,10 @@ class UsersImport implements ToModel, WithHeadingRow
             $student->curriculum()->create([
                 "viewables" => json_encode([])
             ]);
+
+            // send magic link to newly created user
+            $student->sendMagicLink();
+
         }
 
         return $student;

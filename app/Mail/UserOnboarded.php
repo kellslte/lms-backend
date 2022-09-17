@@ -7,7 +7,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class UserOnboarded extends Mailable
+class UserOnboarded extends
+
+Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 

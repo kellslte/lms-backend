@@ -27,6 +27,6 @@ class MagicLinkJob implements ShouldQueue
      */
     public function handle()
     {
-        
+          
     }
 }
