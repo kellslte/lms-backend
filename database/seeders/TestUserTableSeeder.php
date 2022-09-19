@@ -40,28 +40,17 @@ class TestUserTableSeeder extends Seeder
             'password' => bcrypt('password'),
         ])->settings()->create();
 
-        // CommunityManager::create([
-        //     'name' => 'Bell Omoboye',
-        //     'avatar' => 'https://www.forbes.com/sites/angelicamarideoliveira/2021/07/06/meet-the-entrepreneurs-ushering-black-women-into-ux-careers-in-brazil/'
-        // ])->socials()->create([
-        //     'linkedin' => 'https://linkedin.com/in/bellomoboye',
-        //     'twitter' => 'https://twitter.com/omobells',
-        //     'facebook' => 'https://facebook.com/omoboyebell',
-        //     'mail' => 'bellomoboye@gmail.com'
-        // ]);
+        CommunityManager::create([
+            'name' => 'Bell Omoboye',
+            'avatar' => 'https://www.forbes.com/sites/angelicamarideoliveira/2021/07/06/meet-the-entrepreneurs-ushering-black-women-into-ux-careers-in-brazil/'
+        ])->socials()->create([
+            'linkedin' => 'https://linkedin.com/in/bellomoboye',
+            'twitter' => 'https://twitter.com/omobells',
+            'facebook' => 'https://facebook.com/omoboyebell',
+            'mail' => 'bellomoboye@gmail.com'
+        ]);
 
-        // $mentor = Mentor::create([
-        //     'name' => 'Chidera Max-Oti',
-        //     'email' => 'deramaxoti.mentor@gmail.com',
-        //     'recovery_email' => 'deramaxoti@gmail.com',
-        //     'password' => bcrypt('mental'),
-        // ]);
-
-        // $mentor->settings()->create();
-
-        // $mentor->mentees()->create([
-        //     "mentees" => json_encode([])
-        // ]);
+        $this->createMentors();
 
         $this->createFacilitators();
 
@@ -194,5 +183,31 @@ class TestUserTableSeeder extends Seeder
             'access_to_laptop' => 'Yes',
             'password' => bcrypt('student'),
         ], 'Product Design');
+    }
+
+    protected function createMentor(Array $data){
+        $mentor = Mentor::create([
+            'name' => $data["name"],
+            'email' => $data["email"],
+            'recovery_email' => $data["recoveryEmail"],
+            'password' => bcrypt($data["password"]),
+        ]);
+
+        $mentor->settings()->create();
+
+        $mentor->mentees()->create([
+            "mentees" => json_encode([])
+        ]);
+    }
+
+    public function createMentors(){
+        for($i=0; $i <= 20; $i++){
+            $this->createMentor([
+                "name" => "Mentor {$i}",
+                "email" => "mentor{$i}.mentor@gmail.com",
+                "recoveryEmail" => "mentor{$i}@gmail.com",
+                "password" => "mental"
+            ]);
+        }
     }
 }

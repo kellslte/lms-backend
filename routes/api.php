@@ -16,6 +16,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\KnowledgebaseController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 
 // Student Controllers
 use App\Http\Controllers\Auth\MagicLoginController;
@@ -186,6 +187,8 @@ Route::prefix('v1')->group(function(){
             Route::post('onboard/students/slack-invite', [OnboardingController::class, 'sendSlackInvite']);
             // change user track
             Route::post('onboard/students/change-track', [OnboardingController::class, 'changeTrack']);
+            // update course details
+            Route::put('course/{course}', [AdminCourseController::class, 'update']);
             // Create SOTU meeting
             //Route::post('meetings/{sotu}', [MeetingController::class, 'createSotu']);
         });
@@ -228,7 +231,7 @@ Route::prefix('v1')->group(function(){
             // Student mentor route
             Route::get('mentors', [StudentMentorsController::class, 'index']);
             // Assign mentee to mentor
-            Route::post('mentors/{mentor}/mentees/{user}', [StudentMentorsController::class, 'assignMenteeToMentor']);
+            Route::put('mentors/{mentor}/mentees/{user}', [StudentMentorsController::class, 'assignMenteeToMentor']);
             // Remove mentee from mentor
             Route::delete('mentors/{mentor}/mentees/{user}', [StudentMentorsController::class, 'removeMenteeFromMentor']);
             // Create a new meeting

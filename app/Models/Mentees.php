@@ -12,6 +12,13 @@ class Mentees extends Model
 
     protected $guarded = [];
 
+    protected $hidden = [
+        "id",
+        "created_at",
+        "updated_at",
+        "mentorable_type"
+    ];
+
     public function mentorable(){
         return $this->morphTo();
     }

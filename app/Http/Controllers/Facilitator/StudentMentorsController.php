@@ -14,13 +14,11 @@ class StudentMentorsController extends Controller
     {
         $user = getAuthenticatedUser();
 
-        $students = $user->course->students;
-
-        $mentors  = $user->course->mentors;
+        $mentors  = Mentor::all();
 
         $data = collect($mentors)->map(function($mentor){
             return [
-                $mentor->name = collect($mentor->mentees)->map(function($mentee){
+                $mentor->name => collect($mentor->mentees)->map(function($mentee){
                     return $mentee;
                 })
             ];
@@ -36,31 +34,66 @@ class StudentMentorsController extends Controller
 
     public function assignMenteeToMentor(Mentor $mentor, User $user)
     {
-        $students = 
+        $mentees = collect(json_decode($mentor->mentees->mentees, true));
 
-        $mentor->mentees->update([
-            'mentees' => json_encode([
+        $record = $mentees->where("studentId", $user->id)->first();
+
+        if($record){
+            return response()->json([
+                "status" => "failed",
+                "message" => "This student has already been assigned to this mentor"
+            ]);
+        }
+
+        try{
+            array_push($mentees->toArray(), [
                 "studentId" => $user->id,
-            ])
-        ]);
+                "studentName" => $user->name
+            ]);
 
-        $mentees = collect($mentor->mentees)->map(function($mentee){
+            $mentor->mentees->update([
+                'mentees' => json_encode($mentees)
+            ]);
 
-        });
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Mentee has been associated with mentor',
-            'data' => [
-                'mentor' => [$mentor->name => json_decode($mentor->mentees)]
-            ]
-        ]);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Mentee has been associated with mentor',
+                'data' => [
+                    'mentor' => [$mentor->name => json_decode($mentor->mentees, true)]
+                ]
+            ]);
+        }
+        catch(\Exception $e){
+            return response()->json([
+                "status" => "failed",
+                "message" => $e->getMessage()
+            ]);
+        }
     }
 
     public function removeMenteeFromMentor(Mentor $mentor, User $user)
     {
-        $mentees = $mentor->mentees;
+        $mentees = json_decode($mentor->mentees->mentees, true);
 
-        return response()->json($mentees);
+        try{
+            $response = collect($mentees)->reject(function ($mentee) use ($user) {
+                return $mentee["studentId"] === $user->id;
+            })->flatten();
+
+            $mentor->mentees->update([
+                "mentees" => json_encode($response)
+            ]);
+
+            return response()->json([
+                "status" => "successful",
+                "message" => "Student record has been successfully removed"
+            ]);
+        }
+        catch(\Exception $e){
+            return response()->json([
+                "status" => "failed",
+                "messsage" => $e->getMessage()
+            ]);
+        }
     }
 }
