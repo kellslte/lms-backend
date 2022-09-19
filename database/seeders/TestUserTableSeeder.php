@@ -98,13 +98,13 @@ class TestUserTableSeeder extends Seeder
         }
 
         $student->curriculum()->create([
-            "viewables" => json_encode([]),
+            "viewables" => json_encode($lessons),
         ]);
 
 
         $student->progress()->create([
             "course" => $course->title,
-            "course_progress" => json_encode([]),
+            "course_progress" => json_encode($courseProgress),
         ]);
 
         $record = getDaysInMonth(7);

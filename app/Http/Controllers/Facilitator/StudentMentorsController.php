@@ -43,28 +43,28 @@ class StudentMentorsController extends Controller
         }
 
         try{
-            array_push($mentees->toArray(), [
+            $mentees[] = [
                 "studentId" => $user->id,
                 "studentName" => $user->name
-            ]);
-
+            ];
+    
             $mentor->mentees->update([
-                'mentees' => json_encode($mentees)
+                'mentees' => json_encode($mentees->toArray())
             ]);
-
+    
             return response()->json([
                 'status' => 'success',
                 'message' => 'Mentee has been associated with mentor',
                 'data' => [
                     'mentor' => [$mentor->name => json_decode($mentor->mentees->mentees, true)]
-                ]
-            ]);
+                    ]
+                ]);
         }
         catch(\Exception $e){
             return response()->json([
                 "status" => "failed",
                 "message" => $e->getMessage()
-            ]);
+            ], 400);
         }
     }
 

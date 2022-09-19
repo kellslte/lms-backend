@@ -65,6 +65,10 @@ class Classroom {
         ]);
         
         // create lesson media
+
+        // update students lesson progress details
+
+        // send notification to students that lesson has been created
         
     }
 
