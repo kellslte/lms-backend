@@ -185,12 +185,12 @@ class TaskManager{
                 return $item["id"] !== $task->id;
             })->filter(function($task){
                 return !empty($task);
-            })->all();
+            })->toArray();
 
             return (count($entry) > 0) ? [
                 "student_id" => $student->id,
                 "student_name" => $student->name,
-                "submission" => $entry
+                "submission" => [...$entry]
             ]: null; 
         })->filter();
     }
