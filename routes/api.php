@@ -235,7 +235,7 @@ Route::prefix('v1')->group(function(){
             // Remove mentee from mentor
             Route::delete('mentors/{mentor}/mentees/{user}', [StudentMentorsController::class, 'removeMenteeFromMentor']);
             // Create a new meeting
-            Route::post('meetings', [MentorController::class, 'store']);
+            Route::post('meetings', [FacilitatorScheduleController::class, 'fixLiveClass']);
             // Award points to the user
             Route::post("points/{user}", [PointController::class, 'awardPoints']);
         });

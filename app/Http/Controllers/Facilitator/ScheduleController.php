@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Facilitator;
 
+use App\Events\ClassFixed;
 use App\Models\Meeting;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -10,14 +11,6 @@ use App\Services\AttendanceService;
 
 class ScheduleController extends Controller
 {
-    protected $facilitator;
-    protected $attendanceService;
-
-    public function __construct(){
-        $this->facilitator = getAuthenticatedUser();
-        $this->attendanceService = new AttendanceService();
-    }
-
     public function index(){
         $user = getAuthenticatedUser();
 
@@ -28,78 +21,37 @@ class ScheduleController extends Controller
     }
 
     public function fixLiveClass(CreateLiveClassRequest $request){
-        // TODO create the live class
-        $class = Meeting::create([
-            'host_name' => $this->facilitator->name,
-            'link' => $request->link,
-            'time' => $request->time,
-            'date' => $request->date,
-            'type' => $request->type
-        ]);
 
-        // TODO make it attendable
-        // $this->attendanceService->attend($class);
-        // $this->attendanceService->setDate($request->date);
-
-        // TODO attach it to those that should attend
-        // TODO attach it to the schedule of the attendees
-        foreach($this->facilitator->course->students as $student) {
-            $this->attendanceService->attender($student);
-            $student->schedule()->associate($class);
-        }
+        $user = getAuthenticatedUser();
         
-        // TODO send notifications that class has been fixed
+        try{
+            $class = Meeting::create([
+                'host_name' => $user->name,
+                'link' => $request->link,
+                'start_time' => $request->time,
+                'end_time' => $request->time,
+                'date' => $request->date,
+                'calendarId' => '6318e0104204e',
+                'type' => "class",
+                'caption' => $request->caption
+            ]);
+
+            // TODO fire class created event
+            ClassFixed::dispatch($user->course->students, $class, $user);
+
+            return response()->json([
+                "status" => "successful",
+                "message" => "Class has been fixed",
+                "data" => [
+                    "class" => $class
+                ]
+            ]);
+        }
+        catch(\Exception $e){
+            return response()->json([
+                "status" => "failed",
+                "message" => $e->getMessage()
+            ]);
+        }
     }
-
-
-    /*
-    
-    attendance array will now look like this: 
-
-    $attendance = [
-        "september" => [
-            "wk1" => [],
-            "wk2" => [],
-            "wk3" => [],
-            "wk5" => [],
-        ],
-        "october" => [
-            "wk1" => [],
-            "wk2" => [],
-            "wk3" => [],
-            "wk5" => [],
-        ],
-        "november" => [
-            "wk1" => [],
-            "wk2" => [],
-            "wk3" => [],
-            "wk5" => [],
-        ],
-        "december" => [
-            "wk1" => [],
-            "wk2" => [],
-            "wk3" => [],
-            "wk5" => [],
-        ],
-        "january" => [
-            "wk1" => [],
-            "wk2" => [],
-            "wk3" => [],
-            "wk5" => [],
-        ],
-        "february" => [
-            "wk1" => [],
-            "wk2" => [],
-            "wk3" => [],
-            "wk5" => [],
-        ],
-        "march" => [
-            "wk1" => [],
-            "wk2" => [],
-            "wk3" => [],
-            "wk5" => [],
-        ],
-    ];
-    
-    */
 }

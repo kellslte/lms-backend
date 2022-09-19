@@ -3,16 +3,20 @@
 namespace App\Providers;
 
 use App\Models\Point;
+use App\Events\ClassFixed;
 use App\Events\LessonCreated;
 use App\Events\SendMagicLink;
 use App\Events\TaskSubmitted;
 use App\Events\SendSlackInvite;
 use App\Observers\PointObserver;
+use App\Listeners\LiveClassFixed;
 use App\Events\LeaderboardUpdated;
 use App\Listeners\SendSlackInviteMail;
 use Illuminate\Auth\Events\Registered;
 use App\Listeners\LessonProgressUpdate;
+use App\Listeners\UpdateStudentSchedule;
 use App\Listeners\SendMagicLinkToStudents;
+use App\Listeners\UpdateFacilitatorSchedule;
 use App\Listeners\NotifyStudentsAboutTaskGrade;
 use App\Listeners\NotifyStudentsOfLessonCreation;
 use App\Listeners\NotifyFacilitatorAboutSubmission;
@@ -53,6 +57,11 @@ class EventServiceProvider extends ServiceProvider
         ],
         SendSlackInvite::class => [
             SendSlackInviteMail::class,
+        ],
+        ClassFixed::class => [
+            LiveClassFixed::class,
+            UpdateFacilitatorSchedule::class,
+            UpdateStudentSchedule::class,
         ]
     ];
 

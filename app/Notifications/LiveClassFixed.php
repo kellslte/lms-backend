@@ -62,7 +62,9 @@ class LiveClassFixed extends Notification
     public function toArray($notifiable)
     {
         return [
-            "message" => "Hi, {$notifiable->name}, a live class has been fixed! Go to your dashboard to check the details of the class"
-        ];
+            "type" => "class_fixed",
+            "time" => time(),
+            "message" => "A live class has been fixed"
+        ];;
     }
 }

@@ -18,9 +18,8 @@ class CreateLiveClassRequest extends FormRequest
         return [
             'caption' => 'required|string|min:3',
             'link' => 'required|string',
-            'time' => 'required|timestamp',
+            'time' => 'required',
             'date' => 'required|date',
-            'type' => 'required|string',
         ];
     }
 
