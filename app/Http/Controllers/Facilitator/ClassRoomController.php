@@ -29,12 +29,16 @@ class ClassRoomController extends Controller
         ], $code);
     }
 
-    public function store(Request $request){
+    public function store(CreateLessonRequest $request){
         $user = getAuthenticatedUser();
 
-        return response()->json($user);
+        return Classroom::createLesson($request, $user->course);
+    }
 
-        return Classroom::createLesson($request, $user);
+    public function saveAsDraft(CreateLessonRequest $request){
+        $user = getAuthenticatedUser();
+
+        return Classroom::saveLessonAsDraft($request, $user->course);
     }
 
     public function update(CreateLessonRequest $request, Lesson $lesson){

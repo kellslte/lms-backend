@@ -14,10 +14,8 @@ class TaskManager{
     public static function getSubmissions(Object $task, $students)
     {
         return collect($students)->map(function ($user) use ($task) {
-            return collect(json_decode($user->submissions->tasks, true))->reject(function ($item) use ($task) {
-                return $item["id"] !== $task->id;
-            });
-        });
+            return collect(json_decode($user->submissions->tasks, true))->where("id", $task->id)->first();
+        })->filter();
     }
 
     public static function taskStatus(String $course){
@@ -188,6 +186,6 @@ class TaskManager{
                 "student_name" => $student->name,
                 "submission" => $entry
             ]: null; 
-        })->filter();
+        })->filter()->all();
     }
 }
