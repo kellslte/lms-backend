@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Services\TaskManager;
 use App\Services\TaskService;
 use App\Services\LessonsService;
+use App\Services\ScheduleService;
 use App\Http\Controllers\Controller;
 
 class DashboardController extends Controller
@@ -21,7 +22,7 @@ class DashboardController extends Controller
             'completed_tasks' => [],
             'pending_tasks' => [],
             'live_classes' => 21,
-            'schedule' => json_decode($user->schedule->meetings, true),
+            'schedule' => ScheduleService::getSchedule($user),
             'course' => $user->course->title,
             'total_enrolled_students' => $user->course->students->count(),
         ];
