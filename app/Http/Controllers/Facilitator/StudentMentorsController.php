@@ -56,7 +56,7 @@ class StudentMentorsController extends Controller
                 'status' => 'success',
                 'message' => 'Mentee has been associated with mentor',
                 'data' => [
-                    'mentor' => [$mentor->name => json_decode($mentor->mentees, true)]
+                    'mentor' => [$mentor->name => json_decode($mentor->mentees->mentees, true)]
                 ]
             ]);
         }
