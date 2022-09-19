@@ -15,17 +15,11 @@ class TaskController extends Controller
 
         $tasks = collect($user->course->lessons)->map(function($lesson) use ($user){
             $tasks = $user->completedTasks();
-
-            $status = $lesson->task->status;
-
-           if($tasks->where("id", $lesson->task->id)->first()){
-                $status = "submitted";
-           }
             
             return [
                 "id" => $lesson->task->id,
                 "title" => $lesson->task->title,
-                "status" => $status,
+                "status" => ($tasks->contains($lesson->task->id)) ? "submitted": $lesson->task->status,
                 "description" => $lesson->task->description,
                 "task_deadline_date" => formatDate($lesson->task->task_deadline_date),
                 "task_deadline_time" => formatTime($lesson->task->task_deadline_time),
