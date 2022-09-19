@@ -26,11 +26,11 @@ class StudentPerformanceController extends Controller
         ]);
 
         // get user points
-        $boardDetails = $user->points;
+        $boardDetails = $user->point;
 
         // update points
         $boardDetails->update([
-            'bonus_points' => (int)$request->points
+            'bonus_points' => ((int)$request->points + $boardDetails->bonus_points)
         ]);
 
         return response()->json([
