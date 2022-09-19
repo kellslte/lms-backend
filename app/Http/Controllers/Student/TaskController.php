@@ -19,7 +19,7 @@ class TaskController extends Controller
             return [
                 "id" => $lesson->task->id,
                 "title" => $lesson->task->title,
-                "status" => $status,
+                "status" => $lesson->task->status,
                 "description" => $lesson->task->description,
                 "task_deadline_date" => formatDate($lesson->task->task_deadline_date),
                 "task_deadline_time" => formatTime($lesson->task->task_deadline_time),
