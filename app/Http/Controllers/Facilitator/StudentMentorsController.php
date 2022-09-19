@@ -17,7 +17,7 @@ class StudentMentorsController extends Controller
                 "id" => $mentor->id,
                 "name" => $mentor->name,
                 "email" => $mentor->recovery_email,
-                "mentees" => json_decode($mentor->mentees->mentees, true)
+                "mentees" => [...json_decode($mentor->mentees->mentees, true)]
             ];
         });
 
