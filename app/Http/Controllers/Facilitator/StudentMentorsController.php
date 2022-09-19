@@ -18,9 +18,7 @@ class StudentMentorsController extends Controller
 
         $data = collect($mentors)->map(function($mentor){
             return [
-                $mentor->name => collect($mentor->mentees)->map(function($mentee){
-                    return $mentee;
-                })
+                $mentor->name => json_decode($mentor->mentees->mentees, true)
             ];
         });
 
