@@ -61,7 +61,7 @@ class ScheduleController extends Controller
                     return Carbon::parse($val['date'])->format('D');
                 });     
                     
-                $schedule["happening_today"] = $day[getDay(today())]->reject(function($val){
+                $schedule["happening_today"] = ($day->has(getDay(today()))) ? $day[getDay(today())]->reject(function($val){
                     return $val['date'] !== today();
                 })->map(function($val){
                     return [
@@ -73,7 +73,7 @@ class ScheduleController extends Controller
                         "link" => $val['link'],
                         "id" => $val['id'],
                     ];
-                })->take(4);
+                })->take(4) : [];
                 
                 $schedule["happening_this_week"] = $week[getWeek(today())]->take(4) ?? [];
         

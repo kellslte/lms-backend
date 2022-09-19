@@ -210,8 +210,8 @@ Route::prefix('v1')->group(function(){
             Route::post('classroom', [FacilitatorClassroomController::class, 'store']);
             // Get facilitator schedule
             Route::get('schedule', [FacilitatorScheduleController::class, 'index']);
-            // Create a meeting or live event
-            Route::post('schedule', [FacilitatorScheduleController::class, 'fixLiveClass']);
+            // Create a new meeting
+            Route::post('meetings', [FacilitatorScheduleController::class, 'fixLiveClass']);
             // Get Tasks Route
             Route::get('tasks', [FacilitatorTaskController::class, 'index']);
             // Get particular task with students that have submitted theirs
@@ -234,8 +234,6 @@ Route::prefix('v1')->group(function(){
             Route::put('mentors/{mentor}/mentees/{user}', [StudentMentorsController::class, 'assignMenteeToMentor']);
             // Remove mentee from mentor
             Route::delete('mentors/{mentor}/mentees/{user}', [StudentMentorsController::class, 'removeMenteeFromMentor']);
-            // Create a new meeting
-            Route::post('meetings', [FacilitatorScheduleController::class, 'fixLiveClass']);
             // Award points to the user
             Route::post("points/{user}", [PointController::class, 'awardPoints']);
         });
