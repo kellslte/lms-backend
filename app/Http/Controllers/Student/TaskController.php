@@ -13,11 +13,13 @@ class TaskController extends Controller
     public function index(){
         $user = getAuthenticatedUser();
 
-        $tasks = collect($user->course->lessons)->map(function($lesson){
+        $tasks = collect($user->course->lessons)->map(function($lesson) use ($user){
+            $status = (collect(json_decode($user->submissions->tasks, true))->where($lesson->task->id)) ? "submitted" : $lesson->task->id ;
+            
             return [
                 "id" => $lesson->task->id,
                 "title" => $lesson->task->title,
-                "status" => $lesson->task->status,
+                "status" => $status,
                 "description" => $lesson->task->description,
                 "task_deadline_date" => formatDate($lesson->task->task_deadline_date),
                 "task_deadline_time" => formatTime($lesson->task->task_deadline_time),
