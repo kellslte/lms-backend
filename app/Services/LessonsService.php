@@ -176,11 +176,12 @@ class LessonsService {
     public static function getUserCurriculum($user){
         $progress = collect(json_decode($user->progress->course_progress, true));
 
-        return collect(json_decode($user->curriculum->viewables, true))->map(function ($viweable) use ($progress) {
-            $lesson = Lesson::find($viweable->lesson_id);
-            $lessonProgress = $progress->where("lesson_id", $viweable->lesson_id)->first();
+        return collect(json_decode($user->curriculum->viewables, true))->map(function ($viewables) use ($progress) {
+            $lesson = Lesson::find($viewables["lesson_id"]);
+            
+            $lessonProgress = $progress->where("lesson_id", $viewables["lesson_id"])->first();
 
-            return ($viweable->lesson_status === "uncompleted")? [
+            return ($viewables->lesson_status === "uncompleted") ? [
                 "title" => $lesson->title,
                 "description" => $lesson->description,
                 "published_date" => formatDate($lesson->updated_at),

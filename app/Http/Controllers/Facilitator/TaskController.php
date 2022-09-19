@@ -112,7 +112,8 @@ class TaskController extends Controller
        $response = TaskManager::gradeTask($task, $student, (int)$request->grade);
 
        PointService::awardPoints($student, [
-        "task_points" => (int)$request->grade
+        "key" => "task_points", 
+        "points" => (int)$request->grade
        ]);
 
        return ($response)? response()->json([
