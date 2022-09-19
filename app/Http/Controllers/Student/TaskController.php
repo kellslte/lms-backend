@@ -62,6 +62,7 @@ class TaskController extends Controller
         $submittedTasks[] = [
             "id" => $task->id,
             "linkToResource" => $request->linkToResource,
+            "student_name" => $user->name,
             "status" => "submitted",
             "title" => $task->title,
             "description" => $task->description,

@@ -184,6 +184,8 @@ Route::prefix('v1')->group(function(){
             Route::post('onboard/students/magic-link', [OnboardingController::class, 'sendMagicLink']);
             // send slack invite link to students
             Route::post('onboard/students/slack-invite', [OnboardingController::class, 'sendSlackInvite']);
+            // change user track
+            Route::post('onboard/students/change-track', [OnboardingController::class, 'changeTrack']);
             // Create SOTU meeting
             //Route::post('meetings/{sotu}', [MeetingController::class, 'createSotu']);
         });

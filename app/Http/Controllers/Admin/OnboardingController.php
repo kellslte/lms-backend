@@ -69,78 +69,137 @@ class OnboardingController extends Controller
         return Excel::import(new UsersImport, $usersSheet);
     }
 
-    public function changeTrack(Request $request){
+    public function changeTrack(Request $request)
+    {
         $data = $request->validate([
             "newTrack" => 'required|string',
-            "oldTrack" => 'required|string',
+            "currentTrack" => 'required|string',
             "email" => 'required|email',
         ]);
 
-        // get course details
-        $course = Course::whereTitle($data["oldTrack"])->first();
-
-        $oldAccount = $course->students()->where("email", $data["email"])->first();
+        $currentCourse = Course::where("title", $data["currentTrack"])->first();
+        $course = Course::where("title", $data["newTrack"])->first();
+        
+        // get new course details
+        $student = $currentCourse->students()->where("email", $data["email"])->first();
 
         // check that student account exists
-        if(!$oldAccount){
+        if (!$student) {
             return response()->json([
                 "status" => "error",
                 "message" => "User record not found"
-            ],404);
+            ], 404);
         }
 
-        $oldAccount->load(['attendance','course','schedule','point', 'submissions', 'progress', 'settings', 'curriculum']);
-
-        $newCourse = Course::whereTitle($data["newTrack"])->first();
-
-        $newAccount = $newCourse->students()->create([
-            "name" => $oldAccount->name,
-            "email" => $oldAccount->email,
-            "gender" => $oldAccount->gender,
-            "access_to_laptop" => $oldAccount->access_to_laptop,
-            "current_education_level" => $oldAccount->current_education_level,
-            "phonenumber" => $oldAccount->phonenumber,
-            "github_link" => $oldAccount->github_link,
-            "cv_details" => $oldAccount->cv_details,
-        ]);
-
-        $newAccount->submissions()->create([
-            "tasks" => $oldAccount->submissions->tasks,
-        ]);
-
-        $newAccount->settings()->create([...$oldAccount->settings]);
-
-        $newAccount->progress()->create([
-            "course" => $newCourse->title,
-            "course_progress" => json_encode([]),
-        ]);
-
-        $newAccount->schedule()->create([
-            "meetings" => json_encode([])
-        ]);
-
-        // lesson videso for the curriculum
-        $viewables = collect($newCourse->lessons)->map(function($lesson){
-            return [
-                "lesson_id" => $lesson->id,
-                "lesson_status" => "uncompleted"
+        
+        try{
+            // save record in an array
+            $studentRecord = [
+                "user" => [
+                    "name" => $student->name,
+                    "email" => $student->email,
+                    "password" => $student->password,
+                    "gender" => $student->gender,
+                    "access_to_laptop" => $student->access_to_laptop,
+                    "current_education_level" => $student->current_education_level,
+                    "phonenumber" => $student->phonenumber,
+                    "github_link" => $student->github_link,
+                    "cv_details" => $student->cv_details
+                ],
+                "attendance" => [
+                  "record" =>  $student->attendance->record  
+                ],
+                "points" => [
+                    "total" =>  $student->point->total,
+                    "attendance_points" => $student->point->attendance_points,
+                    "bonus_points" =>  $student->point->bonus_points,
+                    "task_points" => $student->point->task_points,
+                    "history" => $student->point->history
+                ],
+                "curricula" => [
+                    "viewables" => $student->curriculum->viewables
+                ],
+                "schedule" => [
+                    "meetings" =>  $student->schedule->meetings
+                ],
+                "settings" => [
+                    "notification_preference" => $student->settings->notification_preference,
+                    "text_message_preference" => $student->settings->text_message_preference
+                ],
+                "submissions" => [
+                    "tasks" => $student->submissions->tasks
+                ],
+                "progress" => [
+                    "course" => $course->title,
+                    "course_progress" => []
+                ],
+                "notifications" => $student->notifications
             ];
-        });
 
-        $newAccount->curriculum()->create([
-            "viewables" => $viewables,
-        ]);
+            $student->attendance->delete();
+            $student->point->delete();
+            $student->submissions->delete();
+            $student->settings->delete();
+            $student->curriculum->delete();
+            $student->progress->delete();
+            $student->delete();
 
-        $newAccount->point()->create([...$oldAccount->points]);
+            $newRecord = $course->students()->create([
+                "name" => $studentRecord["user"]["name"],
+                "email" =>  $studentRecord["user"]["email"],
+                "password" => $studentRecord["user"]["password"],
+                "gender" => $studentRecord["user"]["gender"],
+                "access_to_laptop" => $studentRecord["user"]["access_to_laptop"],
+                "current_education_level" => $studentRecord["user"]["current_education_level"],
+                "phonenumber" => $studentRecord["user"]["phonenumber"],
+                "github_link" => $studentRecord["user"]["github_link"],
+                "cv_details" => $studentRecord["user"]["cv_details"]
+            ]);
 
-        $newAccount->attendance()->create([...$oldAccount->attendance]);
+            $newRecord->attendance()->create([
+                "record" => $studentRecord["attendance"]["record"]
+            ]);
 
-       Mail::to($newAccount->email)->queue(new TrackChanged($newAccount, $oldAccount->course));
+            $newRecord->point()->create([
+                "total" => $studentRecord["points"]["total"],
+                "attendance_points" => $studentRecord["points"]["attendance_points"],
+                "bonus_points" => $studentRecord["points"]["bonus_points"],
+                "task_points" => $studentRecord["points"]["task_points"],
+                "history" => $studentRecord["points"]["history"],
+            ]);
 
-        return response()->json([
-            'status' => 'successful',
-            'message' => 'Student track change has been processed'
-        ], 200);
+            $newRecord->curriculum()->create([
+                "viewables" =>  $studentRecord["curricula"]["viewables"]
+            ]);
+
+            $newRecord->settings()->create([
+                "notification_preference" => $studentRecord["settings"]["notification_preference"],
+                "text_message_preference" => $studentRecord["settings"]["text_message_preference"]
+            ]);
+
+            $newRecord->submissions()->create([
+                "tasks" => $studentRecord["submissions"]["tasks"]
+            ]);
+
+            $newRecord->progress()->create([
+                "course" => $studentRecord["progress"]["course"],
+                "course_progress" => json_encode($studentRecord["progress"]["course_progress"])
+            ]);
+
+            Mail::to($newRecord->email)->send(new TrackChanged($newRecord, $currentCourse));
+
+            return response()->json([
+                "status" => "successful",
+                "message" => "Track has been succesfully changed",
+                "account" => $newRecord
+            ]);
+        }
+        catch(\Exception $e){
+            return response()->json([
+                "status" => "failed",
+                "message" => $e->getMessage()
+            ]);
+        }
     }
 
     public function sendMagicLink(Request $request)
@@ -154,7 +213,7 @@ class OnboardingController extends Controller
 
         try {
             $student->sendMagicLink();
-            
+
             return response()->json([
                 "status" => "success",
                 "message" => "Magic link has been sent successfully"
@@ -229,22 +288,22 @@ class OnboardingController extends Controller
         }
     }
 
-    public function sendSlackInvite(Request $request){
+    public function sendSlackInvite(Request $request)
+    {
         $students = User::all();
 
         $request->validate([
             "link" => "required|string"
         ]);
 
-        try{
+        try {
             SendSlackInvite::dispatch($students, $request->link);
 
             return response()->json([
                 "status" => "successful",
                 "message" => "Slack invite mail has been sent to the students"
             ], 200);
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 "status" => "failed",
                 "message" => $e->getMessage()

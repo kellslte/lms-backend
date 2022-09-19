@@ -183,10 +183,13 @@ class TaskManager{
             $entry =
             collect(json_decode($student->submissions->tasks, true))->reject(function ($item) use ($task) {
                 return $item["id"] !== $task->id;
-            });
+            })->filter(function($task){
+                return !empty($task);
+            })->all();
 
             return (count($entry) > 0) ? [
                 "student_id" => $student->id,
+                "student_name" => $student->name,
                 "submission" => $entry
             ]: null; 
         })->filter();

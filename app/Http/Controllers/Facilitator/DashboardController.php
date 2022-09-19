@@ -28,7 +28,6 @@ class DashboardController extends Controller
 
         if($tasks = TaskManager::taskStatus($user->course->id)){
             if(!is_null($tasks)){
-                $data["completed_tasks"] = $tasks["completed_tasks"];
                 $data["pending_tasks"] = $tasks["pending_tasks"];
             }
         }
