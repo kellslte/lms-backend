@@ -181,16 +181,12 @@ class TaskManager{
         // get the submissions for each task
         return collect($students)->map(function($student) use ($task){
             $entry =
-            collect(json_decode($student->submissions->tasks, true))->reject(function ($item) use ($task) {
-                return $item["id"] !== $task->id;
-            })->filter(function($task){
-                return !empty($task);
-            })->toArray();
+            collect(json_decode($student->submissions->tasks, true))->where("id", $task->id)->first();
 
-            return (count($entry) > 0) ? [
+            return ($entry) ? [
                 "student_id" => $student->id,
                 "student_name" => $student->name,
-                "submission" => [...$entry]
+                "submission" => $entry
             ]: null; 
         })->filter();
     }
