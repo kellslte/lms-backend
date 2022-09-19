@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Models\Facilitator;
+use App\Events\LessonCreated;
 use Illuminate\Support\Facades\Storage;
 
 
@@ -51,30 +52,113 @@ class Classroom {
     }
 
     public static function createLesson($request, $course){
-        // try to upload vide to youtube
-        $response = getYoutubeVideoDetails($request);
-        
-        // upload transcript and return the path
-        $transcript = self::uploadTranscript($request->file('lessonTranscript'));
-        
-        // create lesson
-        $lesson = $course->lessons()->create([
-            "title" => $request->title,
-            "description" => $request->description,
-            "tutor" => $course->facilitator->name,
-        ]);
-        
-        // create lesson media
+        try{
+            // try to upload vide to youtube
+            $response = getYoutubeVideoDetails($request);
 
-        // update students lesson progress details
+            // upload transcript and return the path
+            $transcript = self::uploadTranscript($request->file('lessonTranscript'));
 
-        // send notification to students that lesson has been created
+            // create lesson
+            $lesson = $course->lessons()->create([
+                "title" => $request->title,
+                "description" => $request->description,
+                "tutor" => $course->facilitator->name,
+            ]);
+
+            // create lesson media
+            $lesson->media()->create([
+                "video_link" => $response["videoLink"],
+                "thumbnail" => $response["thumbnail"],
+                "transcript" => $transcript,
+                "youtube_video_id" => $response["youtube_video_id"]
+            ]);
+
+            foreach ($request->resources as $resource) {
+                $lesson->resources()->create([
+                    "type" => "file_link",
+                    "title" => $resource["title"],
+                    "resource" => $resource["link"]
+                ]);
+            }
+
+            // update students lesson progress detail
+            // TODO fire lesson creation event
+            event(new LessonCreated($course->students));
+
+            return response()->json([
+                "status" => "successful",
+                "message" => "Your lesson has been successfully created",
+                "data" => [
+                    "lesson" => $lesson
+                ]
+            ]);
+        }
+        catch(\Exception $e){
+            return response()->json([
+                "status" => "failed",
+                "message" => $e->getMessage()
+            ]);
+        }
         
     }
 
-    public static function saveLessonAsDraft(){}
+    public static function saveLessonAsDraft($request, $course){
+        
+        try{
+            // upload lesson cideo to our server 
+            $videoPath = Storage::putFileAs("lessons", $request->file("lessonVideo"), $request->title);
+    
+            // upload lesson thumnail
+            $path = Storage::putFileAs("thumbnails", $request->file("lessonThumnail"), $request->title);
+    
+            // upload lesson transcript
+            $transcript = self::uploadTranscript($request->file("lessonTranscript"));
+    
+            // create lesson
+            $lesson = $course->lessons()->create([
+                "title" => $request->title,
+                "description" => $request->description,
+                "tutor" => $course->facilitator->name,
+                "status" => "unpublished"
+            ]);
+    
+            // create lesson media
+            $lesson->media()->create([
+                "video_link" => $videoPath,
+                "thumbnail" => $path,
+                "transcript" => $transcript,
+                "youtube_video_id" => ""
+            ]);
+    
+            foreach ($request->resources as $resource) {
+                $lesson->resources()->create([
+                    "type" => "file_link",
+                    "title" => $resource["title"],
+                    "resource" => $resource["link"]
+                ]);
+            }
+    
+            return response()->json([
+                "status" => "successful",
+                "message" => "Your lesson draft has been successfully created",
+                "data" => [
+                    "lesson" => $lesson
+                ]
+            ]);
+        }
+        catch(\Exception $e){
+            return response()->json([
+                "status" => "failed",
+                "message" => $e->getMessage()
+            ]);
+        }
 
-    public static function updateLesson(){}
+    }
+
+    public static function updateLesson($request, $course){
+        
+    }
 
     private static function uploadTranscript($transcript){
         // upload transacript

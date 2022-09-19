@@ -11,6 +11,7 @@ use App\Observers\PointObserver;
 use App\Events\LeaderboardUpdated;
 use App\Listeners\SendSlackInviteMail;
 use Illuminate\Auth\Events\Registered;
+use App\Listeners\LessonProgressUpdate;
 use App\Listeners\SendMagicLinkToStudents;
 use App\Listeners\NotifyStudentsAboutTaskGrade;
 use App\Listeners\NotifyStudentsOfLessonCreation;
@@ -45,6 +46,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         LessonCreated::class => [
             NotifyStudentsOfLessonCreation::class,
+            LessonProgressUpdate::class,
         ],
         SendMagicLink::class => [
             SendMagicLinkToStudents::class,

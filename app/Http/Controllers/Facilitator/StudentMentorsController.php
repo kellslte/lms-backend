@@ -49,7 +49,7 @@ class StudentMentorsController extends Controller
             ];
     
             $mentor->mentees->update([
-                'mentees' => json_encode($mentees->toArray())
+                'mentees' => json_encode($mentees)
             ]);
     
             return response()->json([
