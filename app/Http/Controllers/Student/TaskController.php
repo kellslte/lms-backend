@@ -14,7 +14,7 @@ class TaskController extends Controller
         $user = getAuthenticatedUser();
 
         $tasks = collect($user->course->lessons)->map(function($lesson) use ($user){
-            $status = (collect(json_decode($user->submissions->tasks, true))->where($lesson->task->id)->first()) ? "submitted" : $lesson->task->id ;
+            $status = (collect(json_decode($user->submissions->tasks, true))->where($lesson->task->id)->first()) ? "submitted" : $lesson->task->status;
             
             return [
                 "id" => $lesson->task->id,
