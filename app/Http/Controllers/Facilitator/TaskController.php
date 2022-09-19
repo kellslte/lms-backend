@@ -7,9 +7,10 @@ use App\Models\User;
 use App\Models\Lesson;
 use Illuminate\Http\Request;
 use App\Services\TaskManager;
+use App\Services\PointService;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\CreateTaskRequest;
 use App\Http\Resources\TaskResource;
+use App\Http\Requests\CreateTaskRequest;
 
 class TaskController extends Controller
 {
@@ -109,6 +110,10 @@ class TaskController extends Controller
 
         // TODO get submission data for the task
        $response = TaskManager::gradeTask($task, $student, (int)$request->grade);
+
+       PointService::awardPoints($student, [
+        "task_points" => (int)$request->grade
+       ]);
 
        return ($response)? response()->json([
         "status" => "successful",

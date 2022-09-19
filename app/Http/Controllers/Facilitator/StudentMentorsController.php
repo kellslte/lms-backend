@@ -12,13 +12,14 @@ class StudentMentorsController extends Controller
 {
     public function index()
     {
-        $user = getAuthenticatedUser();
-
         $mentors  = Mentor::all();
 
         $data = collect($mentors)->map(function($mentor){
             return [
-                $mentor->name => json_decode($mentor->mentees->mentees, true)
+                "id" => $mentor->id,
+                "name" => $mentor->name,
+                "email" => $mentor->recovery_email,
+                "mentees" => json_decode($mentor->mentees->mentees, true)
             ];
         });
 

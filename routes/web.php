@@ -1,17 +1,10 @@
 <?php
 
-use App\Models\Course;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\YoutubeService;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Route;
-use App\Http\Requests\PaymentGatewayRequest;
-use Unicodeveloper\Paystack\Facades\Paystack;
-use alchemyguy\YoutubeLaravelApi\VideoService;
-use App\Http\Controllers\Auth\PaymentController;
-use App\Http\Controllers\Auth\MagicLoginController;
-use  alchemyguy\YoutubeLaravelApi\AuthenticateService;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,12 +39,6 @@ Route::get('redirect', function(Request $request){
     return $client->authenticateUser($request);
 });
 
-Route::get('token', function(){
-    $client = new YoutubeService();
-
-    dd($client->listVideos("r_l2SgphnOI"));
-});
-
 Route::get('playlist', function(Request $request){
     $playlistId = Http::post("localhost:8000/api/playlist", [
         "title" => "Product Design"
@@ -60,6 +47,23 @@ Route::get('playlist', function(Request $request){
     dd($playlistId);
 });
 
-Route::get('token', fn()=> response()->json([
-    "token" => Cache::get('access_token')
-]));
+Route::get('students', function(){
+    $students = User::all();
+
+    $students->load("course");
+
+    $response = collect($students)->map(function($student){
+        return [
+            "course" => $student->course->title,
+            "studentId" => $student->id,
+            "studentName" => $student->name
+        ];
+    })->groupBy("course");
+
+    return response()->json([
+        "status" => "successful",
+        "data" => [
+            "records" => $response
+        ]
+    ]);
+});
