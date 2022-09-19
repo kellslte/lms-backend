@@ -4,9 +4,7 @@ namespace App\Http\Controllers\Facilitator;
 
 use App\Models\User;
 use App\Models\Mentor;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Mentees;
 
 class StudentMentorsController extends Controller
 {
