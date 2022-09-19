@@ -39,6 +39,10 @@ class Mentor extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'created_at',
+        'updated_at',
+        'recovery_email',
+        'email_verified_at',
     ];
 
     /**
