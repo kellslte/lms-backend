@@ -55,23 +55,21 @@ class ScheduleService {
             return Carbon::parse($val['date'])->format('D');
         });
 
-        $schedule["happening_today"] = ($day->has(getDay(today()))) ? $day[getDay(today())]->reject(function ($val) {
-            return $val['date'] !== today();
-        })->map(function ($val) {
+        $schedule["happening_today"] = ($day->get(getDay(today()))) ? $day[getDay(today())]->map(function ($val) {
             return [
                 "caption" => $val['caption'],
-                "host" => $val['host_name'],
+                "host" => $val['host'],
                 "date" => $val['date'],
                 "start_time" => formatTime($val['start_time']),
                 "end_time" => formatTime($val['end_time']),
                 "link" => $val['link'],
                 "id" => $val['id'],
             ];
-        })->take(4) : [];
+        }) : [];
 
-        $schedule["happening_this_week"] = $week[getWeek(today())]->take(4) ?? [];
+        $schedule["happening_this_week"] = $week[getWeek(today())] ?? [];
 
-        $schedule["happening_this_month"] = $month[getMonth(today())]->take(4) ?? [];
+        $schedule["happening_this_month"] = $month[getMonth(today())] ?? [];
 
         $schedule["sotu"] = collect($sotu)->map(function ($meeting) {
             return ($meeting->date < today()) ? [
