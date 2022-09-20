@@ -163,11 +163,15 @@ class Classroom {
                 $thumbnail = $lesson->media->thumbnail;
                 $transcript = $lesson->transcript;
 
-                // $request->merge(
-                //     "tags" => $lesson->title,
-                // );
+                $request->merge([
+                    "tags" => $lesson->title,
+                    "lessonVideo" => $videoPath,
+                    "lessonThumbnail" => $thumbnail
+                ]);
 
-                $videoLink = getYoutubeVideoDetails();
+                $videoLink = getYoutubeVideoDetails($request);
+
+                
             }
 
             $lesson->update([

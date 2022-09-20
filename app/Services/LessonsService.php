@@ -111,7 +111,7 @@ class LessonsService {
             }
 
             return [];
-        })->filter();
+        })->filter() ?? [];
     }
 
     public static function getUpcoming(){}
