@@ -19,8 +19,6 @@ class TaskController extends Controller
 
         $response = TaskManager::taskStatus($user->course->id);
 
-        return response()->json($response);
-
         if(array_key_exists("error", $response)){
             return response()->json([
                 "status" => "error",
