@@ -38,7 +38,7 @@ class TaskManager{
                     "status" => $lesson->task->status,
                     "submissions" => self::totalSubmissions($lesson->task, $lesson->course->students)
                 ];
-            })->toArray();
+            })->toArray() ?? [];
 
             $published = collect($lessons)->reject(function($lesson){
                 return $lesson->task->status !== "published";
@@ -53,7 +53,7 @@ class TaskManager{
                     "status" => $lesson->task->status,
                     "submissions" => self::totalSubmissions($lesson->task, $lesson->course->students)
                 ];
-            })->toArray();
+            })->toArray() ?? [];
 
             $graded = collect($lessons)->reject(function($lesson){
                 return $lesson->task->status !== "graded";
@@ -68,7 +68,7 @@ class TaskManager{
                     "status" => $lesson->task->status,
                     "submissions" => self::totalSubmissions($lesson->task, $lesson->course->students)
                 ];
-            })->toArray();
+            })->toArray() ?? [];
 
              return [
                     "pending_tasks" => [...$pending],
@@ -77,7 +77,12 @@ class TaskManager{
                 ];
         }
         catch(\Exception $e){
-            return null;
+            return [
+                "pending_tasks" => [],
+                "published_tasks" => [],
+                "graded_tasks" => [],
+                "error" => $e->getMessage()
+            ];
         }
     }
 
@@ -121,13 +126,13 @@ class TaskManager{
             TaskCreated::dispatch($users);
 
             return [
-                "status" => true,
+                "status" => "success",
                 "task" => $task
             ];
         }
         catch(\Exception $e){
             return [
-                "status" => false,
+                "status" => "failed",
                 "task" => $e->getMessage()
             ];
         }
