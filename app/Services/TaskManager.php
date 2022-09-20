@@ -22,26 +22,18 @@ class TaskManager{
 
         $lessons = Course::find($course)->lessons;
 
-        $tasks = collect($lessons)->map(function($lesson){
-            if(count($lesson->task)){
-                return [
-                    "id" => $lesson->task->id,
-                    "title" => $lesson->task->title,
-                    "description" => $lesson->task->description,
-                    "task_deadline_date" => formatDate($lesson->task_deadline_date),
-                    "task_deadline_time" => formatTime($lesson->task_deadline_time),
-                    "lesson_id" => $lesson->id,
-                    "status" => $lesson->task->status,
-                    "submissions" => self::totalSubmissions($lesson->task, $lesson->course->students)
-                ];
-            }
+        $lessons->load('task');
 
-        });
+        $tasks = collect($lessons)->map(function($lesson){
+            return $lesson->task;
+        })->filter();
 
         try{
-            if($tasks->count()){
+            if($tasks){
                 $pending = collect($tasks)->reject(function ($task) {
-                    return $task->status !== "pending";
+                    if($task){
+                        return $task["status"] !== "pending";
+                    }
                 })->map(function ($task) {
                     return [
                         "id" => $task->id,
@@ -56,7 +48,9 @@ class TaskManager{
                 })->toArray() ?? [];
 
                 $published = collect($tasks)->reject(function ($task) {
-                    return $task->status !== "published";
+                    if($task){
+                        return $task->status !== "published";
+                    }
                 })->map(function ($task) {
                     return [
                         "id" => $task->id,
@@ -71,7 +65,9 @@ class TaskManager{
                 })->toArray() ?? [];
 
                 $graded = collect($tasks)->reject(function ($task) {
-                    return $task->status !== "graded";
+                    if($task){
+                        return $task->status !== "graded";
+                    }
                 })->map(function ($task) {
                     return [
                         "id" => $task->id,
