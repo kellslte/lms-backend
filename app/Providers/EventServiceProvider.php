@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Point;
 use App\Events\ClassFixed;
+use App\Events\CreateCurriculum;
 use App\Events\LessonCreated;
 use App\Events\SendMagicLink;
 use App\Events\TaskSubmitted;
@@ -11,6 +12,7 @@ use App\Events\SendSlackInvite;
 use App\Observers\PointObserver;
 use App\Listeners\LiveClassFixed;
 use App\Events\LeaderboardUpdated;
+use App\Listeners\CreateCurriculumRecord;
 use App\Listeners\SendSlackInviteMail;
 use Illuminate\Auth\Events\Registered;
 use App\Listeners\LessonProgressUpdate;
@@ -62,7 +64,10 @@ class EventServiceProvider extends ServiceProvider
             LiveClassFixed::class,
             UpdateFacilitatorSchedule::class,
             UpdateStudentSchedule::class,
-        ]
+        ],
+        CreateCurriculum::class => [
+            CreateCurriculumRecord::class
+        ],
     ];
 
     /**

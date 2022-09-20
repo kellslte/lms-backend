@@ -189,6 +189,8 @@ Route::prefix('v1')->group(function(){
             Route::post('onboard/students/change-track', [OnboardingController::class, 'changeTrack']);
             // update course details
             Route::put('course/{course}', [AdminCourseController::class, 'update']);
+            // create surriculum data for students
+            Route::post("onboard/students/curriculum", [OnboardingController::class, 'createCurriculum']);
             // Create SOTU meeting
             //Route::post('meetings/{sotu}', [MeetingController::class, 'createSotu']);
         });

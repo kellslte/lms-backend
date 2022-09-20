@@ -12,6 +12,7 @@ use App\Imports\UsersImport;
 use Illuminate\Http\Request;
 use App\Events\SendMagicLink;
 use App\Events\SendSlackInvite;
+use App\Events\CreateCurriculum;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
 use Maatwebsite\Excel\Facades\Excel;
@@ -308,6 +309,25 @@ class OnboardingController extends Controller
                 "status" => "failed",
                 "message" => $e->getMessage()
             ], 400);
+        }
+    }
+
+    public function createCurriculum(){
+        $users = User::all();
+
+        try{
+            event(new CreateCurriculum($users));
+
+            return response()->json([
+                "status" => "successful",
+                "message" => "Curriculum created successfully",
+            ]);
+        }
+        catch(\Exception $e){
+            return response()->json([
+                "status" => "error",
+                "message" => $e->getMessage()
+            ]);
         }
     }
 }
