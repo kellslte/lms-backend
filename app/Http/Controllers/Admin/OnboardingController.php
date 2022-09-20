@@ -316,7 +316,13 @@ class OnboardingController extends Controller
         $users = User::all();
 
         try{
-            CreateCurriculum::dispatch($users);
+            foreach ($users as $student) {
+                if (!$student->curriculum) {
+                    return $student->curriculum()->create([
+                        "viewables" => json_encode([])
+                    ]);
+                }
+            }
 
             return response()->json([
                 "status" => "successful",
