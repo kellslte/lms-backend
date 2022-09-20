@@ -16,12 +16,12 @@ class Classroom {
                 return [
                     "id" => $lesson->id,
                     "status" => $lesson->status,
-                    "thumbnail" => $lesson->thumbnail,
+                    "thumbnail" => $lesson->media->thumbnail,
                     "title" => $lesson->title,
                     "description" => $lesson->description,
                     "datePublished" => formatDate($lesson->created_at),
                     "tutor" => $user->name,
-                    "views" => "",
+                    "views" => 0,
                     "taskSubmissions" => TaskManager::getSubmissions($lesson->task, $user->course->students)->count()
                 ];
             });
@@ -32,7 +32,7 @@ class Classroom {
                 return [
                     "id" => $lesson->id,
                     "status" => $lesson->status,
-                    "thumbnail" => $lesson->thumbnail,
+                    "thumbnail" => $lesson->media->thumbnail,
                     "title" => $lesson->title,
                     "description" => $lesson->description,
                     "datePublished" => formatDate($lesson->created_at),
