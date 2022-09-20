@@ -23,7 +23,7 @@ class TaskController extends Controller
             return response()->json([
                 "status" => "error",
                 "message" => "Task not found"
-            ]);
+            ], 400);
         }
 
         return response()->json([
