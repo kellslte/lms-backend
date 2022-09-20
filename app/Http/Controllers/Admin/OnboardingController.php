@@ -318,11 +318,7 @@ class OnboardingController extends Controller
         try{
             foreach ($users as $student) {
                 if (!$student->curriculum) {
-<<<<<<< HEAD
                     $student->curriculum()->create([
-=======
-                     $student->curriculum()->create([
->>>>>>> 0b1a6090a175835e1be7456c49387e93bc8cc859
                         "viewables" => json_encode([])
                     ]);
                 }
