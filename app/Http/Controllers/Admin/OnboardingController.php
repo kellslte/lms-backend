@@ -316,7 +316,7 @@ class OnboardingController extends Controller
         $users = User::all();
 
         try{
-            event(new CreateCurriculum($users));
+            CreateCurriculum::dispatch($users);
 
             return response()->json([
                 "status" => "successful",
