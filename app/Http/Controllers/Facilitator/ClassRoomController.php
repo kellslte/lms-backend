@@ -17,16 +17,19 @@ class ClassRoomController extends Controller
 
        $response = Classroom::allLessons($user);
 
-       $code = (!is_null($response)) ? 200 : 400;
-
-       $status = (!is_null($response)) ? 'success' : 'failed';
+       if(array_key_exists("error", $response)){
+        return response()->json([
+            "status" => "failed",
+            "message" => $response["error"]  
+        ], 400);
+       }
         
         return response()->json([
-            'status' => $status,
+            'status' => "successful",
             'data' => [
                 'lessons' => $response,
             ]
-        ], $code);
+        ]);
     }
 
     public function store(CreateLessonRequest $request){

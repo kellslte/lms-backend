@@ -10,8 +10,7 @@ use Illuminate\Support\Facades\Storage;
 class Classroom {
     public static function allLessons(Facilitator $user){
         try {
-            $lessons = $user->course->lessons;
-            if ($lessons){
+            if ($user->course->lessons){
                 $published = collect($user->course->lessons)->reject(function($lesson){
                     return $lesson->status !== "published";
                 })->map(function($lesson) use ($user){
@@ -50,7 +49,11 @@ class Classroom {
                 ];
             }
         } catch (\Throwable $th) {
-            return $th->getMessage();
+            return [
+                "published_lessons" => [],
+                "unpublished_lessons" => [],
+                "error" => $th->getMessage()
+            ];
         }        
     }
 
