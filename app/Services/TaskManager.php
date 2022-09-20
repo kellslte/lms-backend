@@ -11,7 +11,7 @@ use App\Events\TaskCreated;
 
 class TaskManager{
 
-    public static function getSubmissions(Object $task, $students)
+    public static function getSubmissions($task, $students)
     {
         return collect($students)->map(function ($user) use ($task) {
             return collect(json_decode($user->submissions->tasks, true))->where("id", $task->id)->first();

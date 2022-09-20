@@ -24,7 +24,7 @@ class Lesson extends Model
 
     public function task()
     {
-        return $this->hasOne(Task::class);
+        return $this->hasMany(Task::class);
     }
 
     public function resources()
