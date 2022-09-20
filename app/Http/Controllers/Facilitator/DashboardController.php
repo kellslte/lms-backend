@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Facilitator;
 
+use App\Models\Meeting;
 use App\Services\Classroom;
 use Illuminate\Http\Request;
 use App\Services\TaskManager;
@@ -16,28 +17,27 @@ class DashboardController extends Controller
     {
         $user = getAuthenticatedUser();
 
+        $meetings = Meeting::where("host_name", $user->name)->count();
+
         $data =  [
             'published_lessons' => [],
             'unpublished_lessons' => [],
             'completed_tasks' => [],
             'pending_tasks' => [],
-            'live_classes' => 21,
+            'live_classes' => $meetings,
             'schedule' => ScheduleService::getSchedule($user),
             'course' => $user->course->title,
             'total_enrolled_students' => $user->course->students->count(),
         ];
 
         if($tasks = TaskManager::taskStatus($user->course->id)){
-            if(!is_null($tasks)){
-                $data["pending_tasks"] = $tasks["pending_tasks"];
-            }
+            $data["pending_tasks"] = $tasks["pending_tasks"];
+            $data["completed_tasks"] = $tasks["graded_tasks"];
         }
 
         if($lessons = Classroom::allLessons($user)){
-            if(!is_null($lessons)){
-                $data["published_lessons"] = $lessons["published_lessons"];
-                $data["unpublished_lessons"] = $lessons["unpublished_lessons"];
-            }
+            $data["published_lessons"] = $lessons["published_lessons"];
+            $data["unpublished_lessons"] = $lessons["unpublished_lessons"];
         }
 
         return response()->json([

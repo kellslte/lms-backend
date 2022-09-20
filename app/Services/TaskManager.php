@@ -28,13 +28,12 @@ class TaskManager{
             return $lesson->task;
         })->filter();
 
+        $pendingTasks = [];
+        $gradedTasks = [];
+
         try{
             if($tasks){
-                $pending = collect($tasks)->reject(function ($task) {
-                    if($task){
-                        return $task["status"] !== "pending";
-                    }
-                })->map(function ($task) {
+                $pendingTasks = collect($tasks)->where("status", "pending")->map(function ($task) {
                     return [
                         "id" => $task->id,
                         "title" => $task->title,
@@ -45,13 +44,9 @@ class TaskManager{
                         "status" => $task->status,
                         "submissions" => self::totalSubmissions($task, $task->lesson->course->students)
                     ];
-                })->toArray() ?? [];
+                })->toArray();
 
-                $published = collect($tasks)->reject(function ($task) {
-                    if($task){
-                        return $task->status !== "published";
-                    }
-                })->map(function ($task) {
+                $gradedTasks = collect($tasks)->where("status", "graded")->map(function ($task) {
                     return [
                         "id" => $task->id,
                         "title" => $task->title,
@@ -62,28 +57,11 @@ class TaskManager{
                         "status" => $task->status,
                         "submissions" => self::totalSubmissions($task, $task->lesson->course->students)
                     ];
-                })->toArray() ?? [];
+                })->toArray();
 
-                $graded = collect($tasks)->reject(function ($task) {
-                    if($task){
-                        return $task->status !== "graded";
-                    }
-                })->map(function ($task) {
-                    return [
-                        "id" => $task->id,
-                        "title" => $task->title,
-                        "description" => $task->description,
-                        "task_deadline_date" => formatDate($task->task_deadline_date),
-                        "task_deadline_time" => formatTime($task->task_deadline_time),
-                        "lesson_id" => $task->lesson->id,
-                        "status" => $task->status,
-                        "submissions" => self::totalSubmissions($task, $task->lesson->course->students)
-                    ];
-                })->toArray() ?? [];
                 return [
-                       "pending_tasks" => [...$pending],
-                       "published_tasks" => [...$published],
-                       "graded_tasks" => [...$graded]
+                       "pending_tasks" => [...$pendingTasks],
+                       "graded_tasks" => [...$gradedTasks],
                    ];
             }
         }
@@ -91,7 +69,6 @@ class TaskManager{
             return [
                 "pending_tasks" => [],
                 "published_tasks" => [],
-                "graded_tasks" => [],
                 "error" => $e->getMessage()
             ];
         }
