@@ -47,7 +47,7 @@ class Classroom {
                 "unpublished_lessons" => $unpublished
             ];
         } catch (\Throwable $th) {
-            return null;
+            return $th->getMessage();
         }        
     }
 
