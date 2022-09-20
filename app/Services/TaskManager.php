@@ -25,56 +25,57 @@ class TaskManager{
         $lessons ?? $lessons->load('task');
 
         try{
-            $pending = collect($lessons)->reject(function($lesson){
-                return $lesson->task->status !== "pending";
-            })->map(function($lesson){
-                return [
-                    "id" => $lesson->task->id,
-                    "title" => $lesson->task->title,
-                    "description" => $lesson->task->description,
-                    "task_deadline_date" => formatDate($lesson->task_deadline_date),
-                    "task_deadline_time" => formatTime($lesson->task_deadline_time),
-                    "lesson_id" => $lesson->id,
-                    "status" => $lesson->task->status,
-                    "submissions" => self::totalSubmissions($lesson->task, $lesson->course->students)
-                ];
-            })->toArray() ?? [];
+            if(Task::count() > 0){
+                $pending = collect($lessons)->reject(function ($lesson) {
+                    return $lesson->task->status !== "pending";
+                })->map(function ($lesson) {
+                    return [
+                        "id" => $lesson->task->id,
+                        "title" => $lesson->task->title,
+                        "description" => $lesson->task->description,
+                        "task_deadline_date" => formatDate($lesson->task_deadline_date),
+                        "task_deadline_time" => formatTime($lesson->task_deadline_time),
+                        "lesson_id" => $lesson->id,
+                        "status" => $lesson->task->status,
+                        "submissions" => self::totalSubmissions($lesson->task, $lesson->course->students)
+                    ];
+                })->toArray() ?? [];
 
-            $published = collect($lessons)->reject(function($lesson){
-                return $lesson->task->status !== "published";
-            })->map(function ($lesson) {
-                return [
-                    "id" => $lesson->task->id,
-                    "title" => $lesson->task->title,
-                    "description" => $lesson->task->description,
-                    "task_deadline_date" => formatDate($lesson->task_deadline_date),
-                    "task_deadline_time" => formatTime($lesson->task_deadline_time),
-                    "lesson_id" => $lesson->id,
-                    "status" => $lesson->task->status,
-                    "submissions" => self::totalSubmissions($lesson->task, $lesson->course->students)
-                ];
-            })->toArray() ?? [];
+                $published = collect($lessons)->reject(function ($lesson) {
+                    return $lesson->task->status !== "published";
+                })->map(function ($lesson) {
+                    return [
+                        "id" => $lesson->task->id,
+                        "title" => $lesson->task->title,
+                        "description" => $lesson->task->description,
+                        "task_deadline_date" => formatDate($lesson->task_deadline_date),
+                        "task_deadline_time" => formatTime($lesson->task_deadline_time),
+                        "lesson_id" => $lesson->id,
+                        "status" => $lesson->task->status,
+                        "submissions" => self::totalSubmissions($lesson->task, $lesson->course->students)
+                    ];
+                })->toArray() ?? [];
 
-            $graded = collect($lessons)->reject(function($lesson){
-                return $lesson->task->status !== "graded";
-            })->map(function ($lesson) {
+                $graded = collect($lessons)->reject(function ($lesson) {
+                    return $lesson->task->status !== "graded";
+                })->map(function ($lesson) {
+                    return [
+                        "id" => $lesson->task->id,
+                        "title" => $lesson->task->title,
+                        "description" => $lesson->task->description,
+                        "task_deadline_date" => formatDate($lesson->task_deadline_date),
+                        "task_deadline_time" => formatTime($lesson->task_deadline_time),
+                        "lesson_id" => $lesson->id,
+                        "status" => $lesson->task->status,
+                        "submissions" => self::totalSubmissions($lesson->task, $lesson->course->students)
+                    ];
+                })->toArray() ?? [];
                 return [
-                    "id" => $lesson->task->id,
-                    "title" => $lesson->task->title,
-                    "description" => $lesson->task->description,
-                    "task_deadline_date" => formatDate($lesson->task_deadline_date),
-                    "task_deadline_time" => formatTime($lesson->task_deadline_time),
-                    "lesson_id" => $lesson->id,
-                    "status" => $lesson->task->status,
-                    "submissions" => self::totalSubmissions($lesson->task, $lesson->course->students)
-                ];
-            })->toArray() ?? [];
-
-             return [
-                    "pending_tasks" => [...$pending],
-                    "published_tasks" => [...$published],
-                    "graded_tasks" => [...$graded]
-                ];
+                       "pending_tasks" => [...$pending],
+                       "published_tasks" => [...$published],
+                       "graded_tasks" => [...$graded]
+                   ];
+            }
         }
         catch(\Exception $e){
             return [
