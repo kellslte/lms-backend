@@ -10,42 +10,45 @@ use Illuminate\Support\Facades\Storage;
 class Classroom {
     public static function allLessons(Facilitator $user){
         try {
-            $published = collect($user->course->lessons)->reject(function($lesson){
-                return $lesson->status !== "published";
-            })->map(function($lesson) use ($user){
+            $lessons = $user->course->lessons;
+            if ($lessons){
+                $published = collect($user->course->lessons)->reject(function($lesson){
+                    return $lesson->status !== "published";
+                })->map(function($lesson) use ($user){
+                    return [
+                        "id" => $lesson->id,
+                        "status" => $lesson->status,
+                        "thumbnail" => $lesson->media->thumbnail,
+                        "title" => $lesson->title,
+                        "description" => $lesson->description,
+                        "datePublished" => formatDate($lesson->created_at),
+                        "tutor" => $user->name,
+                        "views" => 0,
+                        "taskSubmissions" => TaskManager::getSubmissions($lesson->task, $user->course->students)->count()
+                    ];
+                });
+    
+                $unpublished = collect($user->course->lessons)->reject(function($lesson){
+                    return $lesson->status !== "unpublished";
+                })->map(function($lesson)use ($user){
+                    return [
+                        "id" => $lesson->id,
+                        "status" => $lesson->status,
+                        "thumbnail" => $lesson->media->thumbnail,
+                        "title" => $lesson->title,
+                        "description" => $lesson->description,
+                        "datePublished" => formatDate($lesson->created_at),
+                        "tutor" => $user->name,
+                        "views" => 0,
+                        "taskSubmissions" => TaskManager::getSubmissions($lesson->task, $user->course->students)->count()
+                    ];
+                });
+    
                 return [
-                    "id" => $lesson->id,
-                    "status" => $lesson->status,
-                    "thumbnail" => $lesson->media->thumbnail,
-                    "title" => $lesson->title,
-                    "description" => $lesson->description,
-                    "datePublished" => formatDate($lesson->created_at),
-                    "tutor" => $user->name,
-                    "views" => 0,
-                    "taskSubmissions" => TaskManager::getSubmissions($lesson->task, $user->course->students)->count()
+                    "published_lessons" => $published,
+                    "unpublished_lessons" => $unpublished
                 ];
-            });
-
-            $unpublished = collect($user->course->lessons)->reject(function($lesson){
-                return $lesson->status !== "unpublished";
-            })->map(function($lesson)use ($user){
-                return [
-                    "id" => $lesson->id,
-                    "status" => $lesson->status,
-                    "thumbnail" => $lesson->media->thumbnail,
-                    "title" => $lesson->title,
-                    "description" => $lesson->description,
-                    "datePublished" => formatDate($lesson->created_at),
-                    "tutor" => $user->name,
-                    "views" => 0,
-                    "taskSubmissions" => TaskManager::getSubmissions($lesson->task, $user->course->students)->count()
-                ];
-            });
-
-            return [
-                "published_lessons" => $published,
-                "unpublished_lessons" => $unpublished
-            ];
+            }
         } catch (\Throwable $th) {
             return $th->getMessage();
         }        
