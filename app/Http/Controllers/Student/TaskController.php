@@ -33,8 +33,6 @@ class TaskController extends Controller
                 }
             });
             
-        })->reject(function($task){
-            return $task["status"] === "expired";
         });
 
         return response()->json([
