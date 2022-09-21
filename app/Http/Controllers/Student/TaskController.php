@@ -16,17 +16,21 @@ class TaskController extends Controller
         $tasks = collect($user->course->lessons)->map(function($lesson) use ($user){
             $tasks = $user->completedTasks();
 
-            $task = $tasks->where("id", $lesson->task->id)->first();
+            return collect($lesson->tasks)->map(function($task) use ($tasks){
+                
+                $task = $tasks->where("id", $task->id)->first();
+                
+                return [
+                    "id" => $task->id,
+                    "title" => $task->title,
+                    "status" => ($task) ? "submitted": $task->status,
+                    "description" => $task->description,
+                    "task_deadline_date" => formatDate($task->task_deadline_date),
+                    "task_deadline_time" => formatTime($task->task_deadline_time),
+                    "lesson_id" => $task->lesson->id,
+                ];
+            });
             
-            return [
-                "id" => $lesson->task->id,
-                "title" => $lesson->task->title,
-                "status" => ($task) ? "submitted": $lesson->task->status,
-                "description" => $lesson->task->description,
-                "task_deadline_date" => formatDate($lesson->task->task_deadline_date),
-                "task_deadline_time" => formatTime($lesson->task->task_deadline_time),
-                "lesson_id" => $lesson->id,
-            ];
         })->reject(function($task){
             return $task["status"] === "expired";
         });
