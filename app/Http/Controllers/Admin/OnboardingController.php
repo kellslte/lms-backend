@@ -11,6 +11,7 @@ use App\Mail\UserOnboarded;
 use App\Imports\UsersImport;
 use Illuminate\Http\Request;
 use App\Events\SendMagicLink;
+use App\Mail\SlackInviteMail;
 use App\Events\SendSlackInvite;
 use App\Events\CreateCurriculum;
 use App\Http\Controllers\Controller;
@@ -312,26 +313,33 @@ class OnboardingController extends Controller
         }
     }
 
-    public function createCurriculum(){
-        $users = User::all();
+    public function sendStudentSlackInvite(Request $request){
+
+        $request->validate([
+            "email" => "required|email",
+            "link" => "required|string"
+        ]);
+
+        $student = User::whereEmail($request->email)->first();
+
+        if(!$student){
+            return response()->json([
+               'status' => 'error',
+               'message' => 'The user record could not be found',
+            ]);
+        }
 
         try{
-            foreach ($users as $student) {
-                if (!$student->curriculum) {
-                    $student->curriculum()->create([
-                        "viewables" => json_encode([])
-                    ]);
-                }
-            }
+            Mail::to($student->email)->send(new SlackInviteMail($student, $request->link));
 
             return response()->json([
                 "status" => "successful",
-                "message" => "Curriculum created successfully",
+                'message' => 'Slcak invite successfully sent'
             ]);
         }
         catch(\Exception $e){
             return response()->json([
-                "status" => "error",
+                "status" => "failed",
                 "message" => $e->getMessage()
             ]);
         }

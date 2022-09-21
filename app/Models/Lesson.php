@@ -22,9 +22,9 @@ class Lesson extends Model
         return $this->belongsTo(Course::class);
     }
 
-    public function task()
+    public function tasks()
     {
-        return $this->hasOne(Task::class);
+        return $this->hasMany(Task::class);
     }
 
     public function resources()

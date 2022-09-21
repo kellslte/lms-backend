@@ -71,7 +71,7 @@ return [
     'html'  => 'text/html',
     'htm'   => 'text/html',
     'shtml' => 'text/html',
-    'txt'   => 'text/plain',
+    'txt'   => 'text/txt',
     'text'  => 'text/plain',
     'log'   => ['text/plain', 'text/x-log'],
     'rtx'   => 'text/richtext',

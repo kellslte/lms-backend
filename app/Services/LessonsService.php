@@ -84,36 +84,34 @@ class LessonsService {
     public static function getClassroomData($user){
         $progress = collect(json_decode($user->progress->course_progress, true));
 
-        if($user->curriculum->viewables){
-            return collect(json_decode($user->curriculum->viewables, true))->map(function ($lesson) use($progress) {
-                $lessonProgress = $progress->where("lesson_id", $lesson["lesson_id"])->first();
-                $lesson = Lesson::find($lesson["lesson_id"]);
-    
-                if($lesson){
-                    return ($lessonProgress["percentage"] === 100) ? [
-                        "id" => $lesson->id,
-                        "title" => $lesson->title,
-                        "description" => $lesson->description,
-                        "published_date" => formatDate($lesson->updated_at),
-                        "status" => "completed",
-                        "media" => $lesson->media,
-                        "tutor" => $lesson->course->facilitator->name,
-                        "percentage" => $lessonProgress["percentage"]
-                    ]: [
-                        "id" => $lesson->id,
-                        "title" => $lesson->title,
-                        "description" => $lesson->description,
-                        "published_date" => formatDate($lesson->updated_at),
-                        "status" => "uncompleted",
-                        "media" => $lesson->media,
-                        "tutor" => $lesson->course->facilitator->name,
-                        "percentage" => $lessonProgress["percentage"]
-                    ];
-                }
-            })->filter();
-        }
-        
-        return [];
+        return collect(json_decode($user->curriculum->viewables, true))->map(function ($lesson) use($progress) {
+            $lessonProgress = $progress->where("lesson_id", $lesson["lesson_id"])->first();
+            $lesson = Lesson::find($lesson["lesson_id"]);
+
+            if($lesson){
+                return ($lessonProgress["percentage"] === 100) ? [
+                    "id" => $lesson->id,
+                    "title" => $lesson->title,
+                    "description" => $lesson->description,
+                    "published_date" => formatDate($lesson->updated_at),
+                    "status" => "completed",
+                    "media" => $lesson->media,
+                    "tutor" => $lesson->course->facilitator->name,
+                    "percentage" => $lessonProgress["percentage"]
+                ]: [
+                    "id" => $lesson->id,
+                    "title" => $lesson->title,
+                    "description" => $lesson->description,
+                    "published_date" => formatDate($lesson->updated_at),
+                    "status" => "uncompleted",
+                    "media" => $lesson->media,
+                    "tutor" => $lesson->course->facilitator->name,
+                    "percentage" => $lessonProgress["percentage"]
+                ];
+            }
+
+            return [];
+        })->filter() ?? [];
     }
 
     public static function getUpcoming(){}

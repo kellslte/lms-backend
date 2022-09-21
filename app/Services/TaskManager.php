@@ -11,10 +11,15 @@ use App\Events\TaskCreated;
 
 class TaskManager{
 
-    public static function getSubmissions(Object $task, $students)
+    public static function getSubmissions($tasks, $students)
     {
-        return collect($students)->map(function ($user) use ($task) {
-            return collect(json_decode($user->submissions->tasks, true))->where("id", $task->id)->first();
+        return collect($students)->map(function ($user) use ($tasks) {
+            $submissions = collect(json_decode($user->submissions->tasks, true));
+
+            return collect($tasks)->map(function($task) use ($submissions) {
+                return $submissions->where("id", $task->id);
+            });
+            
         })->filter();
     }
 
@@ -22,62 +27,55 @@ class TaskManager{
 
         $lessons = Course::find($course)->lessons;
 
-        $lessons ?? $lessons->load('task');
+        $lessons->load('tasks');
+
+        $tasks = collect($lessons)->map(function($lesson){
+            return $lesson->tasks;
+        })->filter()->flatten();
+
+        $pendingTasks = [];
+        $gradedTasks = [];
 
         try{
-            $pending = collect($lessons)->reject(function($lesson){
-                return $lesson->task->status !== "pending";
-            })->map(function($lesson){
-                return [
-                    "id" => $lesson->task->id,
-                    "title" => $lesson->task->title,
-                    "description" => $lesson->task->description,
-                    "task_deadline_date" => formatDate($lesson->task_deadline_date),
-                    "task_deadline_time" => formatTime($lesson->task_deadline_time),
-                    "lesson_id" => $lesson->id,
-                    "status" => $lesson->task->status,
-                    "submissions" => self::totalSubmissions($lesson->task, $lesson->course->students)
-                ];
-            })->toArray();
+            if($tasks){
+                $pendingTasks = collect($tasks)->where("status", "pending")->map(function ($task) {
+                    return [
+                        "id" => $task->id,
+                        "title" => $task->title,
+                        "description" => $task->description,
+                        "task_deadline_date" => formatDate($task->task_deadline_date),
+                        "task_deadline_time" => formatTime($task->task_deadline_time),
+                        "lesson_id" => $task->lesson->id,
+                        "status" => $task->status,
+                        "submissions" => self::totalSubmissions($task, $task->lesson->course->students)
+                    ];
+                })->toArray();
 
-            $published = collect($lessons)->reject(function($lesson){
-                return $lesson->task->status !== "published";
-            })->map(function ($lesson) {
-                return [
-                    "id" => $lesson->task->id,
-                    "title" => $lesson->task->title,
-                    "description" => $lesson->task->description,
-                    "task_deadline_date" => formatDate($lesson->task_deadline_date),
-                    "task_deadline_time" => formatTime($lesson->task_deadline_time),
-                    "lesson_id" => $lesson->id,
-                    "status" => $lesson->task->status,
-                    "submissions" => self::totalSubmissions($lesson->task, $lesson->course->students)
-                ];
-            })->toArray();
+                $gradedTasks = collect($tasks)->where("status", "graded")->map(function ($task) {
+                    return [
+                        "id" => $task->id,
+                        "title" => $task->title,
+                        "description" => $task->description,
+                        "task_deadline_date" => formatDate($task->task_deadline_date),
+                        "task_deadline_time" => formatTime($task->task_deadline_time),
+                        "lesson_id" => $task->lesson->id,
+                        "status" => $task->status,
+                        "submissions" => self::totalSubmissions($task, $task->lesson->course->students)
+                    ];
+                })->toArray();
 
-            $graded = collect($lessons)->reject(function($lesson){
-                return $lesson->task->status !== "graded";
-            })->map(function ($lesson) {
                 return [
-                    "id" => $lesson->task->id,
-                    "title" => $lesson->task->title,
-                    "description" => $lesson->task->description,
-                    "task_deadline_date" => formatDate($lesson->task_deadline_date),
-                    "task_deadline_time" => formatTime($lesson->task_deadline_time),
-                    "lesson_id" => $lesson->id,
-                    "status" => $lesson->task->status,
-                    "submissions" => self::totalSubmissions($lesson->task, $lesson->course->students)
-                ];
-            })->toArray();
-
-             return [
-                    "pending_tasks" => [...$pending],
-                    "published_tasks" => [...$published],
-                    "graded_tasks" => [...$graded]
-                ];
+                       "pending_tasks" => [...$pendingTasks],
+                       "graded_tasks" => [...$gradedTasks],
+                   ];
+            }
         }
         catch(\Exception $e){
-            return null;
+            return [
+                "pending_tasks" => [],
+                "published_tasks" => [],
+                "error" => $e->getMessage()
+            ];
         }
     }
 
@@ -109,7 +107,7 @@ class TaskManager{
 
     public static function createTask(Array $task, Lesson $lesson, $users){
         try{
-            $lesson->task()->create([
+            $lesson->tasks()->create([
                 "title" => $task["title"],
                 "description" => $task["description"],
                 "status" => $task["status"],
@@ -121,13 +119,13 @@ class TaskManager{
             TaskCreated::dispatch($users);
 
             return [
-                "status" => true,
+                "status" => "success",
                 "task" => $task
             ];
         }
         catch(\Exception $e){
             return [
-                "status" => false,
+                "status" => "failed",
                 "task" => $e->getMessage()
             ];
         }

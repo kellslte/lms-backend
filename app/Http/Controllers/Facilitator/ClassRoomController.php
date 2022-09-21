@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Services\LessonsService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateLessonRequest;
+use App\Http\Resources\FaciLessonResource;
 
 class ClassRoomController extends Controller
 {
@@ -17,16 +18,19 @@ class ClassRoomController extends Controller
 
        $response = Classroom::allLessons($user);
 
-       $code = (!is_null($response)) ? 200 : 400;
-
-       $status = (!is_null($response)) ? 'success' : 'failed';
+       if(array_key_exists("error", $response)){
+        return response()->json([
+            "status" => "failed",
+            "message" => $response["error"]  
+        ], 400);
+       }
         
         return response()->json([
-            'status' => $status,
+            'status' => "successful",
             'data' => [
                 'lessons' => $response,
             ]
-        ], $code);
+        ]);
     }
 
     public function store(CreateLessonRequest $request){
@@ -39,6 +43,24 @@ class ClassRoomController extends Controller
         $user = getAuthenticatedUser();
 
         return Classroom::saveLessonAsDraft($request, $user->course);
+    }
+
+    public function showLesson(String $lesson){
+        $dblesson  = Lesson::find($lesson);
+
+        if(!$lesson){
+            return response()->json([
+                "status" => "failed",
+                "message" => "Lesson does not exist"    
+            ], 404);
+        }
+
+        return response()->json([
+            "status" => "success",
+            "data" => [
+               "lesson" => new FaciLessonResource($dblesson)
+            ],
+        ]);
     }
 
     public function update(CreateLessonRequest $request, Lesson $lesson){

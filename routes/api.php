@@ -189,8 +189,8 @@ Route::prefix('v1')->group(function(){
             Route::post('onboard/students/change-track', [OnboardingController::class, 'changeTrack']);
             // update course details
             Route::put('course/{course}', [AdminCourseController::class, 'update']);
-            // create surriculum data for students
-            Route::post("onboard/students/curriculum", [OnboardingController::class, 'createCurriculum']);
+            // Send slack invite to single user
+            Route::post('onboard/students/single-slack-invite', [OnboardingController::class, 'sendStudentSlackInvite']);
             // Create SOTU meeting
             //Route::post('meetings/{sotu}', [MeetingController::class, 'createSotu']);
         });
@@ -210,6 +210,10 @@ Route::prefix('v1')->group(function(){
             Route::get('classroom', [FacilitatorClassroomController::class, 'index']);
             // Create lesson route
             Route::post('classroom', [FacilitatorClassroomController::class, 'store']);
+            // Get Single Lesson details
+            Route::get("classroom/{lesson}", [FacilitatorClassroomController::class, 'showLesson']);
+            // save lesson as draft
+            Route::post("classroom/draft", [FacilitatorClassroomController::class, 'saveAsDraft']);
             // Get facilitator schedule
             Route::get('schedule', [FacilitatorScheduleController::class, 'index']);
             // Create a new meeting

@@ -3,51 +3,64 @@ namespace App\Services;
 
 use App\Models\Facilitator;
 use App\Events\LessonCreated;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 
 
 class Classroom {
     public static function allLessons(Facilitator $user){
+
+        $publishedLessons = [];
+        $unpublishedLessons = [];
+
         try {
-            $published = collect($user->course->lessons)->reject(function($lesson){
-                return $lesson->status !== "published";
-            })->map(function($lesson) use ($user){
-                return [
-                    "id" => $lesson->id,
-                    "status" => $lesson->status,
-                    "thumbnail" => $lesson->thumbnail,
-                    "title" => $lesson->title,
-                    "description" => $lesson->description,
-                    "datePublished" => formatDate($lesson->created_at),
-                    "tutor" => $user->name,
-                    "views" => "",
-                    "taskSubmissions" => TaskManager::getSubmissions($lesson->task, $user->course->students)->count()
-                ];
-            });
+        $published = collect($user->course->lessons)->where("status", "published")->flatten();
+        
+                if($published){
+                    $publishedLessons = $published->map(function ($lesson) use ($user) {
+                        return [
+                            "id" => $lesson->id,
+                            "status" => $lesson->status,
+                            "thumbnail" =>  isset($lesson->media->thumbnail) ? $lesson->media->thumbnail : null,
+                            "title" => $lesson->title,
+                            "description" => $lesson->description,
+                            "datePublished" => formatDate($lesson->created_at),
+                            "tutor" => $user->name,
+                            "views" => 0,
+                            "taskSubmissions" => TaskManager::getSubmissions($lesson->tasks, $user->course->students)->count()
+                        ];
+                    });
+                }
+    
+                $unpublished = collect($user->course->lessons)->where("status", "unpublished")->flatten();
 
-            $unpublished = collect($user->course->lessons)->reject(function($lesson){
-                return $lesson->status !== "unpublished";
-            })->map(function($lesson)use ($user){
+                if($unpublished){
+                    $unpublishedLessons = $unpublished->map(function ($lesson) use ($user) {
+                        return [
+                            "id" => $lesson->id,
+                            "status" => $lesson->status,
+                            "thumbnail" => isset($lesson->media->thumbnail) ? $lesson->media->thumbnail : null,
+                            "title" => $lesson->title,
+                            "description" => $lesson->description,
+                            "datePublished" => formatDate($lesson->created_at),
+                            "tutor" => $user->name,
+                            "views" => 0,
+                            "taskSubmissions" => TaskManager::getSubmissions($lesson->tasks, $user->course->students)->count()
+                        ];
+                    });
+                }
+    
                 return [
-                    "id" => $lesson->id,
-                    "status" => $lesson->status,
-                    "thumbnail" => $lesson->thumbnail,
-                    "title" => $lesson->title,
-                    "description" => $lesson->description,
-                    "datePublished" => formatDate($lesson->created_at),
-                    "tutor" => $user->name,
-                    "views" => 0,
-                    "taskSubmissions" => TaskManager::getSubmissions($lesson->task, $user->course->students)->count()
+                    "published_lessons" => $publishedLessons,
+                    "unpublished_lessons" => $unpublishedLessons,
                 ];
-            });
-
-            return [
-                "published_lessons" => $published,
-                "unpublished_lessons" => $unpublished
-            ];
         } catch (\Throwable $th) {
-            return null;
+            return [
+                "published_lessons" => [],
+                "unpublished_lessons" => [],
+                "error" => $th->getMessage()
+            ];
         }        
     }
 
@@ -107,51 +120,53 @@ class Classroom {
         
         try{
             // upload lesson cideo to our server 
-            $videoPath = Storage::putFileAs("lessons", $request->file("lessonVideo"), $request->title);
-    
+            $videoPath = Storage::putFile("lessons", $request->file("lessonVideo"));
+
             // upload lesson thumnail
-            $path = Storage::putFileAs("thumbnails", $request->file("lessonThumnail"), $request->title);
+            $path = Storage::putFile("thumbnails", $request->file("lessonThumbnail"));
     
             // upload lesson transcript
             $transcript = self::uploadTranscript($request->file("lessonTranscript"));
     
-            // create lesson
-            $lesson = $course->lessons()->create([
-                "title" => $request->title,
-                "description" => $request->description,
-                "tutor" => $course->facilitator->name,
-                "status" => "unpublished"
-            ]);
-    
-            // create lesson media
-            $lesson->media()->create([
-                "video_link" => $videoPath,
-                "thumbnail" => $path,
-                "transcript" => $transcript,
-                "youtube_video_id" => ""
-            ]);
-    
-            foreach ($request->resources as $resource) {
-                $lesson->resources()->create([
-                    "type" => "file_link",
-                    "title" => $resource["title"],
-                    "resource" => $resource["link"]
+            DB::transaction(function() use ($videoPath, $transcript, $request, $path, $course){
+                // create lesson
+                $lesson = $course->lessons()->create([
+                    "title" => $request->title,
+                    "description" => $request->description,
+                    "tutor" => $course->facilitator->name,
+                    "status" => "unpublished"
                 ]);
-            }
-    
-            return response()->json([
-                "status" => "successful",
-                "message" => "Your lesson draft has been successfully created",
-                "data" => [
-                    "lesson" => $lesson
-                ]
-            ]);
+
+                // create lesson media
+                $lesson->media()->create([
+                    "video_link" => asset("uploads/".$videoPath),
+                    "thumbnail" => asset("uploads/" . $path),
+                    "transcript" => asset("uploads/" . $transcript),
+                    "youtube_video_id" => ""
+                ]);
+
+                // foreach ($request->resources as $resource) {
+                //     $lesson->resources()->create([
+                //         "type" => "file_link",
+                //         "title" => $resource->name,
+                //         "resource" => $resource["link"]
+                //     ]);
+                // }
+
+                return response()->json([
+                    "status" => "successful",
+                    "message" => "Your lesson draft has been successfully created",
+                    "data" => [
+                        "lesson" => $lesson
+                    ]
+                ]);
+            });
         }
         catch(\Exception $e){
             return response()->json([
                 "status" => "failed",
                 "message" => $e->getMessage()
-            ]);
+            ], 400);
         }
 
     }
@@ -163,11 +178,15 @@ class Classroom {
                 $thumbnail = $lesson->media->thumbnail;
                 $transcript = $lesson->transcript;
 
-                // $request->merge(
-                //     "tags" => $lesson->title,
-                // );
+                $request->merge([
+                    "tags" => $lesson->title,
+                    "lessonVideo" => $videoPath,
+                    "lessonThumbnail" => $thumbnail
+                ]);
 
-                $videoLink = getYoutubeVideoDetails();
+                $videoLink = getYoutubeVideoDetails($request);
+
+                
             }
 
             $lesson->update([
@@ -209,8 +228,6 @@ class Classroom {
 
     private static function uploadTranscript($transcript){
         // upload transacript
-        $file = $transcript->store("/transcripts", "public");
-
-        return Storage::url($file);
+        return $transcript->store("/transcripts", "public");
     }
 }
