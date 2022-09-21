@@ -208,6 +208,8 @@ Route::prefix('v1')->group(function(){
             Route::get('classroom', [FacilitatorClassroomController::class, 'index']);
             // Create lesson route
             Route::post('classroom', [FacilitatorClassroomController::class, 'store']);
+            // Get Single Lesson details
+            Route::get("classroom/{lesson}", [FacilitatorClassroomController::class, 'showLesson']);
             // save lesson as draft
             Route::post("classroom/draft", [FacilitatorClassroomController::class, 'saveAsDraft']);
             // Get facilitator schedule

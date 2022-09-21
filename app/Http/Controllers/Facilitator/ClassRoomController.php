@@ -44,6 +44,24 @@ class ClassRoomController extends Controller
         return Classroom::saveLessonAsDraft($request, $user->course);
     }
 
+    public function showLesson(String $lesson){
+        $lesson  = Lesson::find($lesson);
+
+        if(!$lesson){
+            return response()->json([
+                "status" => "failed",
+                "message" => "Lesson does not exist"    
+            ], 404);
+        }
+
+        return response()->json([
+            "status" => "success",
+            "data" => [
+                "lesson" => $lesson->with("media", "resources")
+            ],
+        ]);
+    }
+
     public function update(CreateLessonRequest $request, Lesson $lesson){
         $user = getAuthenticatedUser();
         
