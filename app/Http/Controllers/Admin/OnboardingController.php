@@ -141,6 +141,7 @@ class OnboardingController extends Controller
             $student->attendance->delete();
             $student->point->delete();
             $student->submissions->delete();
+            $student->schedule->delete();
             $student->settings->delete();
             $student->curriculum->delete();
             $student->progress->delete();
@@ -160,6 +161,10 @@ class OnboardingController extends Controller
 
             $newRecord->attendance()->create([
                 "record" => $studentRecord["attendance"]["record"]
+            ]);
+
+            $newRecord->schedule()->create([
+                "meetings" => $studentRecord["schedule"]["meetings"],
             ]);
 
             $newRecord->point()->create([
