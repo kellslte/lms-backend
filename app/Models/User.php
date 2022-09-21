@@ -111,7 +111,7 @@ class User extends Authenticatable
     }
 
     public function completedTasks(){
-        $tasks  = json_decode($this->submissions->tasks, true);
+        $tasks  = collect(json_decode($this->submissions->tasks, true));
 
         if(!empty($tasks)){
             $taskInDb = Task::all();
@@ -136,13 +136,13 @@ class User extends Authenticatable
 
         }
 
-        return [];
+        return collect([]);
     }
 
     public function pendingTasks(){
         $submittedTasks = collect(json_decode($this->submissions->tasks, true));
 
-        if(!empty($submittedTasks)){
+        if($submittedTasks->count() > 0){
             $tasks = collect($this->lessons())->map(fn($lesson)=> $lesson->task);
     
             $pending = $tasks->reject(function ($task) use ($submittedTasks) {
@@ -156,7 +156,7 @@ class User extends Authenticatable
             });
         }
 
-        return [];
+        return collect([]);
     }
 
     public function expiredTasks(){
