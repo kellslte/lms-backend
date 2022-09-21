@@ -26,7 +26,7 @@ class TaskManager{
 
         $tasks = collect($lessons)->map(function($lesson){
             return $lesson->task;
-        })->filter();
+        })->filter()->all();
 
         $pendingTasks = [];
         $gradedTasks = [];
