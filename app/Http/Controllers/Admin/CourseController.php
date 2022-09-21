@@ -43,4 +43,13 @@ class CourseController extends Controller
             ]);
         }
     }
+
+    public function destroy(Course $course){
+        $course->delete();
+
+        return response()->json([
+            "status" => "success",
+            "message" => "course has been deleted"
+        ]);
+    }
 }
