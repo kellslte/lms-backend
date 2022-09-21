@@ -339,7 +339,7 @@ class OnboardingController extends Controller
 
             return response()->json([
                 "status" => "successful",
-                'message' => 'Slcak invite successfully sent'
+                'message' => 'Slack invite successfully sent'
             ]);
         }
         catch(\Exception $e){

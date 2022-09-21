@@ -8,17 +8,26 @@ use App\Http\Controllers\Controller;
 
 class CourseController extends Controller
 {
-    public function index(){}
+    public function index(){
+        return response()->json([
+            "status" => "success",
+            "data" => [
+                "courses" => Course::all()
+            ]
+        ], 200);
+    }
 
     public function store(Request $request){}
 
-    public function update(Course $course, Request $request){
+    public function update(String $course, Request $request){
+        $dbname = Course::find($course);
+        
         $request->validate([
             "title" => "required|string"
         ]);
 
         try{
-            $course->update([
+            $dbname->update([
                 "title" =>  $request->title
             ]);
 
