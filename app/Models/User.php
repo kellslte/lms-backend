@@ -142,8 +142,8 @@ class User extends Authenticatable
     public function pendingTasks(){
         $submittedTasks = collect(json_decode($this->submissions->tasks, true));
 
-        if($submittedTasks->count() > 0){
-            $tasks = collect($this->lessons())->map(fn($lesson)=> $lesson->task);
+        if(!empty($submittedTasks)){
+            $tasks = collect($this->lessons())->map(fn($lesson)=> $lesson->tasks)->flatten();
     
             $pending = $tasks->reject(function ($task) use ($submittedTasks) {
                 return $submittedTasks->where('id', $task->id)->first();
