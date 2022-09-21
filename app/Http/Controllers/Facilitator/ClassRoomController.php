@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Services\LessonsService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateLessonRequest;
+use App\Http\Resources\FaciLessonResource;
 
 class ClassRoomController extends Controller
 {
@@ -57,7 +58,7 @@ class ClassRoomController extends Controller
         return response()->json([
             "status" => "success",
             "data" => [
-                "lesson" => $dblesson->load("media", "resources")
+               "lesson" => new FaciLessonResource($dblesson)
             ],
         ]);
     }
