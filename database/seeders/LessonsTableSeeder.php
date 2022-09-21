@@ -44,7 +44,7 @@ class LessonsTableSeeder extends Seeder
             'youtube_video_id' => uniqid(),
         ]);
 
-        $lesson->task()->create([
+        $lesson->tasks()->create([
             'title' => 'And you\'re off to a start! '. $count,
             'description' => 'Do a write up explaning what you understand from the lesson you have just had',
             'task_deadline_date' => Carbon::now()->addDay(5),
