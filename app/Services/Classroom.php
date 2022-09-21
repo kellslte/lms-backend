@@ -148,7 +148,7 @@ class Classroom {
                 foreach ($request->resources as $resource) {
                     $lesson->resources()->create([
                         "type" => "file_link",
-                        "title" => $resource["title"],
+                        "title" => $resource["name"],
                         "resource" => $resource["link"]
                     ]);
                 }
