@@ -57,7 +57,7 @@ class ClassRoomController extends Controller
         return response()->json([
             "status" => "success",
             "data" => [
-                "lesson" => $dblesson->with("media", "resources")
+                "lesson" => $dblesson->load("media", "resources")
             ],
         ]);
     }
