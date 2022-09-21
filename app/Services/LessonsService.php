@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 class LessonsService {
 
     public static function getAllLessons($user){
+
         return collect($user->course->lessons)->map(function($lesson) use ($user){
             return [
                 "id" => $lesson->id,
