@@ -113,51 +113,63 @@ class User extends Authenticatable
     public function completedTasks(){
         $tasks  = json_decode($this->submissions->tasks, true);
 
-        $taskInDb = Task::all();
+        if(!empty($tasks)){
+            $taskInDb = Task::all();
+    
+            return collect($tasks)->reject(function($task){
+                return $task["status"] !== "submitted";
+            })->map(function($task) use ($taskInDb){
+    
+                $tasks = $taskInDb->where("id", $task["id"])->first();
+    
+                return [
+                    "id" => $task["id"],
+                    "title" => $task["title"],
+                    "status" => $task["status"],
+                    "description" => $task["description"],
+                    "task_deadline_date" => formatDate($tasks->task_deadline_date),
+                    "task_deadline_time" => formatTime($tasks->task_deadline_time),
+                    "date_submitted" => formatDate($task["date_submitted"]),
+                    "linkToResource" => $task["linkToResource"]
+                ];
+            });
 
-        return collect($tasks)->reject(function($task){
-            return $task["status"] !== "submitted";
-        })->map(function($task) use ($taskInDb){
+        }
 
-            $tasks = $taskInDb->where("id", $task["id"])->first();
-
-            return [
-                "id" => $task["id"],
-                "title" => $task["title"],
-                "status" => $task["status"],
-                "description" => $task["description"],
-                "task_deadline_date" => formatDate($tasks->task_deadline_date),
-                "task_deadline_time" => formatTime($tasks->task_deadline_time),
-                "date_submitted" => formatDate($task["date_submitted"]),
-                "linkToResource" => $task["linkToResource"]
-            ];
-        });
+        return [];
     }
 
     public function pendingTasks(){
         $submittedTasks = collect(json_decode($this->submissions->tasks, true));
 
-        $tasks = collect($this->lessons())->map(fn($lesson)=> $lesson->task);
+        if(!empty($submittedTasks)){
+            $tasks = collect($this->lessons())->map(fn($lesson)=> $lesson->task);
+    
+            $pending = $tasks->reject(function ($task) use ($submittedTasks) {
+                return $submittedTasks->where('id', $task->id)->first();
+            })->filter(function ($task) {
+                return $task->status !== 'expired';
+            })->flatten();
+    
+            return $pending->map(function($task){
+                return new TaskResource($task);
+            });
+        }
 
-        $pending = $tasks->reject(function ($task) use ($submittedTasks) {
-            return $submittedTasks->where('id', $task->id)->first();
-        })->filter(function ($task) {
-            return $task->status !== 'expired';
-        })->flatten();
-
-        return $pending->map(function($task){
-            return new TaskResource($task);
-        });
+        return [];
     }
 
     public function expiredTasks(){
        $lessons = $this->course->lessons;
 
-       $lessons->load('task');
+       $lessons->load('tasks');
+
+       return collect($lessons)->map(function($lesson){
+            return collect($lesson->tasks)->filter(function($task){
+                return $task->status == 'expired';
+           })->flatten();  
+       });
         
-       return collect($lessons)->filter(function($lesson){
-        return $lesson->status == 'expired';
-       })->flatten();  
     }
 
     public function lessons()
