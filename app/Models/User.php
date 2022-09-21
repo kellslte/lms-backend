@@ -89,7 +89,7 @@ class User extends Authenticatable
      */
     public function sendPasswordResetNotification($token)
     {
-        $url = config('app.front.url') . '/auth/password/students/reset?token=' . $token.'&email='.$this->email;
+        $url = config('app.front.url') . '/forgotpassword/resetpassword?token=' . $token.'&email='.$this->email;
 
         Mail::to($this->email)->queue(new SendPasswordResetMail($url));
     }

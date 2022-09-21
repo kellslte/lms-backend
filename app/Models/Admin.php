@@ -70,7 +70,7 @@ class Admin extends Authenticatable
     public function sendPasswordResetNotification($token)
     {
         $url =
-        config('app.front.url') . '/auth/password/admins/reset?token=' . $token.'&email='.$this->email;
+        config('app.front.url') . '/forgotpassword/resetpassword?token=' . $token.'&email='.$this->email;
 
         Mail::to($this->recovery_email)->queue(new SendPasswordResetMail($url));
     }

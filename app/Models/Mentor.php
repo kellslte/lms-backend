@@ -74,7 +74,7 @@ class Mentor extends Authenticatable
     public function sendPasswordResetNotification($token)
     {
         $url =
-        config('app.front.url') . '/auth/password/mentors/reset?token=' . $token.'&email='.$this->email;
+        config('app.front.url') . '/forgotpassword/resetpassword?token=' . $token.'&email='.$this->email;
 
         Mail::to($this->email)->queue(new SendPasswordResetMail($url));
     }
