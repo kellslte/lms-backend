@@ -22,11 +22,11 @@ class TaskManager{
 
         $lessons = Course::find($course)->lessons;
 
-        $lessons->load('task');
+        $lessons->load('tasks');
 
         $tasks = collect($lessons)->map(function($lesson){
-            return $lesson->task;
-        })->filter()->all();
+            return $lesson->tasks;
+        })->filter()->flatten();
 
         $pendingTasks = [];
         $gradedTasks = [];
@@ -102,7 +102,7 @@ class TaskManager{
 
     public static function createTask(Array $task, Lesson $lesson, $users){
         try{
-            $lesson->task()->create([
+            $lesson->tasks()->create([
                 "title" => $task["title"],
                 "description" => $task["description"],
                 "status" => $task["status"],

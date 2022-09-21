@@ -166,7 +166,7 @@ class Classroom {
             return response()->json([
                 "status" => "failed",
                 "message" => $e->getMessage()
-            ]);
+            ], 400);
         }
 
     }
