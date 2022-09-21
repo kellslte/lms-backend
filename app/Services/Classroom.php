@@ -145,13 +145,13 @@ class Classroom {
                     "youtube_video_id" => ""
                 ]);
 
-                // foreach ($request->resources as $resource) {
-                //     $lesson->resources()->create([
-                //         "type" => "file_link",
-                //         "title" => $resource["title"],
-                //         "resource" => $resource["link"]
-                //     ]);
-                // }
+                foreach ($request->resources as $resource) {
+                    $lesson->resources()->create([
+                        "type" => "file_link",
+                        "title" => $resource["title"],
+                        "resource" => $resource["link"]
+                    ]);
+                }
 
                 return response()->json([
                     "status" => "successful",
