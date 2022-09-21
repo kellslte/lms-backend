@@ -45,7 +45,7 @@ class ClassRoomController extends Controller
     }
 
     public function showLesson(String $lesson){
-        $lesson  = Lesson::find($lesson);
+        $dblesson  = Lesson::find($lesson);
 
         if(!$lesson){
             return response()->json([
@@ -57,7 +57,7 @@ class ClassRoomController extends Controller
         return response()->json([
             "status" => "success",
             "data" => [
-                "lesson" => $lesson->with("media", "resources")
+                "lesson" => $dblesson->with("media", "resources")
             ],
         ]);
     }
