@@ -15,45 +15,45 @@ class Classroom {
         $unpublishedLessons = [];
 
         try {
-                $published = collect($user->course->lessons)->where("status", "published");
-
+        $published = collect($user->course->lessons)->where("status", "published")->flatten();
+        
                 if($published){
                     $publishedLessons = $published->map(function ($lesson) use ($user) {
                         return [
                             "id" => $lesson->id,
                             "status" => $lesson->status,
-                            "thumbnail" => $lesson->media->thumbnail,
+                            "thumbnail" =>  isset($lesson->media->thumbnail) ? $lesson->media->thumbnail : null,
                             "title" => $lesson->title,
                             "description" => $lesson->description,
                             "datePublished" => formatDate($lesson->created_at),
                             "tutor" => $user->name,
                             "views" => 0,
-                            "taskSubmissions" => TaskManager::getSubmissions($lesson->task, $user->course->students)->count()
+                            "taskSubmissions" => TaskManager::getSubmissions($lesson->tasks, $user->course->students)->count()
                         ];
                     });
                 }
     
-                $unpublished = collect($user->course->lessons)->where("status", "unpublished");
+                $unpublished = collect($user->course->lessons)->where("status", "unpublished")->flatten();
 
                 if($unpublished){
                     $unpublishedLessons = $unpublished->map(function ($lesson) use ($user) {
                         return [
                             "id" => $lesson->id,
                             "status" => $lesson->status,
-                            "thumbnail" => $lesson->media->thumbnail,
+                            "thumbnail" => isset($lesson->media->thumbnail) ? $lesson->media->thumbnail : null,
                             "title" => $lesson->title,
                             "description" => $lesson->description,
                             "datePublished" => formatDate($lesson->created_at),
                             "tutor" => $user->name,
                             "views" => 0,
-                            "taskSubmissions" => TaskManager::getSubmissions($lesson->task, $user->course->students)->count()
+                            "taskSubmissions" => TaskManager::getSubmissions($lesson->tasks, $user->course->students)->count()
                         ];
                     });
                 }
     
                 return [
                     "published_lessons" => $publishedLessons,
-                    "unpublished_lessons" => $unpublishedLessons
+                    "unpublished_lessons" => $unpublishedLessons,
                 ];
         } catch (\Throwable $th) {
             return [
