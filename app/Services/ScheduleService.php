@@ -19,7 +19,7 @@ class ScheduleService {
 
         $meetings = collect(json_decode($user->schedule->meetings, true));
 
-        if($meetings->count() > 0){
+        if(!empty($meetings)){
             $week = $meetings->map(function ($val) {
                 return [
                     "caption" => $val['caption'],
