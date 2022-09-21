@@ -16,7 +16,6 @@ class Course extends Model
     ];
 
     protected $hidden = [
-        'id',
         'updated_at',
         'created_at',
         'track_id',
