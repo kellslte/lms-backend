@@ -11,6 +11,7 @@ use App\Mail\UserOnboarded;
 use App\Imports\UsersImport;
 use Illuminate\Http\Request;
 use App\Events\SendMagicLink;
+use App\Mail\SlackInviteMail;
 use App\Events\SendSlackInvite;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
@@ -304,6 +305,38 @@ class OnboardingController extends Controller
                 "message" => "Slack invite mail has been sent to the students"
             ], 200);
         } catch (\Exception $e) {
+            return response()->json([
+                "status" => "failed",
+                "message" => $e->getMessage()
+            ], 400);
+        }
+    }
+
+    public function sendStudentSlackInvite(Request $request){
+
+        $request->validate([
+            "email" => "required|email",
+            "link" => "required|string"
+        ]);
+
+        $student = User::whereEmail($request->email)->first();
+
+        if(!$student){
+            return response()->json([
+               'status' => 'error',
+               'message' => 'The user record could not be found',
+            ]);
+        }
+
+        try{
+            Mail::to($student->email)->send(new SlackInviteMail($student, $request->link));
+
+            return response()->json([
+                "status" => "successful",
+                'message' => 'Slcak invite successfully sent'
+            ]);
+        }
+        catch(\Exception $e){
             return response()->json([
                 "status" => "failed",
                 "message" => $e->getMessage()

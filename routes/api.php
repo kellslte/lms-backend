@@ -189,6 +189,8 @@ Route::prefix('v1')->group(function(){
             Route::post('onboard/students/change-track', [OnboardingController::class, 'changeTrack']);
             // update course details
             Route::put('course/{course}', [AdminCourseController::class, 'update']);
+            // Send slack invite to single user
+            Route::post('onboard/students/single-slack-invite', [OnboardingController::class, 'sendStudentSlackInvite']);
             // Create SOTU meeting
             //Route::post('meetings/{sotu}', [MeetingController::class, 'createSotu']);
         });
