@@ -188,7 +188,7 @@ Route::prefix('v1')->group(function(){
             // change user track
             Route::post('onboard/students/change-track', [OnboardingController::class, 'changeTrack']);
             // Get course details
-            Route::get('courses', [AdminCoursesController::class, 'index']);
+            Route::get('courses', [AdminCourseController::class, 'index']);
             // update course details
             Route::put('course/{course}', [AdminCourseController::class, 'update']);
             // Send slack invite to single user
