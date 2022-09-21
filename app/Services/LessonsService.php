@@ -70,7 +70,7 @@ class LessonsService {
             
             $lessonProgress = $progress->where("lesson_id", $viewables["lesson_id"])->first();
 
-            return ($viewables->lesson_status === "uncompleted") ? [
+            return ($viewables["lesson_status"] === "uncompleted") ? [
                 "title" => $lesson->title,
                 "description" => $lesson->description,
                 "published_date" => formatDate($lesson->updated_at),
