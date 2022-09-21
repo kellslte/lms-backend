@@ -14,7 +14,7 @@ class TaskController extends Controller
         $user = getAuthenticatedUser();
 
         $tasks = collect($user->course->lessons)->map(function($lesson) use ($user){
-            $tasks = $user->completedTasks();
+            $tasks = collect($user->completedTasks());
 
             return collect($lesson->tasks)->map(function($task) use ($tasks){
                 
