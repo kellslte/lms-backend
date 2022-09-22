@@ -39,6 +39,7 @@ class ChangeTrack implements ToModel, WithHeadingRow
         // check that student account exists
         if ($student) {
             $currentCourse = $student->course;
+            
             if($currentCourse->title !== $course->title){
                 // save record in an array
                 $studentRecord = [
@@ -143,6 +144,10 @@ class ChangeTrack implements ToModel, WithHeadingRow
                 return $newRecord;
 
             }
+
+            $student->update([
+               'avatar' => $studentDetails["user"]["avatar"] 
+            ]);
 
             return $student;
         }
