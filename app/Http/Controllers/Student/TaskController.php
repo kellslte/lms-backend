@@ -13,27 +13,33 @@ class TaskController extends Controller
     public function index(){
         $user = getAuthenticatedUser();
 
-        $tasks = collect($user->course->lessons)->map(function($lesson) use ($user){
-            $tasks = collect($user->completedTasks());
 
-            return collect($lesson->tasks)->map(function($task) use ($tasks){
-                
-                $task = $tasks->where("id", $task->id)->first();
-                
-                if($task){
-                    return [
-                        "id" => $task->id,
-                        "title" => $task->title,
-                        "status" => ($task) ? "submitted" : $task->status,
-                        "description" => $task->description,
-                        "task_deadline_date" => formatDate($task->task_deadline_date),
-                        "task_deadline_time" => formatTime($task->task_deadline_time),
-                        "lesson_id" => $task->lesson->id,
-                    ];
+       if($user->lessons()){
+            $tasks = collect($user->lessons())->map(function ($lesson) use ($user) {
+                $tasks = collect($user->completedTasks());
+
+                if(!$tasks->isEmpty()){
+                    return collect($lesson->tasks)->map(function ($task) use ($tasks) {
+
+                        $task = $tasks->where("id", $task->id)->first();
+
+                        if ($task) {
+                            return [
+                                "id" => $task->id,
+                                "title" => $task->title,
+                                "status" => ($task) ? "submitted" : $task->status,
+                                "description" => $task->description,
+                                "task_deadline_date" => formatDate($task->task_deadline_date),
+                                "task_deadline_time" => formatTime($task->task_deadline_time),
+                                "lesson_id" => $task->lesson->id,
+                            ];
+                        }
+                    });
                 }
-            });
-            
-        });
+
+                return [];
+            })->filter();
+       }
 
         return response()->json([
             'status' => 'success',

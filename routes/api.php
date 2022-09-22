@@ -23,7 +23,6 @@ use App\Http\Controllers\Auth\MagicLoginController;
 use App\Http\Controllers\Admin\OnboardingController;
 use App\Http\Controllers\Student\ProgressController;
 use App\Http\Controllers\Student\LeaderboardController;
-use App\Http\Controllers\Facilitator\StudentMentorsController;
 use App\Http\Controllers\Student\TaskController as StudentTaskController;
 use App\Http\Controllers\Student\ProfileController as StudentProfileController;
 use App\Http\Controllers\Student\ScheduleController as StudentScheduleController;
@@ -33,6 +32,7 @@ use App\Http\Controllers\Student\DashboardController as StudentDashboardControll
 
 // Facilitator Controllers
 use App\Http\Controllers\Facilitator\PointController;
+use App\Http\Controllers\Facilitator\StudentMentorsController;
 use App\Http\Controllers\Facilitator\TaskController as FacilitatorTaskController;
 use App\Http\Controllers\Facilitator\ProfileController as FacilitatorProfileController;
 use App\Http\Controllers\Facilitator\ScheduleController as FacilitatorScheduleController;
