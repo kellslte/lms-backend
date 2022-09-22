@@ -156,7 +156,7 @@ class User extends Authenticatable
             });
         }
 
-        if(!collect($this->lessons())->isEmpty()){
+        if(!collect($this->lessons()->load('tasks'))->isEmpty()){
             return collect($this->lessons()->tasks)->flatten();
         }
 
