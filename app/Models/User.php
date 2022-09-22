@@ -141,6 +141,8 @@ class User extends Authenticatable
 
     public function pendingTasks(){
         $submittedTasks = collect(json_decode($this->submissions->tasks, true));
+        $lessons = $this->lessons();
+        $lessons->load('tasks');
 
         if(!$submittedTasks->isEmpty()){
             $tasks = collect($this->lessons())->map(fn($lesson)=> $lesson->tasks)->flatten();
@@ -157,7 +159,7 @@ class User extends Authenticatable
         }
 
         if(!collect($this->lessons())->isEmpty()){
-            return collect($this->lessons()->tasks)->flatten();
+            return collect($lessons)->flatten();
         }
 
         return [];
@@ -178,7 +180,7 @@ class User extends Authenticatable
 
     public function lessons()
     {
-        return $this->course->lessons->load('tasks');
+        return $this->course->lessons;
     }
 
     public function track(){
