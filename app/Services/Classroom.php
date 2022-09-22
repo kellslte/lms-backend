@@ -65,7 +65,6 @@ class Classroom {
     }
 
     public static function createLesson($request, $course){
-        try{
             // try to upload vide to youtube
             $response = getYoutubeVideoDetails($request);
 
@@ -98,22 +97,8 @@ class Classroom {
             // update students lesson progress detail
             // TODO fire lesson creation event
             event(new LessonCreated($course->students));
-
-            return response()->json([
-                "status" => "successful",
-                "message" => "Your lesson has been successfully created",
-                "data" => [
-                    "lesson" => $lesson
-                ]
-            ]);
-        }
-        catch(\Exception $e){
-            return response()->json([
-                "status" => "failed",
-                "message" => $e->getMessage()
-            ]);
-        }
-        
+            
+            return  $lesson->with('resources', 'media');
     }
 
     public static function saveLessonAsDraft($request, $course){

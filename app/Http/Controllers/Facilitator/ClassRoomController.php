@@ -37,7 +37,22 @@ class ClassRoomController extends Controller
     public function store(CreateLessonRequest $request){
         $user = getAuthenticatedUser();
 
-        return Classroom::createLesson($request, $user->course);
+        try{
+            $lesson = Classroom::createLesson($request, $user->course);
+
+            return response()->json([
+                "status" => "success",
+                "data" => [
+                    'lesson' => $lesson
+                ]
+            ], 200);
+        }
+        catch(\Exception $e){
+            return response()->json([
+                "status" => "failed",
+                "message" => $e->getMessage(),
+            ]);
+        }
     }
 
     public function saveAsDraft(CreateLessonRequest $request){
