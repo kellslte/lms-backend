@@ -13,33 +13,37 @@ class TaskController extends Controller
     public function index(){
         $user = getAuthenticatedUser();
 
+        $tasks = collect($user->course->lessons)->map(function($lesson) use ($user){
+            $tasks = collect($user->completedTasks());
 
-       if($user->lessons()){
-            $tasks = collect($user->lessons())->map(function ($lesson) use ($user) {
-                $tasks = collect($user->completedTasks());
-
-                if(!$tasks->isEmpty()){
-                    return collect($lesson->tasks)->map(function ($task) use ($tasks) {
-
-                        $task = $tasks->where("id", $task->id)->first();
-
-                        if ($task) {
-                            return [
-                                "id" => $task->id,
-                                "title" => $task->title,
-                                "status" => ($task) ? "submitted" : $task->status,
-                                "description" => $task->description,
-                                "task_deadline_date" => formatDate($task->task_deadline_date),
-                                "task_deadline_time" => formatTime($task->task_deadline_time),
-                                "lesson_id" => $task->lesson->id,
-                            ];
-                        }
-                    });
+            return collect($lesson->tasks)->map(function($task) use ($tasks){
+                
+                $taskRE = $tasks->where("id", $task->id)->first();
+                
+                if($taskRE){
+                    return [
+                        "id" => $taskRE->id,
+                        "title" => $taskRE->title,
+                        "status" => ($taskRE) ? "submitted" : $taskRE->status,
+                        "description" => $taskRE->description,
+                        "task_deadline_date" => formatDate($taskRE->task_deadline_date),
+                        "task_deadline_time" => formatTime($taskRE->task_deadline_time),
+                        "lesson_id" => $taskRE->lesson->id,
+                    ];
                 }
 
-                return [];
-            })->filter();
-       }
+                return [
+                    "id" => $task->id,
+                    "title" => $task->title,
+                    "status" => ($task) ? "submitted" : $task->status,
+                    "description" => $task->description,
+                    "task_deadline_date" => formatDate($task->task_deadline_date),
+                    "task_deadline_time" => formatTime($task->task_deadline_time),
+                    "lesson_id" => $task->lesson->id,
+                ];
+            })->flatten();
+            
+        });
 
         return response()->json([
             'status' => 'success',
