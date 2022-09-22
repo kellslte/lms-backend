@@ -13,13 +13,20 @@ class LeaderboardService {
         // get all mentees
         $mentors->load('mentees');
 
-        // TODO get points and arrange the points in descending order;
-        $board = collect($users)->map(function ($user) use ($mentors) {
+        return self::getBoard($users);
+    }
+
+    private static function getBoard($users){
+         $mentors = Mentor::all();
+        // get all mentees
+        $mentors->load('mentees');
+
+       return collect($users)->map(function ($user) use ($mentors) {
             // check if student has a mentor
-            $mentor = collect($mentors)->map(function($mentor) use ($user){
+            $mentor = collect($mentors)->map(function ($mentor) use ($user) {
                 $mentees = collect(json_decode($mentor->mentees->mentees, true));
                 $record = $mentees->where("studentId", $user->id)->first();
-                if($record){
+                if ($record) {
                     return $mentor->id;
                 }
             })->filter()->toArray();
@@ -34,22 +41,18 @@ class LeaderboardService {
                 "email" => $user->email,
                 "mentor" => $mentors->where("id", implode($mentor))->first()
             ];
+        })->sortBy(function($item){
+            return $item["total"];
         });
-
-        return $board;
     }
 
-    public static function getTotalLeaderBoard(){
-        //$users = $user->course->students;
-        // pull alll courses
+    public static function getUserPosition($user){
+        $students = $user->course->students;
 
-        // puul students too
+        $board = self::getBoard($students)->sortBy('total');
 
-        // pull points too
-
-        // render leaderboard
-
-        // return data;
-        $users = User::all();
+        return $board->search(function($item) use($user){
+            return $item["id"] === $user->id;
+        });
     }
 }

@@ -31,6 +31,7 @@ class UpdateStudentSchedule
 
             $schedule[] = [
              "id" => $event->meeting->id,
+             "caption" => $event->meeting->caption,
              "date" => formatDate($event->meeting->date),
              "link" => $event->meeting->link,
              "host_name" => $event->meeting->host_name,

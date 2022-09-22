@@ -68,17 +68,20 @@ class LessonsService {
         return collect(json_decode($user->curriculum->viewables, true))->map(function ($viewables) use ($progress) {
             $lesson = Lesson::find($viewables["lesson_id"]);
             
-            $lessonProgress = $progress->where("lesson_id", $viewables["lesson_id"])->first();
+            if(!is_null($lesson)){
+                $lessonProgress = $progress->where("lesson_id", $viewables["lesson_id"])->first();
 
-            return ($viewables["lesson_status"] === "uncompleted") ? [
-                "title" => $lesson->title,
-                "description" => $lesson->description,
-                "published_date" => formatDate($lesson->updated_at),
-                "media" => $lesson->media,
-                "status" => $lesson->status,
-                "tutor" => $lesson->course->facilitator->name,
-                "percentageWatched" => $lessonProgress["percentage"]
-            ]: null;
+                return ($viewables["lesson_status"] === "uncompleted") ? [
+                    "title" => $lesson->title,
+                    "description" => $lesson->description,
+                    "published_date" => formatDate($lesson->updated_at),
+                    "media" => $lesson->media,
+                    "status" => $lesson->status,
+                    "tutor" => $lesson->course->facilitator->name,
+                    "percentageWatched" => $lessonProgress["percentage"]
+                ]: null;
+            }
+
         })->filter();
     }
 
@@ -89,7 +92,7 @@ class LessonsService {
             $lessonProgress = $progress->where("lesson_id", $lesson["lesson_id"])->first();
             $lesson = Lesson::find($lesson["lesson_id"]);
 
-            if($lesson){
+            if(!is_null($lesson)){
                 return ($lessonProgress["percentage"] === 100) ? [
                     "id" => $lesson->id,
                     "title" => $lesson->title,
@@ -131,24 +134,8 @@ class LessonsService {
 
     // Facilitator Methods
     public static function myLessons(){
-        // array should look like this:
-        /* 
-        [
-            {
-                "id": 1,
-                "title": "Lesson",
-                "description": "Lesson",
-                "thumbnail" => "lesson.jpg",
-                "published_date": "2020-01-01",
-                "tutor" => "Prince Chijioke",
-                "views" => 1203,
-                "taskSubmissions" => 504
-            }
-        ]
-        */
-
         $lessons = getAuthenticatedUser()->lessons();
-        $lessons->load('task');
+        $lessons->load('tasks');
 
         $myLessons = collect($lessons)->sortBy('updated_at');
         

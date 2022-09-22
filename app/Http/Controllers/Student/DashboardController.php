@@ -19,7 +19,7 @@ class DashboardController extends Controller
             'status' => 'success',
             'data' => [
                 'lessons' => LessonsService::getUserCurriculum($user),
-                'leaderboard_position' => 2,
+                'leaderboard_position' => LeaderboardService::getUserPosition($user),
                 'total_tasks_done' => count($user->completedTasks()),
                 'schedule' => ScheduleService::getSchedule($user),
                 'leaderboard' => LeaderboardService::getTrackBoard(getAuthenticatedUser())->take(5),
