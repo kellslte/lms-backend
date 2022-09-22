@@ -14,7 +14,8 @@ class Point extends Model
         "attendance_points",
         "bonus_points",
         "task_points",
-        "history"
+        "history",
+        "user_id"
     ];
 
     public function getHistory(){

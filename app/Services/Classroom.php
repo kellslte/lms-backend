@@ -118,7 +118,6 @@ class Classroom {
 
     public static function saveLessonAsDraft($request, $course){
         
-        try{
             // upload lesson cideo to our server 
             $videoPath = Storage::putFile("lessons", $request->file("lessonVideo"));
 
@@ -128,47 +127,32 @@ class Classroom {
             // upload lesson transcript
             $transcript = self::uploadTranscript($request->file("lessonTranscript"));
     
-            DB::transaction(function() use ($videoPath, $transcript, $request, $path, $course){
-                // create lesson
-                $lesson = $course->lessons()->create([
-                    "title" => $request->title,
-                    "description" => $request->description,
-                    "tutor" => $course->facilitator->name,
-                    "status" => "unpublished"
-                ]);
+            // create lesson
+            $lesson = $course->lessons()->create([
+                "title" => $request->title,
+                "description" => $request->description,
+                "tutor" => $course->facilitator->name,
+                "status" => "unpublished"
+            ]);
 
-                // create lesson media
-                $lesson->media()->create([
-                    "video_link" => $videoPath,
-                    "thumbnail" => $path,
-                    "transcript" => $transcript,
-                    "youtube_video_id" => ""
-                ]);
+            // create lesson media
+            $lesson->media()->create([
+                "video_link" => asset("uploads/". $videoPath),
+                "thumbnail" => asset("uploads/".$path),
+                "transcript" => asset("uploads/". $transcript),
+                "youtube_video_id" => ""
+            ]);
 
-                // foreach ($request->resources as $resource) {
-                //     $lesson->resources()->create([
-                //         "type" => "file_link",
-                //         "title" => $resource->name,
-                //         "resource" => $resource["link"]
-                //     ]);
-                // }
+            // foreach ($request->resources as $resource) {
+            //     $lesson->resources()->create([
+            //         "type" => "file_link",
+            //         "title" => $resource->name,
+            //         "resource" => $resource["link"]
+            //     ]);
+            // }
 
-                return response()->json([
-                    "status" => "successful",
-                    "message" => "Your lesson draft has been successfully created",
-                    "data" => [
-                        "lesson" => $lesson
-                    ]
-                ]);
-            });
-        }
-        catch(\Exception $e){
-            return response()->json([
-                "status" => "failed",
-                "message" => $e->getMessage()
-            ], 400);
-        }
-
+            return $lesson;
+            
     }
 
     public static function updateLesson($request, $lesson){

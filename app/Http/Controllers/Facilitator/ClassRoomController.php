@@ -8,6 +8,7 @@ use App\Services\Classroom;
 use Illuminate\Http\Request;
 use App\Services\LessonsService;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\CreateLessonRequest;
 use App\Http\Resources\FaciLessonResource;
 
@@ -42,7 +43,20 @@ class ClassRoomController extends Controller
     public function saveAsDraft(CreateLessonRequest $request){
         $user = getAuthenticatedUser();
 
-        return Classroom::saveLessonAsDraft($request, $user->course);
+        $lesson = Classroom::saveLessonAsDraft($request, $user->course);
+
+        if(is_null($lesson)){
+            return response()->json([
+               'status' => 'failed',
+               'message' => 'Could not save the Lesson',
+            ], 400);
+        }
+
+        return response()->json([
+           'status' => "successful",
+           'data' => [
+               'lesson' => $lesson,
+           ]], 200);
     }
 
     public function showLesson(String $lesson){
@@ -55,10 +69,19 @@ class ClassRoomController extends Controller
             ], 404);
         }
 
+        $response = [
+            "id" => $dblesson->id,
+            "title" => $dblesson->title,
+            "description" => $dblesson->description,
+            "thumbnail" => $dblesson->media->thumbnail,
+            "videoLink" => $dblesson->media->video_link,
+            "resources" => $dblesson->resources,
+        ];
+
         return response()->json([
             "status" => "success",
             "data" => [
-               "lesson" => new FaciLessonResource($dblesson)
+               "lesson" => $response
             ],
         ]);
     }

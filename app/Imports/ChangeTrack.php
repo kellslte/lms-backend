@@ -16,7 +16,7 @@ class ChangeTrack implements ToModel, WithHeadingRow
     * @param Collection $collection
     */
     public function model(Array $row)
-    {
+    {   
         $newCourse = $row["course"];
         $studentEmail = $row["email"];
 
@@ -151,6 +151,8 @@ class ChangeTrack implements ToModel, WithHeadingRow
 
             return $student;
         }
+
+        
 
         return null;
     }
