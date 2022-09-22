@@ -8,6 +8,7 @@ use App\Models\Course;
 use App\Models\Mentor;
 use App\Mail\TrackChanged;
 use App\Mail\UserOnboarded;
+use App\Imports\ChangeTrack;
 use App\Imports\UsersImport;
 use Illuminate\Http\Request;
 use App\Events\SendMagicLink;
@@ -207,6 +208,12 @@ class OnboardingController extends Controller
                 "message" => $e->getMessage()
             ]);
         }
+    }
+
+    public function bulkChangeTrack(Request $request){
+        $usersSheet = $request->file("users");
+
+        return Excel::import(new ChangeTrack, $usersSheet);
     }
 
     public function sendMagicLink(Request $request)

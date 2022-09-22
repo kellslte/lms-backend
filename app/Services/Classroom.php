@@ -139,9 +139,9 @@ class Classroom {
 
                 // create lesson media
                 $lesson->media()->create([
-                    "video_link" => asset("uploads/".$videoPath),
-                    "thumbnail" => asset("uploads/" . $path),
-                    "transcript" => asset("uploads/" . $transcript),
+                    "video_link" => $videoPath,
+                    "thumbnail" => $path,
+                    "transcript" => $transcript,
                     "youtube_video_id" => ""
                 ]);
 

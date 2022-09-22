@@ -185,8 +185,10 @@ Route::prefix('v1')->group(function(){
             Route::post('onboard/students/magic-link', [OnboardingController::class, 'sendMagicLink']);
             // send slack invite link to students
             Route::post('onboard/students/slack-invite', [OnboardingController::class, 'sendSlackInvite']);
-            // change user track
+            // change single user track
             Route::post('onboard/students/change-track', [OnboardingController::class, 'changeTrack']);
+            // change bulk users track
+            Route::post('onboard/students/bulk-change-track', [OnboardingController::class, 'bulkChangeTrack']);
             // Get course details
             Route::get('courses', [AdminCourseController::class, 'index']);
             // update course details

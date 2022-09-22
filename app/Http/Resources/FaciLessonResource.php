@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class FaciLessonResource extends JsonResource
@@ -14,6 +15,16 @@ class FaciLessonResource extends JsonResource
      */
     public function toArray($request)
     {
+        if($this->status === "unpublished"){
+            return [
+                "id" => $this->id,
+                "title" => $this->title,
+                "description" => $this->description,
+                "thumbnail" => Storage::get($this->media->thumbnail),
+                "videoLink" => Storage::get($this->media->video_link),
+                "resources" => $this->resources,
+            ];
+        }
         
         return [
             "id" => $this->id,
