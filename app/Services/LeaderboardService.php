@@ -13,7 +13,7 @@ class LeaderboardService {
         // get all mentees
         $mentors->load('mentees');
 
-        return [...self::getBoard($users)];
+        return collect([...self::getBoard($users)]);
     }
 
     private static function getBoard($users){
