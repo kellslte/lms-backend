@@ -13,7 +13,7 @@ class LeaderboardService {
         // get all mentees
         $mentors->load('mentees');
 
-        return self::getBoard($users);
+        return [...self::getBoard($users)];
     }
 
     private static function getBoard($users){
@@ -43,7 +43,7 @@ class LeaderboardService {
             ];
         })->sortBy(function($item){
             return $item["total"];
-        })->toArray();
+        });
     }
 
     public static function getUserPosition($user){
