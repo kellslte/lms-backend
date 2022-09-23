@@ -65,7 +65,11 @@ class Classroom {
     }
 
     public static function createLesson($request, $course){
-            // try to upload vide to youtube
+            $request->merge([
+                'courseTitle' => $course->title
+            ]);
+
+            // try to upload video to youtube
             $response = getYoutubeVideoDetails($request);
 
             // upload transcript and return the path

@@ -51,7 +51,7 @@ class TaskController extends Controller
                 'completed_tasks' => $user->completedTasks(),
                 'pending_tasks' => $user->pendingTasks(),
                 'expired_tasks' => $user->expiredTasks(),
-                'tasks' => $tasks,
+                'tasks' => $tasks->filter(),
             ]
         ]);
     }
