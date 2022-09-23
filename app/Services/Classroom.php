@@ -90,17 +90,17 @@ class Classroom {
                 "youtube_video_id" => $response["youtube_video_id"]
             ]);
 
-            foreach ($request->resources as $resource) {
-                $lesson->resources()->create([
-                    "type" => "file_link",
-                    "title" => $resource["title"],
-                    "resource" => $resource["link"]
-                ]);
-            }
+            // foreach ($request->resources as $resource) {
+            //     $lesson->resources()->create([
+            //         "type" => "file_link",
+            //         "title" => $resource["title"],
+            //         "resource" => $resource["link"]
+            //     ]);
+            // }
 
             // update students lesson progress detail
             // TODO fire lesson creation event
-            event(new LessonCreated($course->students));
+            //event(new LessonCreated($course->students));
             
             return  $lesson->with('resources', 'media');
     }
