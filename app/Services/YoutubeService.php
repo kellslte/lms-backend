@@ -258,6 +258,7 @@ class YoutubeService {
     public function createPlaylist($title){
         $this->refreshToken();
 
+        try{
         $path = "id,snippet,status";
 
         $snippet = new PlaylistSnippet();
@@ -275,61 +276,74 @@ class YoutubeService {
 
         $response = $this->service->playlists->insert($path, $playlist);
 
-        return response()->json([
-            "playlistId" => $response["id"]
-        ]);
+        return $response["id"];
+        }catch (\Google_Service_Exception $e) {
+            throw new \Exception($e->getMessage());
+        } catch (\Google_Exception $e) {
+            throw new \Exception($e->getMessage());
+        } 
     }
 
     public function uploadVideoToPlaylist(Request $request){
         $this->refreshToken();
 
-        // upload vide and get video id
-        $videoDetails = $this->uploadVideo($request);
+        try{
+            // upload vide and get video id
+            $videoDetails = $this->uploadVideo($request);
 
-        // setup params for playlist 
-        $course = Course::whereTitle($request->courseTitle)->first();
-        $playlistId = $course->playlistId;
+            // setup params for playlist 
+            $course = Course::whereTitle($request->courseTitle)->first();
+            $playlistId = $course->playlistId;
 
-        // setup resource
-        $resource = new ResourceId();
-        $resource->setKind("youtube#video");
-        $resource->setVideoId($videoDetails["videoId"]);
+            // setup resource
+            $resource = new ResourceId();
+            $resource->setKind("youtube#video");
+            $resource->setVideoId($videoDetails["videoId"]);
 
-        $parts = "id,snippet";
-        $snippet = new PlaylistItemSnippet();
-        $snippet->setPlaylistId($playlistId);
-        $snippet->setResourceId($resource); 
-        $item = new PlaylistItem();
-        $item->setSnippet($snippet);
+            $parts = "id,snippet";
+            $snippet = new PlaylistItemSnippet();
+            $snippet->setPlaylistId($playlistId);
+            $snippet->setResourceId($resource);
+            $item = new PlaylistItem();
+            $item->setSnippet($snippet);
 
-        $response = $this->service->playlistItems->insert($parts, $item);
+            $response = $this->service->playlistItems->insert($parts, $item);
 
-        return response()->json([
-            "response" => [
+            return [
                 "videoLink" => $this->listVideos($videoDetails["videoId"]),
                 "thumbnail" => $response["snippet"]["thumbnails"]["default"]["url"],
                 "youtube_video_id" => $videoDetails["videoId"],
-            ]
-        ]);
+            ];
+        } catch (\Google_Service_Exception $e) {
+            throw new \Exception($e->getMessage());
+        } catch (\Google_Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
     }
 
     public function getVideosViews(){
         $this->refreshToken();
 
-        $reportData = new ReportData([
-            "endDate" => today()->addWeek()->format("Y-m-d"),
-            "startDate" => today()->format("Y-m-d"),
-            "ids" => "channel==UCtaa9WH19QmP2sIkqQXXDgw",
-            "metrics" => "views"
-        ]);
-        $report = new Report();
+        try{
+            $reportData = new ReportData([
+                "endDate" => today()->addWeek()->format("Y-m-d"),
+                "startDate" => today()->format("Y-m-d"),
+                "ids" => "channel==UCtaa9WH19QmP2sIkqQXXDgw",
+                "metrics" => "views"
+            ]);
+            $report = new Report();
 
-        $report->setData($reportData);;
+            $report->setData($reportData);;
 
-        $response = $this->service->analytics->list($report);
+            $response = $this->service->analytics->list($report);
 
-        return response()->json([
-            "response" => $response
-        ]);
+            return $response;
+        } 
+        catch (\Google_Service_Exception $e) {
+            throw new \Exception($e->getMessage());
+        } catch (\Google_Exception $e) {
+            throw new \Exception($e->getMessage());
+        }
+        
     }
 }
