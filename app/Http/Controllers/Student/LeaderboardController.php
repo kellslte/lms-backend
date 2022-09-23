@@ -15,7 +15,7 @@ class LeaderboardController extends Controller
         return response()->json([
             'status' => 'Successfull',
             "data" => [
-                "leaderboard" => $board
+                "leaderboard" => [...$board]
             ]
         ]);
     }
