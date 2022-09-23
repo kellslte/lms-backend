@@ -43,7 +43,7 @@ class LeaderboardService {
             ];
         })->sortBy(function($item){
             return $item["total"];
-        });
+        })->toArray();
     }
 
     public static function getUserPosition($user){
