@@ -24,11 +24,13 @@ class LessonObserver
 
             $lessonProgress = $progress->where("lesson_id", $lesson->id)->first();
 
-            if($lessonProgress["percentage"] === 100){
-                $count = $lesson->views->count + 1;
-                $lesson->views->update([
-                    "count" => $count,
-                ]); 
+            if($lessonProgress){
+                if($lessonProgress["percentage"] === 100){
+                    $count = $lesson->views->count + 1;
+                    $lesson->views->update([
+                        "count" => $count,
+                    ]); 
+                }
             }
         }
     }
