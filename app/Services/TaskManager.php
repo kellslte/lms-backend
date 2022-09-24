@@ -163,13 +163,31 @@ class TaskManager{
             ]);
 
             return [
-                "status" =>  true,
+                "status" =>  "success",
                 "task" => $task
             ];
         }
         catch(\Exception $e){
             return [
-                "status" =>  false,
+                "status" =>  "failed",
+                "task" =>  $e->getMessage()
+            ];
+        }
+    }
+
+    public static function markAsGraded(Task $task){
+        try{
+            $task->update([
+                "status" => "graded"
+            ]);
+
+            return [
+                "status" =>  "success",
+                "task" => $task
+            ];
+        }catch(\Exception $e){
+            return [
+                "status" =>  "failed",
                 "task" =>  $e->getMessage()
             ];
         }

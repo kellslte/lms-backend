@@ -125,10 +125,18 @@ class TaskController extends Controller
        ], 400);
     }
 
+    public function markTaskAsGraded(Task $task){
+        $response = TaskManager::markAsGraded($task);
+
+        $code = ($response["status"] === "success") ? 200 : 400;
+
+        return response()->json($response, $code);
+    }
+
     public function closeSubmission(Task $task){
         $response = TaskManager::closeTasksubmission($task);
 
-        $code = ($response["status"]) ? 200 : 400;
+        $code = ($response["status"] === "success") ? 200 : 400;
 
         return response()->json($response, $code);
     }
