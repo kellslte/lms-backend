@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Timeline;
+use Carbon\Carbon;
 
 class TimelineObserver
 {
@@ -16,7 +17,10 @@ class TimelineObserver
      */
     public function retrieved(Timeline $timeline)
     {
-        if($timeline->end_date < today()){
+        $date1 = Carbon::createFromDate($timeline->end_date);
+        $date2 = Carbon::createFromDate(today());
+
+        if($date1->lt($date2)){
             $timeline->update([ "done" =>  true]);
         }
     }
