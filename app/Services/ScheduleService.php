@@ -1,6 +1,7 @@
 <?php 
 namespace App\Services;
 
+use App\Models\Sotu;
 use App\Models\Lesson;
 use App\Models\Meeting;
 use Illuminate\Support\Carbon;
@@ -15,8 +16,6 @@ class ScheduleService {
             "happening_this_month" => [],
             "sotu" => []
         ];
-
-        $sotu = Meeting::whereCaption("State of The Union")->get();
 
         $meetings = collect(json_decode($user->schedule->meetings, true));
 
@@ -86,24 +85,13 @@ class ScheduleService {
 
         $schedule["happening_this_month"] = $month[getMonth(today())] ?? [];
 
+        $sotu = Sotu::all();
+
         $schedule["sotu"] = collect($sotu)->map(function ($meeting) {
-            return ($meeting->date < today()) ? [
-                "caption" => $meeting->caption,
-                "host" => $meeting->host_name,
-                "date" => $meeting->date,
-                "start_time" => formatTime($meeting->start_time),
-                "end_time" => formatTime($meeting->end_time),
-                "link" => $meeting->link,
-                "done" => true,
-            ] : [
-                "caption" => $meeting->caption,
-                "host" => $meeting->host_name,
-                "date" => $meeting->date,
-                "start_time" => formatTime($meeting->start_time),
-                "end_time" => formatTime($meeting->end_time),
-                "link" => $meeting->link,
-                "done" => false,
-            ];
+                    return [
+                        "link" => $meeting->link,
+                        "done" => true,
+                    ];
         });
         
 

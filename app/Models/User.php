@@ -207,4 +207,8 @@ class User extends Authenticatable
     public function progress(){
         return $this->hasOne(Progress::class);
     }
+
+    public function allowedDevices(){
+        return $this->morphOne(AllowedDevices::class, "loggable");
+    }
 }

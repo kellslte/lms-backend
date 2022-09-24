@@ -14,6 +14,7 @@ use App\Services\AttendanceService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Jenssegers\Agent\Facades\Agent;
 
 class LoginController extends Controller
 {
@@ -142,6 +143,20 @@ class LoginController extends Controller
 
         if(Auth::guard('student')->attempt($credentials)){
             $token = $user->createToken('access_token');
+
+            // store device specification
+        //    if(count($user->allowedDevices->device_specifications) < 0){ 
+        //     $user->allowedDevices()->create([
+        //         "device_specifications" = json_encode([
+        //             [
+        //                 "ip_address" => $request->ip(),
+        //                 "device_type" => Agent::device(),
+        //                 "browser_type" => Agent::browser(),
+        //                 "browser_version" => Agent::browser_version(),
+        //             ]
+        //         ])
+        //     ]);
+            //}
     
             if (!$token) return response()->json([
                 'status' => 'failed',
