@@ -3,20 +3,24 @@
 namespace App\Providers;
 
 use App\Models\Point;
+use App\Models\Lesson;
+use App\Models\Timeline;
 use App\Events\ClassFixed;
-use App\Events\CreateCurriculum;
 use App\Events\LessonCreated;
 use App\Events\SendMagicLink;
 use App\Events\TaskSubmitted;
 use App\Events\SendSlackInvite;
+use App\Events\CreateCurriculum;
 use App\Observers\PointObserver;
 use App\Listeners\LiveClassFixed;
+use App\Observers\LessonObserver;
 use App\Events\LeaderboardUpdated;
-use App\Listeners\CreateCurriculumRecord;
+use App\Observers\TimelineObserver;
 use App\Listeners\SendSlackInviteMail;
 use Illuminate\Auth\Events\Registered;
 use App\Listeners\LessonProgressUpdate;
 use App\Listeners\UpdateStudentSchedule;
+use App\Listeners\CreateCurriculumRecord;
 use App\Listeners\SendMagicLinkToStudents;
 use App\Listeners\UpdateFacilitatorSchedule;
 use App\Listeners\NotifyStudentsAboutTaskGrade;
@@ -78,6 +82,8 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         Point::observe(PointObserver::class);
+        Lesson::observe(LessonObserver::class);
+        Timeline::observe(TimelineObserver::class);
     }
 
     /**

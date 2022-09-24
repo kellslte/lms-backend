@@ -4,8 +4,10 @@ namespace App\Observers;
 
 use App\Models\Timeline;
 
-class TimelineOberver
+class TimelineObserver
 {
+    public $afterCommit = true;
+
     /**
      * Handle the Timeline "force deleted" event.
      *

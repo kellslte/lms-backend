@@ -4,8 +4,10 @@ namespace App\Observers;
 
 use App\Models\Lesson;
 
-class LessonOberver
+class LessonObserver
 {
+    public $afterCommit = true;
+
     /**
      * Handle the Lesson "retrieved" event.
      *
