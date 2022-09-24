@@ -15,35 +15,50 @@ class TaskController extends Controller
 
         $tasks = collect($user->course->lessons)->map(function($lesson) use ($user){
             $tasks = collect($user->completedTasks());
-
-            return collect($lesson->tasks)->map(function($task) use ($tasks){
-                
-                $taskRE = $tasks->where("id", $task->id)->first();
-                
-                if($taskRE){
-                    return [
-                        "id" => $taskRE->id,
-                        "title" => $taskRE->title,
-                        "status" => ($taskRE) ? "submitted" : $taskRE->status,
-                        "description" => $taskRE->description,
-                        "task_deadline_date" => formatDate($taskRE->task_deadline_date),
-                        "task_deadline_time" => formatTime($taskRE->task_deadline_time),
-                        "lesson_id" => $taskRE->lesson->id,
-                    ];
-                }
+            if(!$tasks->isEmpty()){
+                return collect($lesson->tasks)->map(function($task) use ($tasks){
+                    $taskRE = $tasks->where("id", $task->id)->first();
 
                 return [
                     "id" => $task->id,
                     "title" => $task->title,
-                    "status" => ($task) ? "submitted" : $task->status,
+                    "status" => ($taskRE) ? "submitted" : $task->status,
                     "description" => $task->description,
                     "task_deadline_date" => formatDate($task->task_deadline_date),
                     "task_deadline_time" => formatTime($task->task_deadline_time),
                     "lesson_id" => $task->lesson->id,
                 ];
-            })->flatten();
+                })->reject(function($item){
+                    return empty($item);
+                });
+            }
             
-        });
+                if(count($lesson->tasks) > 0){
+                    return collect($lesson->tasks)->map(function($task){
+                            if(!$task->exists()){
+                                return null;
+                            }
+
+                            return [
+                                "id" => $task->id,
+                                "title" => $task->title,
+                                "status" => $task->status,
+                                "description" => $task->description,
+                                "task_deadline_date" => formatDate($task->task_deadline_date),
+                                "task_deadline_time" => formatTime($task->task_deadline_time),
+                                "lesson_id" => $task->lesson->id,
+                            ];
+                        });
+                    }
+        })->filter();
+
+        $record = [];
+        foreach($tasks as $task){
+            foreach($task as $item){
+                $record[] = $item;
+            }
+        }
+        
 
         return response()->json([
             'status' => 'success',
@@ -51,7 +66,7 @@ class TaskController extends Controller
                 'completed_tasks' => $user->completedTasks(),
                 'pending_tasks' => $user->pendingTasks(),
                 'expired_tasks' => $user->expiredTasks(),
-                'tasks' => $tasks->filter(),
+                'tasks' => $record,
             ]
         ]);
     }
