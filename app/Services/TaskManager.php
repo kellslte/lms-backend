@@ -21,6 +21,8 @@ class TaskManager{
                     return $submissions->where("id", $task->id)->first();
                 });
             }
+
+            return [];
             
         })->filter();
     }
