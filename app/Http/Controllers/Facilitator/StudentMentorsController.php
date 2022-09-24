@@ -75,7 +75,7 @@ class StudentMentorsController extends Controller
         try{
             $response = collect($mentees)->filter(function ($mentee) use ($user) {
                 return $mentee["studentId"] !== $user->id;
-            })->flatten();
+            });
 
             $mentor->mentees->update([
                 "mentees" => json_encode($response)
