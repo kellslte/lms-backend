@@ -26,6 +26,17 @@ class LessonProgressUpdate
      */
     public function handle(LessonCreated $event)
     {
-        //
+        foreach($event->students as $student){
+            $progress = json_decode($student->progress->course_progress, true);
+
+            $progress[] = [
+                "lesson_id" => $event->lesson->id,
+                "percentage" => 0
+            ];
+
+            $student->progress->update([
+                "course_progress" => json_encode($progress)
+            ]);
+        }
     }
 }

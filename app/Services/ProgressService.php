@@ -26,20 +26,16 @@ class ProgressService {
             "percentage" => "required|numeric",
         ]);
 
-        $progress = collect(json_decode($user->progress->course_progress, true));
+        $progress = collect(json_decode($user->progress->course_progress, true))->map(function($lesson) use ($lessonId, $request){
+            if($lesson["id"] === $lessonId){
+                $lesson["percentage"] = $request->percentage;
+            }
 
-        $lesson = $progress->where("lesson_id", $lessonId)->first();
-
-        $lesson["percentage"] = $request->percentage;
-
-        $new = $progress->reject(function($item) use ($lesson){
-            return $item["lesson_id"] === $lesson["lesson_id"];
+            return $lesson;
         });
         
-        $newArray = [...$new, $lesson];
-        
         return $user->progress->update([
-            "course_progress" => json_encode($newArray),
+            "course_progress" => json_encode($progress),
         ]);
     }
 }

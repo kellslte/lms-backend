@@ -100,7 +100,7 @@ class Classroom {
 
             // update students lesson progress detail
             // TODO fire lesson creation event
-            //event(new LessonCreated($course->students));
+            event(new LessonCreated($course->students, $lesson));
             
             return  $lesson->with('resources', 'media');
     }

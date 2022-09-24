@@ -3,8 +3,9 @@
 namespace App\Listeners;
 
 use App\Events\LessonCreated;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Notifications\NotifyStudentWhenLessonCreated;
 
 class NotifyStudentsOfLessonCreation
 {
@@ -26,6 +27,8 @@ class NotifyStudentsOfLessonCreation
      */
     public function handle(LessonCreated $event)
     {
-        //
+        foreach($event->students as $student){
+            $student->notify(new NotifyStudentWhenLessonCreated());
+        }
     }
 }
