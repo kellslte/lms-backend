@@ -121,6 +121,10 @@ class User extends Authenticatable
             })->map(function($task) use ($taskInDb){
     
                 $tasks = $taskInDb->where("id", $task["id"])->first();
+
+                if(is_null($tasks)){
+                    return [];
+                }
     
                 return [
                     "id" => $task["id"],
