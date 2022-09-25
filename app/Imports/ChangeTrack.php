@@ -44,10 +44,9 @@ class ChangeTrack implements ToModel, WithHeadingRow
                 // save record in an array
                 
                 $student->update([
-                    "avatar" => $studentDetails["user"]["avatar"]
+                    "avatar" => $studentDetails["user"]["avatar"],
+                    "course_id" => $course->id,
                 ]);
-
-                $student->progress->update();
     
                 $student->progress->update([
                     "course" => $course->title,

@@ -11,7 +11,7 @@ Your Email for password recovery: {{ $user->recovery_email }}
 
 Your account password: {{ $password }}
 
-[Click here to login](config('app.url'))
+[Click here to login]("https://lms.theadaproject.com.ng/facilitator")
 
 Regards,<br>
 The ADA Team
