@@ -74,7 +74,9 @@ class Classroom {
             $response = getYoutubeVideoDetails($request);
 
             // upload transcript and return the path
-            $transcript = self::uploadTranscript($request->file('lessonTranscript'));
+            if($request->file('lessonTranscript')){
+                $transcript = self::uploadTranscript($request->file('lessonTranscript'));
+            }
 
             // create lesson
             $lesson = $course->lessons()->create([
@@ -87,7 +89,7 @@ class Classroom {
             $lesson->media()->create([
                 "video_link" => $response["videoLink"],
                 "thumbnail" => $response["thumbnail"],
-                "transcript" => $transcript,
+                "transcript" => ($transcript) ? $transcript : "",
                 "youtube_video_id" => $response["youtube_video_id"]
             ]);
 
