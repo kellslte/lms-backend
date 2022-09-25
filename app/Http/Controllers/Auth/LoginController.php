@@ -141,22 +141,15 @@ class LoginController extends Controller
             ], 404);
         };
 
+        if(!Hash::check($credentials['password'], $user->password)){
+            return response()->json([
+               'status' => 'failed',
+               'message' => 'User email or password incorrect',
+            ], 401);
+        }
+
         if(Auth::guard('student')->attempt($credentials)){
             $token = $user->createToken('access_token');
-
-            // store device specification
-        //    if(count($user->allowedDevices->device_specifications) < 0){ 
-        //     $user->allowedDevices()->create([
-        //         "device_specifications" = json_encode([
-        //             [
-        //                 "ip_address" => $request->ip(),
-        //                 "device_type" => Agent::device(),
-        //                 "browser_type" => Agent::browser(),
-        //                 "browser_version" => Agent::browser_version(),
-        //             ]
-        //         ])
-        //     ]);
-            //}
     
             if (!$token) return response()->json([
                 'status' => 'failed',
