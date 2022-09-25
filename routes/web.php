@@ -21,11 +21,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Magic Link Login
-Route::middleware('guest')->get('auth/magiclink/{token}', fn($token) => response()->json([
-    'status' => 'success',
-    'token' => $token,
-]))->name('verify-login');
+// // Magic Link Login
+// Route::middleware('guest')->get('auth/magiclink/{token}', fn($token) => response()->json([
+//     'status' => 'success',
+//     'token' => $token,
+// ]))->name('magic-login');
 
 Route::get('auth', function(){
     $client = new YoutubeService();
