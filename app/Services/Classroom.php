@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Models\User;
 use App\Models\Facilitator;
 use App\Events\LessonCreated;
 use Illuminate\Support\Facades\DB;
@@ -100,7 +101,12 @@ class Classroom {
 
             // update students lesson progress detail
             // TODO fire lesson creation event
-            event(new LessonCreated($course->students, $lesson));
+            if($course->title === "General Concepts & tooling"){
+                LessonCreated::dispatch(User::all(), $lesson);
+            }else {
+                LessonCreated::dispatch($course->students, $lesson);
+            }
+
             
             return  $lesson->with('resources', 'media');
     }
