@@ -22,10 +22,10 @@ Route::get('/', function () {
 });
 
 // // Magic Link Login
-// Route::middleware('guest')->get('auth/magiclink/{token}', fn($token) => response()->json([
-//     'status' => 'success',
-//     'token' => $token,
-// ]))->name('magic-login');
+Route::middleware('guest')->get('auth/magiclink/{token}', fn($token) => response()->json([
+    'status' => 'success',
+    'token' => $token,
+]))->name('magic-login');
 
 Route::get('auth', function(){
     $client = new YoutubeService();

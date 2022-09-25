@@ -36,7 +36,7 @@ Mailable implements ShouldQueue
     public function build()
     {
         return $this->markdown('emails.send-magic-link', [
-            'url' => config('app.front.url').URL::temporarySignedRoute('verify-login', $this->expiresAt, [
+            'url' => config('app.front.url').URL::temporarySignedRoute('magic-login', $this->expiresAt, [
                 'token' => $this->token,
             ], false),
             'user' => $this->user,
