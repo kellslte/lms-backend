@@ -26,6 +26,7 @@ use App\Listeners\UpdateFacilitatorSchedule;
 use App\Listeners\NotifyStudentsAboutTaskGrade;
 use App\Listeners\NotifyStudentsOfLessonCreation;
 use App\Listeners\NotifyFacilitatorAboutSubmission;
+use App\Listeners\UpdateStudentCurriculum;
 use App\Notifications\NotifyStudentsOnTaskCreation;
 use App\Listeners\UpdateStudentsOnLeaderboardUpdate;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -57,6 +58,7 @@ class EventServiceProvider extends ServiceProvider
         LessonCreated::class => [
             NotifyStudentsOfLessonCreation::class,
             LessonProgressUpdate::class,
+            UpdateStudentCurriculum::class,
         ],
         SendMagicLink::class => [
             SendMagicLinkToStudents::class,
