@@ -24,34 +24,27 @@ class OnboardingController extends Controller
 {
     public function facilitator(CreateFacilitatorRequest $request)
     {
+        $course = Course::whereTitle($request->course_title)->first();
+        
+        if (!$course) return response()->json([
+            'status' => 'error',
+            'message' => 'Course not found',
+        ]);
+        
         try {
-            $course = Course::whereTitle($request->course_title)->first();
-
-            if (!$course) return response()->json([
-                'status' => 'error',
-                'message' => 'Course not found',
-            ]);
-
             $password = generatePassword(7);
-
+            
             $facilitator = $course->facilitator()->create([
                 'name' => $request->name,
                 'email' => $request->email,
-                'recovery_email' => $request->recoveryEmail,
+                'recovery_email' => $request->recovery_email,
                 'password' => bcrypt($password),
             ]);
 
             $facilitator->settings()->create();
 
-            $facilitator->socials()->create([
-                "twitter" => $request->twitter,
-                "linkedin" => $request->linkedin,
-                "facebook" => $request->facebook,
-                "mail" => $request->email,
-            ]);
-
             Mail::to($facilitator->recovery_email)->queue(new UserOnboarded($facilitator, $password));
-
+            
             return response()->json([
                 'status' => 'success',
                 'message' => 'Facilitator account has been created and email has been sent successfully'
@@ -95,111 +88,22 @@ class OnboardingController extends Controller
             $formerCourse = $student->course;
             
             if($course->title !== $formerCourse->title){
-                // save record in an array
-                $studentRecord = [
-                    "user" => [
-                        "name" => $student->name,
-                        "email" => $student->email,
-                        "password" => $student->password,
-                        "gender" => $student->gender,
-                        "access_to_laptop" => $student->access_to_laptop,
-                        "current_education_level" => $student->current_education_level,
-                        "phonenumber" => $student->phonenumber,
-                        "github_link" => $student->github_link,
-                        "cv_details" => $student->cv_details
-                    ],
-                    "attendance" => [
-                    "record" =>  $student->attendance->record  
-                    ],
-                    "points" => [
-                        "total" =>  $student->point->total,
-                        "attendance_points" => $student->point->attendance_points,
-                        "bonus_points" =>  $student->point->bonus_points,
-                        "task_points" => $student->point->task_points,
-                        "history" => $student->point->history
-                    ],
-                    "curricula" => [
-                        "viewables" => $student->curriculum->viewables
-                    ],
-                    "schedule" => [
-                        "meetings" =>  $student->schedule->meetings
-                    ],
-                    "settings" => [
-                        "notification_preference" => $student->settings->notification_preference,
-                        "text_message_preference" => $student->settings->text_message_preference
-                    ],
-                    "submissions" => [
-                        "tasks" => $student->submissions->tasks
-                    ],
-                    "progress" => [
-                        "course" => $course->title,
-                        "course_progress" => []
-                    ],
-                    "notifications" => $student->notifications
-                ];
 
-                $student->attendance->delete();
-                $student->point->delete();
-                $student->submissions->delete();
-                $student->schedule->delete();
-                $student->settings->delete();
-                $student->curriculum->delete();
-                $student->progress->delete();
-                $student->delete();
-
-                $newRecord = $course->students()->create([
-                    "name" => $studentRecord["user"]["name"],
-                    "email" =>  $studentRecord["user"]["email"],
-                    "password" => $studentRecord["user"]["password"],
-                    "gender" => $studentRecord["user"]["gender"],
-                    "access_to_laptop" => $studentRecord["user"]["access_to_laptop"],
-                    "current_education_level" => $studentRecord["user"]["current_education_level"],
-                    "phonenumber" => $studentRecord["user"]["phonenumber"],
-                    "github_link" => $studentRecord["user"]["github_link"],
-                    "cv_details" => $studentRecord["user"]["cv_details"]
+                $student->update([
+                    "course_id" => $course->id,
                 ]);
 
-                $newRecord->attendance()->create([
-                    "record" => $studentRecord["attendance"]["record"]
+                $student->progress->update([
+                    "course" => $course->title,
                 ]);
 
-                $newRecord->schedule()->create([
-                    "meetings" => $studentRecord["schedule"]["meetings"],
-                ]);
-
-                $newRecord->point()->create([
-                    "total" => $studentRecord["points"]["total"],
-                    "attendance_points" => $studentRecord["points"]["attendance_points"],
-                    "bonus_points" => $studentRecord["points"]["bonus_points"],
-                    "task_points" => $studentRecord["points"]["task_points"],
-                    "history" => $studentRecord["points"]["history"],
-                ]);
-
-                $newRecord->curriculum()->create([
-                    "viewables" =>  $studentRecord["curricula"]["viewables"]
-                ]);
-
-                $newRecord->settings()->create([
-                    "notification_preference" => $studentRecord["settings"]["notification_preference"],
-                    "text_message_preference" => $studentRecord["settings"]["text_message_preference"]
-                ]);
-
-                $newRecord->submissions()->create([
-                    "tasks" => $studentRecord["submissions"]["tasks"]
-                ]);
-
-                $newRecord->progress()->create([
-                    "course" => $studentRecord["progress"]["course"],
-                    "course_progress" => json_encode($studentRecord["progress"]["course_progress"])
-                ]);
-
-                Mail::to($newRecord->email)->send(new TrackChanged($newRecord, $formerCourse));
+                Mail::to($student->email)->send(new TrackChanged($student, $formerCourse));
 
                 return response()->json([
                     "status" => "successful",
                     "message" => "Track has been succesfully changed",
-                    "account" => $newRecord,
-                    "track" => $newRecord->course->title
+                    "account" => $student,
+                    "track" => $student->course->title
                 ]);
             }
 

@@ -20,7 +20,11 @@ class TimelineObserver
         $date1 = Carbon::createFromDate($timeline->end_date);
         $date2 = Carbon::createFromDate(today());
 
-        if($date1->lt($date2)){
+        info("Timeline retrieved");
+        info($date1->lte($date2)." {$date1} is greater than {$date2}");
+        info("Timeline retrieved");
+
+        if($date1->lte($date2)){
             $timeline->update([ "done" =>  true]);
         }
     }

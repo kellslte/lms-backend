@@ -30,6 +30,7 @@ class Facilitator extends Authenticatable
         'name',
         'email',
         'password',
+        'recovery_email'
     ];
 
     /**
