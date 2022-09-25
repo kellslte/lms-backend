@@ -1,11 +1,11 @@
 @component('mail::message')
-# Hi {{ $user->firstname }},
+# Hi {{ $user->name }},
 
 You have been onboarded on our LMS as a facilitator.
 
 Here are your account and login details:
 
-User Name: {{ $user->firstname }} {{ $user->lastname }}
+User Name: {{  $user->name }}
 Login Email: {{ $user->email }}
 Your Email for password recovery: {{ $user->recovery_email }}
 
