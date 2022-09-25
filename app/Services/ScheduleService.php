@@ -17,69 +17,68 @@ class ScheduleService {
             "sotu" => []
         ];
 
-        $meetings = collect(json_decode($user->schedule->meetings, true));
-
-        if($meetings->isEmpty()){
-            return $schedule;
+        if($user->schedule){
+            $meetings = collect(json_decode($user->schedule->meetings, true));
+        
+            $week = $meetings->map(function ($val) {
+                $meeting = Meeting::find($val["id"]);
+    
+                return [
+                    "caption" => $meeting->caption,
+                    "host" => $meeting->host_name,
+                    "date" => $val['date'],
+                    "start_time" => formatTime($meeting->start_time),
+                    "link" => $val['link'],
+                    "id" => $val['id'],
+                ];
+            })->groupBy(function ($val) {
+                return Carbon::parse($val['date'])->format('W');
+            });
+    
+            $month = $meetings->map(function ($val) {
+                $meeting = Meeting::find($val["id"]);
+    
+                return [
+                    "caption" => $meeting->caption,
+                    "host" => $meeting->host_name,
+                    "date" => $val['date'],
+                    "start_time" => formatTime($meeting->start_time),
+                    "link" => $val['link'],
+                    "id" => $val['id'],
+                ];
+            })->groupBy(function ($val) {
+                return Carbon::parse($val['date'])->format('M');
+            });
+    
+            $day = $meetings->map(function ($val) {
+                $meeting = Meeting::find($val["id"]);
+    
+                return [
+                    "caption" => $meeting->caption,
+                    "host" => $meeting->host_name,
+                    "date" => $val['date'],
+                    "start_time" => formatTime($meeting->start_time),
+                    "link" => $val['link'],
+                    "id" => $val['id'],
+                ];
+            })->groupBy(function ($val) {
+                return Carbon::parse($val['date'])->format('D');
+            });
+    
+            $schedule["happening_today"] = ($day->get(getDay(today()))) ? $day[getDay(today())]->map(function ($val) {
+                $meeting = Meeting::find($val["id"]);
+    
+                return [
+                    "caption" => $meeting->caption,
+                    "host" => $meeting->host_name,
+                    "date" => $val['date'],
+                    "start_time" => formatTime($meeting->start_time),
+                    "link" => $val['link'],
+                    "id" => $val['id'],
+                ];
+            }) : [];
         }
 
-        $week = $meetings->map(function ($val) {
-            $meeting = Meeting::find($val["id"]);
-
-            return [
-                "caption" => $meeting->caption,
-                "host" => $meeting->host_name,
-                "date" => $val['date'],
-                "start_time" => formatTime($meeting->start_time),
-                "link" => $val['link'],
-                "id" => $val['id'],
-            ];
-        })->groupBy(function ($val) {
-            return Carbon::parse($val['date'])->format('W');
-        });
-
-        $month = $meetings->map(function ($val) {
-            $meeting = Meeting::find($val["id"]);
-
-            return [
-                "caption" => $meeting->caption,
-                "host" => $meeting->host_name,
-                "date" => $val['date'],
-                "start_time" => formatTime($meeting->start_time),
-                "link" => $val['link'],
-                "id" => $val['id'],
-            ];
-        })->groupBy(function ($val) {
-            return Carbon::parse($val['date'])->format('M');
-        });
-
-        $day = $meetings->map(function ($val) {
-            $meeting = Meeting::find($val["id"]);
-
-            return [
-                "caption" => $meeting->caption,
-                "host" => $meeting->host_name,
-                "date" => $val['date'],
-                "start_time" => formatTime($meeting->start_time),
-                "link" => $val['link'],
-                "id" => $val['id'],
-            ];
-        })->groupBy(function ($val) {
-            return Carbon::parse($val['date'])->format('D');
-        });
-
-        $schedule["happening_today"] = ($day->get(getDay(today()))) ? $day[getDay(today())]->map(function ($val) {
-            $meeting = Meeting::find($val["id"]);
-
-            return [
-                "caption" => $meeting->caption,
-                "host" => $meeting->host_name,
-                "date" => $val['date'],
-                "start_time" => formatTime($meeting->start_time),
-                "link" => $val['link'],
-                "id" => $val['id'],
-            ];
-        }) : [];
 
         $schedule["happening_this_week"] = $week[getWeek(today())] ?? [];
 

@@ -89,6 +89,31 @@ class OnboardingController extends Controller
             
             if($course->title !== $formerCourse->title){
 
+                $oldAccount = [
+                    "user" => [
+                        "name" => $student->name,
+                        "email" => $student->email,
+                        "password" => $student->password,
+                        "gender" => $student->gender,
+                        "cv_details" => $student->cv_details,
+                        "github_link" => $student->github_link,
+                        "access_to_laptop" => $student->access_to_laptop,
+                        "phonenumber" => $student->phonenumber,
+                    ],
+                    "submissions" => [
+                        "tasks" => $student->submissions->tasks,
+                    ],
+                    "attendance" => [
+                        // "tasks" => $student->attendance->,
+                    ],
+                    "settings" => [],
+                    "point" => [],
+                    "curriculum" => [],
+                    "reports" => [],
+                    "progress" => [],
+                ];
+
+
                 $student->update([
                     "course_id" => $course->id,
                 ]);
