@@ -9,9 +9,11 @@ use App\Http\Controllers\Controller;
 class AdminController extends Controller
 {
     public function updateCurriculum(Lesson $lesson){
-        $students = $lesson->course->students;
+     try {  $students = $lesson->course->students;
 
         foreach($students as $student){
+            $student->load('curriculum', 'progress');
+
             $curriculum = $student->curriculum;
             $progress = $student->progress;
 
@@ -37,6 +39,17 @@ class AdminController extends Controller
             $progress->update([
                 "course_progress" => json_encode($courseProgress)
             ]);
+            
         }
+        return response()->json([
+            "status" => "success",
+            "message" => "Lesson details have been updated for each student"
+        ]);
+    }catch(\Exception $e) {
+        return response()->json([
+            "status" => "error",
+            "message" => $e->getMessage()
+        ], 400);
+    }
     }
 }
