@@ -19,7 +19,6 @@ return new class extends Migration
             $table->unsignedBigInteger('attendance_points')->default(0);
             $table->unsignedBigInteger('bonus_points')->default(0);
             $table->unsignedBigInteger('task_points')->default(0);
-            $table->json('history');
             $table->foreignUuid('user_id')->references('id')->on('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->timestamps();
         });

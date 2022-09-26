@@ -94,6 +94,8 @@ class Classroom {
             "transcript" => ($transcriptUrl) ? $transcriptUrl : "",
             "youtube_video_id" => ""
         ]);
+
+        $lesson->views()->create();
         
         $resources = $request->resources;
 

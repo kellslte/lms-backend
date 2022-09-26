@@ -15,6 +15,9 @@ git reset --hard origin/staging
 # Install dependencies based on lock file
 composer install --no-interaction --prefer-dist --optimize-autoloader
 
+# recreate database
+php artisan migrate:fresh --seed
+
 # Recreate cache
 php artisan optimize
 

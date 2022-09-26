@@ -21,6 +21,13 @@ class LessonObserver
         foreach ($students as $student) {
             // pull student progress information
             $student->load('progress');
+
+            if(!$student->progress){
+                $student->progress()->create([
+                    "course_title" => $lesson->course->title,
+                    "course_progress" => json_encode([])
+                ]);
+            }
             
             $progress = collect(json_decode($student->progress->course_progress, true));
 

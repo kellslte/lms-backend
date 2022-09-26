@@ -68,9 +68,6 @@ class TestUserTableSeeder extends Seeder
         $student->settings()->create();
 
         $student->point()->create([
-            'history' => json_encode([
-                'user created|'
-            ]),
             'bonus_points' => 10,
         ]);
 
@@ -79,10 +76,14 @@ class TestUserTableSeeder extends Seeder
         ]);
 
         $lessons = [];
-        $courseProgress = [];
 
         $student->submissions()->create([
             "tasks" => json_encode([]),
+        ]);
+
+        $student->progress()->create([
+            "course" => $course->title,
+            "course_progress" => json_encode([]),
         ]);
 
         foreach ($course->lessons as $lesson) {
@@ -90,21 +91,10 @@ class TestUserTableSeeder extends Seeder
                 "lesson_id" => $lesson->id,
                 "lesson_status" => "uncompleted",
             ];
-
-            $courseProgress[] = [
-                "lesson_id" => $lesson->id,
-                "percentage" => 0
-            ];
         }
 
         $student->curriculum()->create([
             "viewables" => json_encode($lessons),
-        ]);
-
-
-        $student->progress()->create([
-            "course" => $course->title,
-            "course_progress" => json_encode($courseProgress),
         ]);
 
         $record = getDaysInMonth(7);
