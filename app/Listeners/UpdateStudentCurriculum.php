@@ -27,6 +27,12 @@ class UpdateStudentCurriculum
     public function handle(LessonCreated $event)
     {
         foreach($event->students as $student){
+            if(!$student->curriculum){
+                $student->curriculum()->create([
+                    "vieawables" => json_encode([])
+                ]);
+            }
+
             $curriculum = collect(json_decode($student->curriculum->viewables, true));
 
             $curriculum->merge([
