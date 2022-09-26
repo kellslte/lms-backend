@@ -105,10 +105,70 @@ class Classroom {
             // TODO fire lesson creation event
             if($course->title === "General Concepts & tooling"){
                 LessonCreated::dispatch(User::all(), $lesson);
-            }else {
-                LessonCreated::dispatch($course->students, $lesson);
-            }
 
+                // get all students
+                $students = User::all();
+
+                // update their curriculum and then their progress
+                foreach ($students as $student) {
+                    $curriculum = $student->curriculum;
+                    $progress = $student->progress;
+
+                    $viewables = collect(json_decode($curriculum->viewables, true));
+                    $courseProgress = collect(json_decode($progress->course_progress, true));
+
+                    $courseProgress->merge([
+                        "course_progress" => [
+                            "lesson_id" => $lesson->id,
+                            "percentage" => 0
+                        ]
+                    ]);
+
+                    $viewables->merge([
+                        "lesson_id" => $lesson->id,
+                        "lesson_status" => "uncompleted"
+                    ]);
+
+                    $curriculum->update([
+                        "viewables" => json_encode($viewables),
+                    ]);
+
+                    $progress->update([
+                        "course_progress" => json_encode($courseProgress)
+                    ]);
+                }
+
+            }else {
+                $students = $course->students;
+
+                foreach ($students as $student) {
+                    $curriculum = $student->curriculum;
+                    $progress = $student->progress;
+
+                    $viewables = collect(json_decode($curriculum->viewables, true));
+                    $courseProgress = collect(json_decode($progress->course_progress, true));
+
+                    $courseProgress->merge([
+                        "course_progress" => [
+                            "lesson_id" => $lesson->id,
+                            "percentage" => 0
+                        ]
+                    ]);
+
+                    $viewables->merge([
+                        "lesson_id" => $lesson->id,
+                        "lesson_status" => "uncompleted"
+                    ]);
+
+                    $curriculum->update([
+                        "viewables" => json_encode($viewables),
+                    ]);
+
+                    $progress->update([
+                        "course_progress" => json_encode($courseProgress)
+                    ]);
+                }
+            }
             
             return  $lesson->with('resources', 'media');
     }
