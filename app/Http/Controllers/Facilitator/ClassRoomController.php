@@ -38,12 +38,14 @@ class ClassRoomController extends Controller
         $user = getAuthenticatedUser();
 
         try {
-            return $lesson = Classroom::stageLesson($request, $user->course);
+            $lesson = Classroom::stageLesson($request, $user->course);
 
             return response()->json([
                 "status" => "success",
                 "data" => [
-                    'lesson' => $lesson
+                    'lesson' => $lesson,
+                    'thumbnail' => $lesson->media->thumbnail,
+                    'video_link' => $lesson->media->video_link 
                 ]
             ], 200);
         } catch (\Exception $e) {
@@ -58,12 +60,14 @@ class ClassRoomController extends Controller
         $user = getAuthenticatedUser();
 
         try{
-           return $lesson = Classroom::stageLesson($request, $user->course);
+           $lesson = Classroom::stageLesson($request, $user->course);
 
             return response()->json([
                 "status" => "success",
                 "data" => [
-                    'lesson' => $lesson
+                    'lesson' => $lesson,
+                    'thumbnail' => $lesson->media->thumbnail,
+                    'video_link' => $lesson->media->video_link 
                 ]
             ], 200);
         }
