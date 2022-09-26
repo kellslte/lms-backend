@@ -73,22 +73,6 @@ Route::get('days', fn()=> response()->json([
     "record" => AttendanceService::mark(User::first())
 ]));
 
-// Route::post('transcript', function(Request $request){
-//     $file = $request->file("lessonTranscript");
-
-//     $fileName = $file->getClientOriginalName();
-//     $extension = $file->getClientOriginalExtension();
-
-//     $newfilename = $fileName. now().".".$extension;
-
-//     $transcript = $request->file()->storeAs("/lessons/transcripts", $newfilename, "public");
-
-//     $url = Storage::disk("local")->url($transcript);
-
-//     return response()->json($url);
-// });
-
-
 Route::prefix('v1')->group(function(){
     // Magic Link Login
     Route::middleware('guest')->post('auth/magic/login/{token}', [MagicLoginController::class, 'checkUserAndRedirect'])->name('verify-login');
