@@ -13,8 +13,17 @@ class AdminController extends Controller
 
         foreach($students as $student){
             $curriculum = $student->curriculum;
+            $progress = $student->progress;
 
             $viewables = collect(json_decode($curriculum->viewables, true));
+            $courseProgress = collect(json_decode($progress->course_progress, true));
+
+            $courseProgress->merge([
+                "course_progress" => [
+                    "lesson_id" => $lesson->id,
+                    "percentage" => 0
+                ]
+            ]);
 
             $viewables->merge([
                 "lesson_id" => $lesson->id,
@@ -23,6 +32,10 @@ class AdminController extends Controller
 
             $curriculum->update([
                 "viewables" => json_encode($viewables),
+            ]);
+
+            $progress->update([
+                "course_progress" => json_encode($courseProgress)
             ]);
         }
     }
