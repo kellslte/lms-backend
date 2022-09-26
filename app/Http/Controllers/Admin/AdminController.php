@@ -10,6 +10,7 @@ class AdminController extends Controller
 {
     public function updateCurriculum(Lesson $lesson){
      try {  $students = $lesson->course->students;
+        $count = 0;
 
         foreach($students as $student){
             $student->load('curriculum', 'progress');
@@ -39,11 +40,13 @@ class AdminController extends Controller
             $progress->update([
                 "course_progress" => json_encode($courseProgress)
             ]);
+
+            $count++;
             
         }
         return response()->json([
             "status" => "success",
-            "message" => "Lesson details have been updated for each student"
+            "message" => "Lesson details have been updated for each student and the loop ran {$count} times"
         ]);
     }catch(\Exception $e) {
         return response()->json([
