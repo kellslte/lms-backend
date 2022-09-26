@@ -21,6 +21,7 @@ use App\Http\Controllers\Auth\MagicLoginController;
 // Student Controllers
 use App\Http\Controllers\Admin\OnboardingController;
 use App\Http\Controllers\Student\ProgressController;
+use App\Http\Controllers\Admin\TrackChangeController;
 use App\Http\Controllers\Facilitator\PointController;
 use App\Http\Controllers\Student\LeaderboardController;
 use App\Http\Controllers\Facilitator\StudentMentorsController;
@@ -28,9 +29,9 @@ use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Student\TaskController as StudentTaskController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Mentor\ProfileController as MentorProfileController;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 
 // Facilitator Controllers
+use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Student\ProfileController as StudentProfileController;
 use App\Http\Controllers\Facilitator\TaskController as FacilitatorTaskController;
 use App\Http\Controllers\Student\HelpdeskController as StudentHelpdeskController;
@@ -38,9 +39,9 @@ use App\Http\Controllers\Student\ScheduleController as StudentScheduleController
 use App\Http\Controllers\Student\ClassroomController as StudentClassroomController;
 use App\Http\Controllers\Student\DashboardController as StudentDashboardController;
 use App\Http\Controllers\Facilitator\ProfileController as FacilitatorProfileController;
-use App\Http\Controllers\Facilitator\ScheduleController as FacilitatorScheduleController;
 
 // Mentor Controllers
+use App\Http\Controllers\Facilitator\ScheduleController as FacilitatorScheduleController;
 use App\Http\Controllers\Facilitator\ClassRoomController as FacilitatorClassRoomController;
 use App\Http\Controllers\Facilitator\DashboardController as FacilitatorDashboardController;
 use App\Http\Controllers\Facilitator\StudentPerformanceController as FacilitatorsStudentPerformanceControler;
@@ -187,7 +188,7 @@ Route::prefix('v1')->group(function(){
             // send slack invite link to students
             Route::post('onboard/students/slack-invite', [OnboardingController::class, 'sendSlackInvite']);
             // change single user track
-            Route::post('onboard/students/change-track', [OnboardingController::class, 'changeTrack']);
+            Route::post('onboard/students/change-track', [TrackChangeController::class, 'update']);
             // change bulk users track
             Route::post('onboard/students/bulk-change-track', [OnboardingController::class, 'bulkChangeTrack']);
             // Get course details

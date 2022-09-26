@@ -104,7 +104,7 @@ class Classroom {
             // update students lesson progress detail
             // TODO fire lesson creation event
             if($course->title === "General Concepts & tooling"){
-                LessonCreated::dispatch(User::all(), $lesson);
+                // LessonCreated::dispatch(User::all(), $lesson);
 
                 // get all students
                 $students = User::all();
@@ -165,6 +165,9 @@ class Classroom {
                     $progress->update([
                         "course_progress" => json_encode($courseProgress)
                     ]);
+
+                    // send out notification too
+                    $student->notify();
                 }
             }
             
