@@ -114,20 +114,19 @@ class Classroom {
                     $curriculum = $student->curriculum;
                     $progress = $student->progress;
 
-                    $viewables = collect(json_decode($curriculum->viewables, true));
-                    $courseProgress = collect(json_decode($progress->course_progress, true));
 
-                    $courseProgress->merge([
-                        "course_progress" => [
-                            "lesson_id" => $lesson->id,
-                            "percentage" => 0
-                        ]
-                    ]);
+                $viewables = json_decode($curriculum->viewables, true);
+                $courseProgress = json_decode($progress->course_progress, true);
 
-                    $viewables->merge([
-                        "lesson_id" => $lesson->id,
-                        "lesson_status" => "uncompleted"
-                    ]);
+                $courseProgress[] = [
+                    "lesson_id" => $lesson->id,
+                    "percentage" => 0
+                ];
+
+                $viewables[] = [
+                    "lesson_id" => $lesson->id,
+                    "lesson_status" => "uncompleted"
+                ];
 
                     $curriculum->update([
                         "viewables" => json_encode($viewables),
@@ -145,20 +144,19 @@ class Classroom {
                     $curriculum = $student->curriculum;
                     $progress = $student->progress;
 
-                    $viewables = collect(json_decode($curriculum->viewables, true));
-                    $courseProgress = collect(json_decode($progress->course_progress, true));
 
-                    $courseProgress->merge([
-                        "course_progress" => [
-                            "lesson_id" => $lesson->id,
-                            "percentage" => 0
-                        ]
-                    ]);
+                $viewables = json_decode($curriculum->viewables, true);
+                $courseProgress = json_decode($progress->course_progress, true);
 
-                    $viewables->merge([
-                        "lesson_id" => $lesson->id,
-                        "lesson_status" => "uncompleted"
-                    ]);
+                $courseProgress[] = [
+                    "lesson_id" => $lesson->id,
+                    "percentage" => 0
+                ];
+
+                $viewables[] = [
+                    "lesson_id" => $lesson->id,
+                    "lesson_status" => "uncompleted"
+                ];
 
                     $curriculum->update([
                         "viewables" => json_encode($viewables),
