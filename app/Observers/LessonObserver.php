@@ -20,6 +20,8 @@ class LessonObserver
 
         foreach ($students as $student) {
             // pull student progress information
+            $student->load('progress');
+            
             $progress = collect(json_decode($student->progress->course_progress, true));
 
             $lessonProgress = $progress->where("lesson_id", $lesson->id)->first();

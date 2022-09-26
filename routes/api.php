@@ -181,8 +181,6 @@ Route::prefix('v1')->group(function(){
             Route::put('course/{course}', [AdminCourseController::class, 'update']);
             // Send slack invite to single user
             Route::post('onboard/students/single-slack-invite', [OnboardingController::class, 'sendStudentSlackInvite']);
-            // Create SOTU meeting
-            //Route::post('meetings/{sotu}', [MeetingController::class, 'createSotu']);
             // update student curriculum
             Route::post('lessons/{lesson}', [AdminController::class, 'updateCurriculum']);
         });
@@ -202,6 +200,8 @@ Route::prefix('v1')->group(function(){
             Route::get('classroom', [FacilitatorClassroomController::class, 'index']);
             // Create lesson route
             Route::post('classroom', [FacilitatorClassroomController::class, 'store']);
+            // stage lesson route
+            Route::post('classroom/stage', [FacilitatorClassroomController::class, 'stageLesson']);
             // Get Single Lesson details
             Route::get("classroom/{lesson}", [FacilitatorClassroomController::class, 'showLesson']);
             // save lesson as draft

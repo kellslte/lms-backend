@@ -65,6 +65,44 @@ class Classroom {
         }        
     }
 
+    public static function stageLesson($request, $course){
+        $request->merge([
+            "courseTitle" => $course->title,
+        ]);
+
+        // upload file to server
+        $videoUrl = asset( "/uploads" ,$request->file('lessonVideo')->store("/lessons", "public"));
+
+        // upload transcript to server
+        if($request->file("lessonTranscript")){
+            $transcriptUrl = asset( "/uploads",$request->file('lessonTranscript')->store("/transcripts", "public"));
+        }
+
+        // upload lesson thumbnail to server
+        $thumbnailUrl = asset( "/uploads",$request->file('lessonThumbnail')->store("/thumbnails", "public"));
+
+        // create lesson
+        $lesson = $course->lessons()->create([
+            "title" => $request->title,
+            "description" => $request->description,
+            "tutor" => $course->facilitator->name,
+        ]);
+
+        $lesson->media()->create([
+            "video_link" => $videoUrl,
+            "thumbnail" => $thumbnailUrl,
+            "transcript" => ($transcriptUrl) ? $transcriptUrl : "",
+            "youtube_video_id" => ""
+        ]);
+        
+        $resources = $request->resources;
+
+        // fire lesson created event
+        LessonCreated::dispatch($course->students, $lesson);
+
+        return  $lesson->with('resources', 'media');
+    }
+
     public static function createLesson($request, $course){
             $request->merge([
                 'courseTitle' => $course->title

@@ -34,6 +34,26 @@ class ClassRoomController extends Controller
         ]);
     }
 
+    public function stageLesson(CreateLessonRequest $request){
+        $user = getAuthenticatedUser();
+
+        try {
+            return $lesson = Classroom::createLesson($request, $user->course);
+
+            return response()->json([
+                "status" => "success",
+                "data" => [
+                    'lesson' => $lesson
+                ]
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                "status" => "failed",
+                "message" => $e->getMessage(),
+            ]);
+        }
+    }
+
     public function store(CreateLessonRequest $request){
         $user = getAuthenticatedUser();
 
