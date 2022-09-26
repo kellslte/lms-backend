@@ -15,17 +15,11 @@ git reset --hard origin/staging
 # Install dependencies based on lock file
 composer install --no-interaction --prefer-dist --optimize-autoloader
 
-# Clear the old cache
-php artisan clear-compiled
-
 # Recreate cache
 php artisan optimize
 
 # cache events
 php artisan event:cache 
-
-# Run database migrations
-php artisan migrate --force
 
 # Exit maintenance mode
 php artisan up
