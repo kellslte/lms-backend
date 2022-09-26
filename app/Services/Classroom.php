@@ -71,15 +71,17 @@ class Classroom {
         ]);
 
         // upload file to server
-        $videoUrl = asset( "/uploads" ,$request->file('lessonVideo')->store("/lessons", "public"));
+        $videoUrl = asset( "/uploads".$request->file('lessonVideo')->store("/lessons", "public"));
 
         // upload transcript to server
         if($request->file("lessonTranscript")){
-            $transcriptUrl = asset( "/uploads",$request->file('lessonTranscript')->store("/transcripts", "public"));
+            $transcriptUrl = asset( "/uploads".$request->file('lessonTranscript')->store("/transcripts", "public"));
         }
 
         // upload lesson thumbnail to server
-        $thumbnailUrl = asset( "/uploads",$request->file('lessonThumbnail')->store("/thumbnails", "public"));
+
+
+        $thumbnailUrl = asset( "/uploads".$request->file('lessonThumbnail')->store("/thumbnails", "public") );
 
         // create lesson
         $lesson = $course->lessons()->create([
