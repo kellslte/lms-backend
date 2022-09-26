@@ -6,13 +6,14 @@ echo "Deployment started..."
 
 # Enter maintenance mode or return true
 # if already is in maintenance mode
-(php artisan down) || true
+(php artisan down --message 'The app is being (quickly!) updated. Please try again in a minute.') || true
 
 # Pull the latest version of the app
-git pull origin staging
+git fetch origin staging
+git reset --hard origin/staging
 
-# Install composer dependencies
-composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+# Install dependencies based on lock file
+composer install --no-interaction --prefer-dist --optimize-autoloader
 
 # Clear the old cache
 php artisan clear-compiled

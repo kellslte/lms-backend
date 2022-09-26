@@ -38,7 +38,7 @@ class ClassRoomController extends Controller
         $user = getAuthenticatedUser();
 
         try {
-            return $lesson = Classroom::createLesson($request, $user->course);
+            return $lesson = Classroom::stageLesson($request, $user->course);
 
             return response()->json([
                 "status" => "success",

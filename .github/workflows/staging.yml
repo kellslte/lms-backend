@@ -4,8 +4,7 @@ name: Deploy
 # pull request events on the production branch
 on:
   push:
-    branches:
-      - staging
+    branches: [ staging ]
       
 # Authenticate to the the server via ssh 
 # and run our deployment script 
@@ -14,6 +13,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.PUSH_TOKEN }}
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         with:
@@ -21,5 +22,5 @@ jobs:
           username: ${{ secrets.USERNAME }}
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSHKEY }}
-          script: "/home/u759879241/domains/theadaproject.com.ng/public_html/staging_server
+          script: "cd /home/u759879241/domains/theadaproject.com.ng/public_html/staging_server
  && ./.scripts/staging.sh"
