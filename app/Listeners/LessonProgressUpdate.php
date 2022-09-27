@@ -15,7 +15,7 @@ class LessonProgressUpdate
      */
     public function __construct()
     {
-        //
+        info("Lesson progress updated for all students");
     }
 
     /**
@@ -37,6 +37,8 @@ class LessonProgressUpdate
             $student->progress->update([
                 "course_progress" => json_encode($progress)
             ]);
+
+            info("The lesson progress record has been updated for {$student->name}");
         }
     }
 }

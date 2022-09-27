@@ -84,14 +84,15 @@ class LessonsService {
 
     public static function getClassroomData($user){
         $progress = collect(json_decode($user->progress->course_progress, true));
-
+        
         return collect(json_decode($user->curriculum->viewables, true))->map(function ($lesson) use($progress) {
-            $lessonProgress = $progress->where("lesson_id", $lesson["lesson_id"])->first();
+             //$lessonProgress = $progress->where("lesson_id", $lesson["lesson_id"])->first();
 
-            $lesson = Lesson::find($lesson["lesson_id"]);
+            
 
-            if($lessonProgress){
-                if(!is_null($lesson)){
+            return $lesson = Lesson::all()->where("id", $lesson["lesson_id"])->first();
+/* 
+                if(!is_null($lesson) && !is_null($lessonProgress)){
                     return ($lessonProgress["percentage"] === 100) ? [
                         "id" => $lesson->id,
                         "title" => $lesson->title,
@@ -111,8 +112,7 @@ class LessonsService {
                         "tutor" => $lesson->course->facilitator->name,
                         "percentage" => $lessonProgress["percentage"]
                     ];
-                }
-            }
+                } */
 
 
             return [];

@@ -22,7 +22,7 @@ class LessonCreated
      */
     public function __construct(public $students, public Lesson $lesson)
     {
-        //
+        info("Lesson Created Event fired!");
     }
 
     /**

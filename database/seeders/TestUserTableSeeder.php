@@ -76,14 +76,10 @@ class TestUserTableSeeder extends Seeder
         ]);
 
         $lessons = [];
+        $progress = [];
 
         $student->submissions()->create([
             "tasks" => json_encode([]),
-        ]);
-
-        $student->progress()->create([
-            "course" => $course->title,
-            "course_progress" => json_encode([]),
         ]);
 
         foreach ($course->lessons as $lesson) {
@@ -91,7 +87,18 @@ class TestUserTableSeeder extends Seeder
                 "lesson_id" => $lesson->id,
                 "lesson_status" => "uncompleted",
             ];
+
+            $progress[] = [
+                "lesson_id" => $lesson->id,
+                "percentage" => 0
+            ];
         }
+
+        $student->progress()->create([
+            "course" => $course->title,
+            "course_progress" => json_encode($progress),
+        ]);
+
 
         $student->curriculum()->create([
             "viewables" => json_encode($lessons),

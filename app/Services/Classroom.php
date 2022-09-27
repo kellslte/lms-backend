@@ -70,7 +70,7 @@ class Classroom {
         $video = $request->file('lessonVideo')->store("/lessons", "public");
         $videoUrl = asset("/uploads/{$video}");
 
-        // $transcriptUrl = "";
+        $transcriptUrl = "";
 
         // upload transcript to server
         if($request->file("lessonTranscript")){
@@ -102,7 +102,9 @@ class Classroom {
         $resources = $request->resources;
 
         // fire lesson created event
-        LessonCreated::dispatch($course->students, $lesson);
+        event(new LessonCreated($course->students, $lesson));
+
+        info("Lesson created!");
 
         return  $lesson;
     }

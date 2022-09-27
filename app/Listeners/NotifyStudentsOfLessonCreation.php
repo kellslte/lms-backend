@@ -16,7 +16,7 @@ class NotifyStudentsOfLessonCreation
      */
     public function __construct()
     {
-        //
+        info("Lesson email has been pushed out");
     }
 
     /**
