@@ -1,10 +1,14 @@
 <?php
 
 use App\Models\User;
+use App\Models\Lesson;
 use Illuminate\Http\Request;
+use App\Services\ProcessVideo;
+use App\Jobs\ProcessVideoUpload;
 use App\Services\YoutubeService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,8 +71,3 @@ Route::get('students', function(){
         ]
     ]);
 });
-
-/* 
-
-
-*/

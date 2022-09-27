@@ -183,6 +183,8 @@ Route::prefix('v1')->group(function(){
             Route::post('onboard/students/single-slack-invite', [OnboardingController::class, 'sendStudentSlackInvite']);
             // update student curriculum
             Route::post('lessons/{lesson}', [AdminController::class, 'updateCurriculum']);
+            // update student curriculum for all lessons
+            Route::post('classroom', [AdminController::class, 'updateCourseContent']);
         });
 
         // Facilitator Routes

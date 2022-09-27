@@ -9,6 +9,18 @@ class LessonObserver
     public $afterCommit = true;
 
     /**
+     * Handle the Lesson "updated" event.
+     * 
+     * @param  \App\Models\Lesson $lesson
+     * @return void
+    */
+    public function updated(Lesson $Lesson){
+        
+    }
+
+
+
+    /**
      * Handle the Lesson "retrieved" event.
      *
      * @param  \App\Models\Lesson  $lesson

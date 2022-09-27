@@ -6,6 +6,7 @@ use App\Models\Course;
 use App\Models\Lesson;
 use App\Services\Classroom;
 use Illuminate\Http\Request;
+use App\Jobs\ProcessVideoUpload;
 use App\Services\LessonsService;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
@@ -40,6 +41,8 @@ class ClassRoomController extends Controller
         try {
             $lesson = Classroom::stageLesson($request, $user->course);
 
+            ProcessVideoUpload::dispatch($lesson);
+
             return response()->json([
                 "status" => "success",
                 "data" => [
@@ -62,6 +65,8 @@ class ClassRoomController extends Controller
         try{
            $lesson = Classroom::stageLesson($request, $user->course);
 
+            ProcessVideoUpload::dispatch($lesson);
+            
             return response()->json([
                 "status" => "success",
                 "data" => [

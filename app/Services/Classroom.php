@@ -28,7 +28,7 @@ class Classroom {
                             "description" => $lesson->description,
                             "datePublished" => formatDate($lesson->created_at),
                             "tutor" => $user->name,
-                            "views" => 0,
+                            "views" => $lesson->views->count,
                             "taskSubmissions" => TaskManager::getSubmissions($lesson->tasks, $user->course->students)->count()
                         ];
                     });
@@ -46,7 +46,7 @@ class Classroom {
                             "description" => $lesson->description,
                             "datePublished" => formatDate($lesson->created_at),
                             "tutor" => $user->name,
-                            "views" => 0,
+                            "views" => $lesson->views->count,
                             "taskSubmissions" => TaskManager::getSubmissions($lesson->tasks, $user->course->students)->count()
                         ];
                     });
@@ -70,7 +70,7 @@ class Classroom {
         $video = $request->file('lessonVideo')->store("/lessons", "public");
         $videoUrl = asset("/uploads/{$video}");
 
-        $transcriptUrl = "";
+        // $transcriptUrl = "";
 
         // upload transcript to server
         if($request->file("lessonTranscript")){
@@ -82,7 +82,6 @@ class Classroom {
         $thumbnail = $request->file('lessonThumbnail')->store("/thumbnails", "public");
         $thumbnailUrl = asset("/uploads/{$thumbnail}");
 
-        // create lesson
         $lesson = $course->lessons()->create([
             "title" => $request->title,
             "description" => $request->description,
@@ -91,7 +90,9 @@ class Classroom {
 
         $lesson->media()->create([
             "video_link" => $videoUrl,
+            "videoPath" => $video,
             "thumbnail" => $thumbnailUrl,
+            "thumbnailPath" => $thumbnail,
             "transcript" => $transcriptUrl,
             "youtube_video_id" => ""
         ]);

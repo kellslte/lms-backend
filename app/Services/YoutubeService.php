@@ -114,15 +114,15 @@ class YoutubeService {
         return substr(explode(" ", $response->items[0]['player']['embedHtml'])[3], 7);
     }
 
-    private function uploadVideo(Request $request){
+    private function uploadVideo(Array $request){
         $this->refreshToken();
 
         try{
             $snippet = new VideoSnippet();
 
-            $snippet->setTitle($request->title);
-            $snippet->setDescription($request->description);
-            $snippet->setTags($request->tags);
+            $snippet->setTitle($request["title"]);
+            $snippet->setDescription($request["description"]);
+            $snippet->setTags($request["tags"]);
             //$snippet->setCategory(28);
 
             $status = new VideoStatus();
@@ -148,11 +148,11 @@ class YoutubeService {
                 $chunkSize
             );
 
-            $media->setFileSize(filesize($request->file('lessonVideo')));
+            $media->setFileSize(filesize($request["lessonVideo"]));
 
             // Read the file and upload in chunks
             $status = false;
-            $handle = fopen($request->file('lessonVideo'), 'rb');
+            $handle = fopen($request["lessonVideo"], 'rb');
 
             while (!$status && !feof($handle)) {
                 $chunk = fread($handle, $chunkSize);
@@ -163,7 +163,7 @@ class YoutubeService {
 
             $this->client->setDefer(false);
 
-            $thumbnail = $this->uploadThumbnail($request->file('lessonThumbnail'), $status['id']);
+            $thumbnail = $this->uploadThumbnail($request["lessonThumbnail"], $status['id']);
             
             return [
                 "videoLink" => $this->listVideos($status['id']),
@@ -284,7 +284,7 @@ class YoutubeService {
         } 
     }
 
-    public function uploadVideoToPlaylist(Request $request){
+    public function uploadVideoToPlaylist(Array $request){
         $this->refreshToken();
 
         try{
@@ -292,7 +292,7 @@ class YoutubeService {
             $videoDetails = $this->uploadVideo($request);
 
             // setup params for playlist 
-            $course = Course::whereTitle($request->courseTitle)->first();
+            $course = Course::whereTitle($request["courseTitle"])->first();
             $playlistId = $course->playlistId;
 
             // setup resource
