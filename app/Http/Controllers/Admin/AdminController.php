@@ -61,7 +61,7 @@ class AdminController extends Controller
             "email" => "required|email",
         ]);
 
-        $student = User::whereEmail($request->email);
+        $student = User::whereEmail($request->email)->first();
 
         $course = $student->course;
 
