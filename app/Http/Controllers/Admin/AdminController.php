@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
 use App\Models\Lesson;
-use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -126,50 +125,5 @@ class AdminController extends Controller
 
     public function index(){
         
-    }
-
-    public function updateCourseContent(Request $request){
-        $request->validate([
-            "email" => "required|email",
-        ]);
-
-        $student = User::whereEmail($request->email);
-
-        $course = $student->course;
-
-        $lessons = $course->lessons;
-
-        if(!$student->progress){
-            $courseProgress = [];
-            
-            foreach($lessons as $lesson){
-                $courseProgress[] = [
-                    "lesson_id" => $lesson->id,
-                    "percentage" => 0
-                ];
-            }
-            
-            $student->progress()->create([
-                "course" => $course->title,
-                "course_progress" => json_encode($courseProgress)
-            ]);
-        }
-
-        if(!$student->curriculum){
-            $curriculum = [];
-
-            foreach($lessons as $lesson){
-                $curriculum[] = [
-                    "lesson_id" => $lesson->id,
-                    "lesson_status" => "uncompleted"
-                ];
-            }
-
-            $student->curriculum()->create([
-                "viewables" => json_encode($curriculum)
-            ]);
-        }
-
-        return $student;
     }
 }

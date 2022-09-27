@@ -1,10 +1,10 @@
-name: Staging
+name: Production
 
 # Trigger the workflow on push and 
 # pull request events on the production branch
 on:
   push:
-    branches: [ staging ]
+    branches: [ production ]
       
 # Authenticate to the the server via ssh 
 # and run our deployment script 
@@ -22,5 +22,5 @@ jobs:
           username: ${{ secrets.USERNAME }}
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSHKEY }}
-          script: "cd /home/u759879241/domains/theadaproject.com.ng/public_html/staging_server
- && ./.scripts/staging.sh"
+          script: "cd /home/u759879241/domains/theadaproject.com.ng/public_html/lms_api
+ && ./.scripts/prod.sh"
