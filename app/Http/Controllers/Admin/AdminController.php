@@ -69,7 +69,6 @@ class AdminController extends Controller
 
         try{
             if(!$student->progress){
-                
                 $student->progress()->create([
                     "course" => $course->title,
                     "course_progress" => json_encode([])
@@ -103,6 +102,10 @@ class AdminController extends Controller
                     "lesson_status" => "uncompleted"
                 ];
             }
+
+            $student->curriculum->update([
+                "viewables" => json_encode($curriculum)
+            ]);
 
             return response()->json([
                 "status" => "success",
