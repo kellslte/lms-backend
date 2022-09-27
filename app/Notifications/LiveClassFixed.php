@@ -49,7 +49,7 @@ class LiveClassFixed extends Notification
                     ->subject('ADA Software Engineering Internship')
                     ->line("Hi, {$notifiable->name},")
                     ->line("A Live class has been fixed! Go to your dashboard to check out the details of the class")
-                    ->action('Go to dashboard', url('/'))
+                    ->action('Go to dashboard', config('app.front.url'))
                     ->line('Happy learning!');
     }
 
