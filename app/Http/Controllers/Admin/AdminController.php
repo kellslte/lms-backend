@@ -69,34 +69,39 @@ class AdminController extends Controller
 
         try{
             if(!$student->progress){
-                $courseProgress = [];
-                
-                foreach($lessons as $lesson){
-                    $courseProgress[] = [
-                        "lesson_id" => $lesson->id,
-                        "percentage" => 0
-                    ];
-                }
                 
                 $student->progress()->create([
                     "course" => $course->title,
-                    "course_progress" => json_encode($courseProgress)
+                    "course_progress" => json_encode([])
+                ]);
+            }
+            
+            $courseProgress = [];
+            
+            foreach($lessons as $lesson){
+                $courseProgress[] = [
+                    "lesson_id" => $lesson->id,
+                    "percentage" => 0
+                ];
+            }
+
+            $student->progress->update([
+                "course_progress" => json_encode($courseProgress)
+            ]);
+
+            if(!$student->curriculum){
+                $student->curriculum()->create([
+                    "viewables" => json_encode([])
                 ]);
             }
 
-            if(!$student->curriculum){
-                $curriculum = [];
+            $curriculum = [];
 
-                foreach($lessons as $lesson){
-                    $curriculum[] = [
-                        "lesson_id" => $lesson->id,
-                        "lesson_status" => "uncompleted"
-                    ];
-                }
-
-                $student->curriculum()->create([
-                    "viewables" => json_encode($curriculum)
-                ]);
+            foreach($lessons as $lesson){
+                $curriculum[] = [
+                    "lesson_id" => $lesson->id,
+                    "lesson_status" => "uncompleted"
+                ];
             }
 
             return response()->json([
