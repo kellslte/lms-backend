@@ -3,9 +3,6 @@ namespace App\Services;
 
 use App\Models\Course;
 use App\Models\Lesson;
-use App\Events\LessonCreated;
-use App\Services\TaskService;
-use Illuminate\Support\Facades\Storage;
 
 class LessonsService {
 
@@ -90,29 +87,33 @@ class LessonsService {
 
         return collect(json_decode($user->curriculum->viewables, true))->map(function ($lesson) use($progress) {
             $lessonProgress = $progress->where("lesson_id", $lesson["lesson_id"])->first();
+
             $lesson = Lesson::find($lesson["lesson_id"]);
 
-            if(!is_null($lesson)){
-                return ($lessonProgress["percentage"] === 100) ? [
-                    "id" => $lesson->id,
-                    "title" => $lesson->title,
-                    "description" => $lesson->description,
-                    "published_date" => formatDate($lesson->updated_at),
-                    "status" => "completed",
-                    "media" => $lesson->media,
-                    "tutor" => $lesson->course->facilitator->name,
-                    "percentage" => $lessonProgress["percentage"]
-                ]: [
-                    "id" => $lesson->id,
-                    "title" => $lesson->title,
-                    "description" => $lesson->description,
-                    "published_date" => formatDate($lesson->updated_at),
-                    "status" => "uncompleted",
-                    "media" => $lesson->media,
-                    "tutor" => $lesson->course->facilitator->name,
-                    "percentage" => $lessonProgress["percentage"]
-                ];
+            if($lessonProgress){
+                if(!is_null($lesson)){
+                    return ($lessonProgress["percentage"] === 100) ? [
+                        "id" => $lesson->id,
+                        "title" => $lesson->title,
+                        "description" => $lesson->description,
+                        "published_date" => formatDate($lesson->updated_at),
+                        "status" => "completed",
+                        "media" => $lesson->media,
+                        "tutor" => $lesson->course->facilitator->name,
+                        "percentage" => $lessonProgress["percentage"]
+                    ]: [
+                        "id" => $lesson->id,
+                        "title" => $lesson->title,
+                        "description" => $lesson->description,
+                        "published_date" => formatDate($lesson->updated_at),
+                        "status" => "uncompleted",
+                        "media" => $lesson->media,
+                        "tutor" => $lesson->course->facilitator->name,
+                        "percentage" => $lessonProgress["percentage"]
+                    ];
+                }
             }
+
 
             return [];
         })->filter() ?? [];
