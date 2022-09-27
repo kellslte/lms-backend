@@ -64,9 +64,9 @@ class LessonsService {
 
         return collect(json_decode($user->curriculum->viewables, true))->map(function ($viewables) use ($progress) {
             $lesson = Lesson::find($viewables["lesson_id"]);
+            $lessonProgress = $progress->where("lesson_id", $viewables["lesson_id"])->first();
             
-            if(!is_null($lesson)){
-                $lessonProgress = $progress->where("lesson_id", $viewables["lesson_id"])->first();
+            if(!is_null($lesson) && !is_null($lessonProgress)){
 
                 return ($viewables["lesson_status"] === "uncompleted") ? [
                     "title" => $lesson->title,
