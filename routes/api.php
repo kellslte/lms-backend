@@ -73,21 +73,6 @@ Route::get('days', fn()=> response()->json([
     "record" => AttendanceService::mark(User::first())
 ]));
 
-// Route::post('transcript', function(Request $request){
-//     $file = $request->file("lessonTranscript");
-
-//     $fileName = $file->getClientOriginalName();
-//     $extension = $file->getClientOriginalExtension();
-
-//     $newfilename = $fileName. now().".".$extension;
-
-//     $transcript = $request->file()->storeAs("/lessons/transcripts", $newfilename, "public");
-
-//     $url = Storage::disk("local")->url($transcript);
-
-//     return response()->json($url);
-// });
-
 
 Route::prefix('v1')->group(function(){
     // Magic Link Login
@@ -201,6 +186,8 @@ Route::prefix('v1')->group(function(){
             //Route::post('meetings/{sotu}', [MeetingController::class, 'createSotu']);
             // update student curriculum
             Route::post('lessons/{lesson}', [AdminController::class, 'updateCurriculum']);
+             // update student curriculum for all lessons
+            Route::post('classroom', [AdminController::class, 'updateCourseContent']);
         });
 
         // Facilitator Routes
