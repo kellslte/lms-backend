@@ -17,7 +17,7 @@ class ClassroomController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => [
-                'lessons' => LessonsService::getClassroomData(getAuthenticatedUser()),
+                'lessons' => [...LessonsService::getClassroomData(getAuthenticatedUser())],
                 'attendance' => AttendanceService::getRecord(getAuthenticatedUser())
             ]
         ], 200);

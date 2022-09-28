@@ -88,7 +88,7 @@ class LessonsService {
         return collect(json_decode($user->curriculum->viewables, true))->map(function ($lesson) use($progress) {
              $lessonProgress = $progress->where("lesson_id", $lesson["lesson_id"])->first();
 
-            return $lesson = Lesson::all()->where("id", $lesson["lesson_id"])->first();
+            $lesson = Lesson::all()->where("id", $lesson["lesson_id"])->first();
 
                 if(!is_null($lesson) && !is_null($lessonProgress)){
                     return ($lessonProgress["percentage"] === 100) ? [
