@@ -79,7 +79,7 @@ class LessonsService {
                 ]: null;
             }
 
-        })->filter();
+        })->filter()->toArray();
     }
 
     public static function getClassroomData($user){
