@@ -41,8 +41,6 @@ class ClassRoomController extends Controller
         try {
             $lesson = Classroom::stageLesson($request, $user->course);
 
-            ProcessVideoUpload::dispatch($lesson);
-
             return response()->json([
                 "status" => "success",
                 "data" => [
@@ -64,8 +62,6 @@ class ClassRoomController extends Controller
 
         try{
            $lesson = Classroom::stageLesson($request, $user->course);
-
-            ProcessVideoUpload::dispatch($lesson);
             
             return response()->json([
                 "status" => "success",
@@ -84,24 +80,24 @@ class ClassRoomController extends Controller
         }
     }
 
-    public function saveAsDraft(CreateLessonRequest $request){
-        $user = getAuthenticatedUser();
+    // public function saveAsDraft(CreateLessonRequest $request){
+    //     $user = getAuthenticatedUser();
 
-        $lesson = Classroom::saveLessonAsDraft($request, $user->course);
+    //     $lesson = Classroom::saveLessonAsDraft($request, $user->course);
 
-        if(is_null($lesson)){
-            return response()->json([
-               'status' => 'failed',
-               'message' => 'Could not save the Lesson',
-            ], 400);
-        }
+    //     if(is_null($lesson)){
+    //         return response()->json([
+    //            'status' => 'failed',
+    //            'message' => 'Could not save the Lesson',
+    //         ], 400);
+    //     }
 
-        return response()->json([
-           'status' => "successful",
-           'data' => [
-               'lesson' => $lesson,
-           ]], 200);
-    }
+    //     return response()->json([
+    //        'status' => "successful",
+    //        'data' => [
+    //            'lesson' => $lesson,
+    //        ]], 200);
+    // }
 
     public function showLesson(String $lesson){
         $dblesson  = Lesson::find($lesson);
