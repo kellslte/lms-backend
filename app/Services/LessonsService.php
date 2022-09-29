@@ -14,6 +14,7 @@ class LessonsService {
                 'title' => $lesson->title,
                 "description" => $lesson->description,
                 "published_date" => formatDate($lesson->updated_at),
+                "media" => $lesson->media,
                 "tutor" => $lesson->tutor,
                 "student_views" => $lesson->views->views,
                 "task_submitted" => TaskManager::getSubmissions($lesson->task, $user->course->students)
