@@ -113,12 +113,14 @@ class Classroom {
             $students = User::all();
             $students->load(['progress', 'curriculum']);
             // fire lesson created event
-            StudentService::execute($students, $lesson);
+            LessonCreated::dispatch($students, $lesson);
+
             }else {
                 $students = $course->students;
                 $students->load(['progress', 'curriculum']);
                 // fire lesson created event
-                StudentService::execute($course->students, $lesson);
+                LessonCreated::dispatch($course->students, $lesson);
+
             }
         }catch(\Exception $e){
             return response()->json([
