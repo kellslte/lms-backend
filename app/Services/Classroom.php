@@ -98,11 +98,22 @@ class Classroom {
         ]);
 
         $lesson->views()->create();
-        
-        $resources = $request->resources;
 
-        // fire lesson created event
-        event(new LessonCreated($course->students, $lesson));
+        foreach($request->resources as $resource){
+            $lesson->resources()->create([
+                "title" => $resource["name"],
+                "link" => $resource["link"],
+                "type" => "file_link"
+            ]);
+        }
+
+        if($course->title === "General Concepts & tooling"){
+            // fire lesson created event
+            event(new LessonCreated(User::all(), $lesson));
+        }else {
+            // fire lesson created event
+            event(new LessonCreated($course->students, $lesson));
+        }
 
         info("Lesson created!");
 

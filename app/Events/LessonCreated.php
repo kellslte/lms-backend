@@ -3,6 +3,7 @@
 namespace App\Events;
 
 use App\Models\Lesson;
+use App\Jobs\ProcessVideoUpload;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -22,7 +23,7 @@ class LessonCreated
      */
     public function __construct(public $students, public Lesson $lesson)
     {
-        info("Lesson Created Event fired!");
+        ProcessVideoUpload::dispatch($lesson);
     }
 
     /**

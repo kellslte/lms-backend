@@ -15,11 +15,15 @@ git reset --hard origin/prod
 # Install dependencies based on lock file
 composer install --no-interaction --prefer-dist --optimize-autoloader
 
+# Update Database
+php artisan migrate --force
+
 # Recreate cache
 php artisan optimize
 
 # cache events
 php artisan event:cache 
+
 
 # Exit maintenance mode
 php artisan up

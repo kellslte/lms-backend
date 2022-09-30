@@ -18,7 +18,7 @@ class DashboardController extends Controller
         return response()->json([
             'status' => 'success',
             'data' => [
-                'lessons' => LessonsService::getUserCurriculum($user),
+                'lessons' => [...LessonsService::getUserCurriculum($user)],
                 'leaderboard_position' => LeaderboardService::getUserPosition($user),
                 'total_tasks_done' => count($user->completedTasks()),
                 'schedule' => ScheduleService::getSchedule($user),

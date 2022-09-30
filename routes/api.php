@@ -57,22 +57,6 @@ use App\Http\Controllers\Facilitator\StudentPerformanceController as Facilitator
 |
 */
 
-Route::post('videos', function (Request $request) {
-    //return (new YoutubeService)->uploadVideo($request);
-});
-
-Route::post('playlist', function(Request $request){
-    return (new YoutubeService)->createPlaylist($request->title);
-});
-
-Route::get('analytics', function(){
-    return (new YoutubeService)->getVideosViews();
-});
-
-Route::get('days', fn()=> response()->json([
-    "record" => AttendanceService::mark(User::first())
-]));
-
 Route::prefix('v1')->group(function(){
     // Magic Link Login
     Route::middleware('guest')->post('auth/magic/login/{token}', [MagicLoginController::class, 'checkUserAndRedirect'])->name('verify-login');
@@ -248,7 +232,7 @@ Route::prefix('v1')->group(function(){
             Route::post('auth/mentor/password/create', [PasswordController::class, 'createPassword']);
             // Profile Route
             Route::get('profile', [MentorProfileController::class, 'index']);
-            // Change Proflie Settings Route
+            // Change Profile Settings Route
             Route::post('profile', [MentorProfileController::class, 'storeSettings']);
 
         });
