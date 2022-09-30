@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Models\User;
 use App\Models\Facilitator;
 use App\Events\LessonCreated;
+use App\Services\StudentService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -108,165 +109,19 @@ class Classroom {
         }
 
         if($course->title === "General Concepts & tooling"){
+            $students = User::all();
+            $students->load(['progress', 'curriculum']);
             // fire lesson created event
-            event(new LessonCreated(User::all(), $lesson));
+            StudentService::execute($students, $lesson);
         }else {
+            $students = $course->students;
+            $students->load(['progress', 'curriculum']);
             // fire lesson created event
-            event(new LessonCreated($course->students, $lesson));
+            StudentService::execute($course->students, $lesson);
         }
-
-        info("Lesson created!");
 
         return  $lesson;
     }
-
-    // public static function createLesson($request, $course){
-    //         $request->merge([
-    //             'courseTitle' => $course->title
-    //         ]);
-
-    //         // try to upload video to youtube
-    //         $response = getYoutubeVideoDetails($request);
-
-    //         // upload transcript and return the path
-    //         if($request->file('lessonTranscript')){
-    //             $transcript = self::uploadTranscript($request->file('lessonTranscript'));
-    //         }
-
-    //         // create lesson
-    //         $lesson = $course->lessons()->create([
-    //             "title" => $request->title,
-    //             "description" => $request->description,
-    //             "tutor" => $course->facilitator->name,
-    //         ]);
-
-    //         // create lesson media
-    //         $lesson->media()->create([
-    //             "video_link" => $response["videoLink"],
-    //             "thumbnail" => $response["thumbnail"],
-    //             "transcript" => ($transcript) ? $transcript : "",
-    //             "youtube_video_id" => $response["youtube_video_id"]
-    //         ]);
-
-    //         foreach ($request->resources as $resource) {
-    //             $lesson->resources()->create([
-    //                 "type" => "file_link",
-    //                 "title" => $resource["title"],
-    //                 "resource" => $resource["link"]
-    //             ]);
-    //         }
-
-    //         // update students lesson progress detail
-    //         // TODO fire lesson creation event
-    //         if($course->title === "General Concepts & tooling"){
-    //             // LessonCreated::dispatch(User::all(), $lesson);
-
-    //             // get all students
-    //             $students = User::all();
-
-    //             // update their curriculum and then their progress
-    //             foreach ($students as $student) {
-    //                 $curriculum = $student->curriculum;
-    //                 $progress = $student->progress;
-
-
-    //             $viewables = json_decode($curriculum->viewables, true);
-    //             $courseProgress = json_decode($progress->course_progress, true);
-
-    //             $courseProgress[] = [
-    //                 "lesson_id" => $lesson->id,
-    //                 "percentage" => 0
-    //             ];
-
-    //             $viewables[] = [
-    //                 "lesson_id" => $lesson->id,
-    //                 "lesson_status" => "uncompleted"
-    //             ];
-
-    //                 $curriculum->update([
-    //                     "viewables" => json_encode($viewables),
-    //                 ]);
-
-    //                 $progress->update([
-    //                     "course_progress" => json_encode($courseProgress)
-    //                 ]);
-    //             }
-
-    //         }else {
-    //             $students = $course->students;
-
-    //             foreach ($students as $student) {
-    //                 $curriculum = $student->curriculum;
-    //                 $progress = $student->progress;
-
-
-    //             $viewables = json_decode($curriculum->viewables, true);
-    //             $courseProgress = json_decode($progress->course_progress, true);
-
-    //             $courseProgress[] = [
-    //                 "lesson_id" => $lesson->id,
-    //                 "percentage" => 0
-    //             ];
-
-    //             $viewables[] = [
-    //                 "lesson_id" => $lesson->id,
-    //                 "lesson_status" => "uncompleted"
-    //             ];
-
-    //                 $curriculum->update([
-    //                     "viewables" => json_encode($viewables),
-    //                 ]);
-
-    //                 $progress->update([
-    //                     "course_progress" => json_encode($courseProgress)
-    //                 ]);
-
-    //                 // send out notification too
-    //                 $student->notify();
-    //             }
-    //         }
-            
-    //         return  $lesson->with('resources', 'media');
-    // }
-
-    // public static function saveLessonAsDraft($request, $course){
-        
-    //         // upload lesson cideo to our server 
-    //         $videoPath = Storage::putFile("lessons", $request->file("lessonVideo"));
-
-    //         // upload lesson thumnail
-    //         $path = Storage::putFile("thumbnails", $request->file("lessonThumbnail"));
-    
-    //         // upload lesson transcript
-    //         $transcript = self::uploadTranscript($request->file("lessonTranscript"));
-    
-    //         // create lesson
-    //         $lesson = $course->lessons()->create([
-    //             "title" => $request->title,
-    //             "description" => $request->description,
-    //             "tutor" => $course->facilitator->name,
-    //             "status" => "unpublished"
-    //         ]);
-
-    //         // create lesson media
-    //         $lesson->media()->create([
-    //             "video_link" => asset("uploads/". $videoPath),
-    //             "thumbnail" => asset("uploads/".$path),
-    //             "transcript" => asset("uploads/". $transcript),
-    //             "youtube_video_id" => ""
-    //         ]);
-
-    //         // foreach ($request->resources as $resource) {
-    //         //     $lesson->resources()->create([
-    //         //         "type" => "file_link",
-    //         //         "title" => $resource->name,
-    //         //         "resource" => $resource["link"]
-    //         //     ]);
-    //         // }
-
-    //         return $lesson;
-            
-    // }
 
     public static function updateLesson($request, $lesson){
         try {
