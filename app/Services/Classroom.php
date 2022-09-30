@@ -108,16 +108,22 @@ class Classroom {
             ]);
         }
 
-        if($course->title === "General Concepts & tooling"){
+        try{
+            if($course->title === "General Concepts & tooling"){
             $students = User::all();
             $students->load(['progress', 'curriculum']);
             // fire lesson created event
             StudentService::execute($students, $lesson);
-        }else {
-            $students = $course->students;
-            $students->load(['progress', 'curriculum']);
-            // fire lesson created event
-            StudentService::execute($course->students, $lesson);
+            }else {
+                $students = $course->students;
+                $students->load(['progress', 'curriculum']);
+                // fire lesson created event
+                StudentService::execute($course->students, $lesson);
+            }
+        }catch(\Exception $e){
+            return response()->json([
+                "error" => $e->getMessage()
+            ]);
         }
 
         return  $lesson;
