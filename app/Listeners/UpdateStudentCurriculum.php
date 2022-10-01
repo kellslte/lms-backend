@@ -36,13 +36,13 @@ class UpdateStudentCurriculum
 
             $curriculum = collect(json_decode($student->curriculum->viewables, true));
 
-            $curriculum[] = [
+            $curriculumRecord[] = [
                 "lesson_id" => $event->lesson->id,
                 "lesson_status" => "uncompleted"
             ];
 
             $student->curriculum->update([
-                "viewables" => json_encode($curriculum),
+                "viewables" => json_encode([...$curriculum, $curriculumRecord]),
             ]);
         }
     }
