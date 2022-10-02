@@ -35,18 +35,24 @@ class ClassRoomController extends Controller
         ]);
     }
 
-    public function store(CreateLessonRequest $request){
+    public function store(Request $request){
         $user = getAuthenticatedUser();
 
         try{
-           $lesson = Classroom::stageLesson($request, $user->course);
+
+            if($request->has('courseTitle')){
+                $course = Course::where("title", $request->courseTitle)->first();
+                $lesson = Classroom::save($request, $course);
+            }else {
+                $lesson = Classroom::save($request, $user->course);
+            }
             
             return response()->json([
                 "status" => "success",
                 "data" => [
                     'lesson' => $lesson,
-                    'thumbnail' => $lesson->media->thumbnail,
-                    'video_link' => $lesson->media->video_link 
+                    // 'thumbnail' => $lesson->media->thumbnail,
+                    // 'video_link' => $lesson->media->video_link 
                 ]
             ], 200);
         }
@@ -57,25 +63,6 @@ class ClassRoomController extends Controller
             ]);
         }
     }
-
-    // public function saveAsDraft(CreateLessonRequest $request){
-    //     $user = getAuthenticatedUser();
-
-    //     $lesson = Classroom::saveLessonAsDraft($request, $user->course);
-
-    //     if(is_null($lesson)){
-    //         return response()->json([
-    //            'status' => 'failed',
-    //            'message' => 'Could not save the Lesson',
-    //         ], 400);
-    //     }
-
-    //     return response()->json([
-    //        'status' => "successful",
-    //        'data' => [
-    //            'lesson' => $lesson,
-    //        ]], 200);
-    // }
 
     public function showLesson(String $lesson){
         $dblesson  = Lesson::find($lesson);

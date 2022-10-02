@@ -3,11 +3,11 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Models\Facilitator;
+use Illuminate\Support\Str;
 use App\Events\LessonCreated;
 use App\Services\StudentService;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
-
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\NotifyStudentWhenLessonCreated;
 
 
 class Classroom {
@@ -66,7 +66,7 @@ class Classroom {
         }        
     }
 
-    public static function stageLesson($request, $course){
+    public static function save($request, $course){
         // upload file to server
         $video = $request->file('lessonVideo')->store("/lessons", "public");
         $videoUrl = asset("/uploads/{$video}");
@@ -98,6 +98,35 @@ class Classroom {
             "youtube_video_id" => ""
         ]);
 
+        foreach ($course->students as $student) {
+            // update progress
+            $progress = $student->progress;
+
+            $courseProgress = json_decode($progress->course_progress, true);
+
+            $progress->course_progress = json_encode([...$courseProgress, [
+                "lesson_id" => $lesson->id,
+                "percentage" => 0
+            ]]);
+
+            $progress->save();
+
+            // update curriculum
+            $curriculum = $student->curriculum;
+
+            $courseCurriculum = json_decode($curriculum->viewables, true);
+
+            $curriculum->viewables = json_encode([...$courseCurriculum, [
+                "lesson_id" => $lesson->id,
+                "lesson_status" => "uncompleted"
+            ]]);
+
+            $curriculum->save();
+
+            // Send notification to students
+            Notification::send($student, new NotifyStudentWhenLessonCreated());
+        }
+        
         $lesson->views()->create();
 
         foreach($request->resources as $resource){
@@ -108,25 +137,6 @@ class Classroom {
             ]);
         }
 
-        try{
-            if($course->title === "General Concepts & tooling"){
-            $students = User::all();
-            $students->load(['progress', 'curriculum']);
-            // fire lesson created event
-            LessonCreated::dispatch($students, $lesson);
-
-            }else {
-                $students = $course->students;
-                $students->load(['progress', 'curriculum']);
-                // fire lesson created event
-                LessonCreated::dispatch($course->students, $lesson);
-
-            }
-        }catch(\Exception $e){
-            return response()->json([
-                "error" => $e->getMessage()
-            ]);
-        }
 
         return  $lesson;
     }
@@ -186,8 +196,4 @@ class Classroom {
         }   
     }
 
-    private static function uploadTranscript($transcript){
-        // upload transacript
-        return $transcript->store("/transcripts", "public");
-    }
 }
