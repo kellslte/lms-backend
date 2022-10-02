@@ -129,16 +129,15 @@ class Classroom {
         
         $lesson->views()->create();
 
-        foreach($request->resources as $resource){
-            $lesson->resources()->create([
-                "title" => $resource["name"],
-                "link" => $resource["link"],
-                "type" => "file_link"
-            ]);
-        }
+        // foreach($request->resources as $resource){
+        //     $resources[] = [
+        //         "title" => $resource["name"],
+        //         "link" => $resource["link"],
+        //         "type" => "file_link"
+        //     ];
+        // }
 
-
-        return  $lesson;
+        return  ["lesson" => $lesson, "resources" =>  $request->resources];
     }
 
     public static function updateLesson($request, $lesson){

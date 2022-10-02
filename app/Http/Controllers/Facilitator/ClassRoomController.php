@@ -42,17 +42,20 @@ class ClassRoomController extends Controller
 
             if($request->has('courseTitle')){
                 $course = Course::where("title", $request->courseTitle)->first();
-                $lesson = Classroom::save($request, $course);
+                if($course){
+                   $response = Classroom::save($request, $course);
+                }                
             }else {
-                $lesson = Classroom::save($request, $user->course);
+                $response = Classroom::save($request, $user->course);
             }
             
             return response()->json([
                 "status" => "success",
                 "data" => [
-                    'lesson' => $lesson,
-                    // 'thumbnail' => $lesson->media->thumbnail,
-                    // 'video_link' => $lesson->media->video_link 
+                    'lesson' => $response["lesson"],
+                    'thumbnail' => $response["lesson"]->media->thumbnail,
+                    'video_link' => $response["lesson"]->media->video_link,
+                    'resources' => $response["resources"],
                 ]
             ], 200);
         }
@@ -60,7 +63,7 @@ class ClassRoomController extends Controller
             return response()->json([
                 "status" => "failed",
                 "message" => $e->getMessage(),
-            ]);
+            ], 400);
         }
     }
 
