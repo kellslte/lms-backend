@@ -5,13 +5,9 @@ namespace App\Http\Controllers\Facilitator;
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Services\Classroom;
-use Illuminate\Http\Request;
-use App\Jobs\ProcessVideoUpload;
 use App\Services\LessonsService;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Storage;
 use App\Http\Requests\CreateLessonRequest;
-use App\Http\Resources\FaciLessonResource;
 
 class ClassRoomController extends Controller
 {
@@ -35,13 +31,13 @@ class ClassRoomController extends Controller
         ]);
     }
 
-    public function store(Request $request){
+    public function store(CreateLessonRequest $request){
         $user = getAuthenticatedUser();
 
         try{
 
-            if($request->has('courseTitle')){
-                $course = Course::where("title", $request->courseTitle)->first();
+            if($request->has('lessonTrack')){
+                $course = Course::where("title", $request->lessonTrack)->first();
                 if($course){
                    $response = Classroom::save($request, $course);
                 }                
