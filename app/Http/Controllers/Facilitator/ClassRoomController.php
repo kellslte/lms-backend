@@ -36,8 +36,8 @@ class ClassRoomController extends Controller
 
         try{
 
-            if($request->has('lessonTrack')){
-                $course = Course::where("title", $request->lessonTrack)->first();
+            if($request->has('track')){
+                $course = Course::where("title", $request->track)->first();
                 if($course){
                    $response = Classroom::save($request, $course);
                 }                
