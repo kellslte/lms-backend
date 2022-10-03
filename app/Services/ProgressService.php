@@ -28,7 +28,7 @@ class ProgressService {
         ]);
 
         $progress = collect(json_decode($user->progress->course_progress, true))->map(function($lesson) use ($lessonId, $request){
-            if($lesson["id"] === $lessonId){
+            if($lesson["lesson_id"] === $lessonId){
                 $lesson["percentage"] = $request->percentage;
             }
 
