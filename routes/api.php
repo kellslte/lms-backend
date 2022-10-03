@@ -22,6 +22,8 @@ use App\Http\Controllers\Admin\TrackChangeController;
 use App\Http\Controllers\Admin\CourseController as AdminCourseController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\StudentController as AdminStudentController;
+use App\Http\Controllers\Admin\FacilitatorController as AdminFacilitatorControllertor;
 
 // Student Controllers
 use App\Http\Controllers\Student\ProgressController;
@@ -171,6 +173,17 @@ Route::prefix('v1')->group(function(){
             Route::post('lessons/{lesson}', [AdminController::class, 'updateCurriculum']);
              // update student curriculum for all lessons
             Route::post('classroom', [AdminController::class, 'updateCourseContent']);
+
+            // Students area
+            // overview
+            Route::get('students', [AdminStudentController::class, 'index']);
+            // remove student
+            Route::post('students/{student}', [AdminStudentController::class, 'destroy']);
+
+            // Facilitators area
+            Route::get('facilitators', [AdminFacilitatorControllertor::class, 'index']);
+            // onboard facilitator
+            Route::post('facilitators', [AdminFacilitatorControllertor::class, 'store']);
         });
 
         // Facilitator Routes

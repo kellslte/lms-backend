@@ -37,7 +37,9 @@ class ClassroomController extends Controller
 
         return response()->json([
             "status" => "success",
-            "data" => $lessons
+            "data" => [
+                "lessons" => $lessons
+            ]
         ]);
     }
 }
