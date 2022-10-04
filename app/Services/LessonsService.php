@@ -99,7 +99,7 @@ class LessonsService {
                         "published_date" => formatDate($lesson->updated_at),
                         "status" => "completed",
                         "media" => $lesson->media,
-                        "tutor" => $lesson->course->facilitator->name,
+                        "tutor" => $lesson->tutor,
                         "percentage" => $lessonProgress["percentage"]
                     ]: [
                         "id" => $lesson->id,
@@ -108,7 +108,7 @@ class LessonsService {
                         "published_date" => formatDate($lesson->updated_at),
                         "status" => "uncompleted",
                         "media" => $lesson->media,
-                        "tutor" => $lesson->course->facilitator->name,
+                        "tutor" => $lesson->tutor,
                         "percentage" => $lessonProgress["percentage"]
                     ];
                 }
