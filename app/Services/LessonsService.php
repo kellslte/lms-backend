@@ -56,7 +56,7 @@ class LessonsService {
             return response()->json([
                 'status' => "error",
                 'message' => "An error has occurred while updating the lesson.",
-            ], 400);        
+            ], 400);
         }
     }
 
@@ -66,7 +66,7 @@ class LessonsService {
         return collect(json_decode($user->curriculum->viewables, true))->map(function ($viewables) use ($progress) {
             $lesson = Lesson::find($viewables["lesson_id"]);
             $lessonProgress = $progress->where("lesson_id", $viewables["lesson_id"])->first();
-            
+
             if(!is_null($lesson) && !is_null($lessonProgress)){
 
                 return ($viewables["lesson_status"] === "uncompleted") ? [
@@ -85,14 +85,14 @@ class LessonsService {
 
     public static function getClassroomData($user){
         $progress = collect(json_decode($user->progress->course_progress, true));
-        
+
         return collect(json_decode($user->curriculum->viewables, true))->map(function ($lesson) use($progress) {
              $lessonProgress = $progress->where("lesson_id", $lesson["lesson_id"])->first();
 
             $lesson = Lesson::all()->where("id", $lesson["lesson_id"])->first();
 
                 if(!is_null($lesson) && !is_null($lessonProgress)){
-                    return ($lessonProgress["percentage"] === 100) ? [
+                    return ($lessonProgress["percentage"] >= 90) ? [
                         "id" => $lesson->id,
                         "title" => $lesson->title,
                         "description" => $lesson->description,
@@ -111,7 +111,7 @@ class LessonsService {
                         "tutor" => $lesson->course->facilitator->name,
                         "percentage" => $lessonProgress["percentage"]
                     ];
-                } 
+                }
 
 
             return [];
@@ -129,7 +129,7 @@ class LessonsService {
     }
 
     public function lessonViews($user){
-        $lessons = $user->course->lessons->orderDesc()->take(2);       
+        $lessons = $user->course->lessons->orderDesc()->take(2);
     }
 
     // Facilitator Methods
@@ -138,6 +138,6 @@ class LessonsService {
         $lessons->load('tasks');
 
         $myLessons = collect($lessons)->sortBy('updated_at');
-        
+
     }
 }
