@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Facilitator;
 
 use App\Models\Meeting;
-use App\Services\Classroom;
+use App\Services\Classroom as ClassroomAlias;
 use Illuminate\Http\Request;
 use App\Services\TaskManager;
 use App\Services\TaskService;
@@ -35,7 +35,7 @@ class DashboardController extends Controller
             $data["completed_tasks"] = $tasks["graded_tasks"];
         }
 
-        if($lessons = Classroom::allLessons($user)){
+        if($lessons = ClassroomAlias::allLessons($user)){
             $data["published_lessons"] = $lessons["published_lessons"];
             $data["unpublished_lessons"] = $lessons["unpublished_lessons"];
         }

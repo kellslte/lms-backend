@@ -70,7 +70,6 @@ class EventService{
 
             $token = $this->storeTokens($tokens);
         }
-
         return $token;
     }
 

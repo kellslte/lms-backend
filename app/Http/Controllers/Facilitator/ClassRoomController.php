@@ -19,10 +19,10 @@ class ClassRoomController extends Controller
        if(array_key_exists("error", $response)){
         return response()->json([
             "status" => "failed",
-            "message" => $response["error"]  
+            "message" => $response["error"]
         ], 400);
        }
-        
+
         return response()->json([
             'status' => "successful",
             'data' => [
@@ -39,12 +39,12 @@ class ClassRoomController extends Controller
             if($request->has('track')){
                 $course = Course::where("title", $request->track)->first();
                 if($course){
-                   $response = Classroom::save($request, $course);
-                }                
+                   $response = Classroom::save($request, $course, $user->name);
+                }
             }else {
-                $response = Classroom::save($request, $user->course);
+                $response = Classroom::save($request, $user->course, $user->name);
             }
-            
+
             return response()->json([
                 "status" => "success",
                 "data" => [
@@ -69,7 +69,7 @@ class ClassRoomController extends Controller
         if(!$lesson){
             return response()->json([
                 "status" => "failed",
-                "message" => "Lesson does not exist"    
+                "message" => "Lesson does not exist"
             ], 404);
         }
 
@@ -92,7 +92,7 @@ class ClassRoomController extends Controller
 
     public function update(CreateLessonRequest $request, Lesson $lesson){
         $user = getAuthenticatedUser();
-        
+
         return LessonsService::updateLesson($request, $user, $lesson);
     }
 

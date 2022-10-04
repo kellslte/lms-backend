@@ -22,11 +22,9 @@ class AttendanceService
             return $record;
         });
 
-        if ($records !== $newRecord) {
-            $user->attendance->update([
-                "record" => json_encode($newRecord),
-            ]);
-        }
+        if ($records !== $newRecord) $user->attendance->update([
+            "record" => json_encode($newRecord),
+        ]);
 
         return $newRecord;
     }

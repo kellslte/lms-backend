@@ -3,11 +3,9 @@ namespace App\Services;
 
 class Chart{
     public static function render($courses){
-        
-        foreach($courses as $course){
-            $response = self::getCoursePerformance($course);
-        }
-        
+
+        foreach($courses as $course) $response = self::getCoursePerformance($course);
+
         return $response;
     }
 

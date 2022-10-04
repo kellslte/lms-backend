@@ -1,6 +1,7 @@
 <?php
 namespace App\Services;
 
+use App\Models\Lesson;
 use App\Models\User;
 use App\Models\Facilitator;
 use Illuminate\Support\Str;
@@ -17,8 +18,12 @@ class Classroom {
         $unpublishedLessons = [];
 
         try {
-        $published = collect($user->course->lessons)->where("status", "published")->flatten();
-        
+            $publishedCollection  =  collect(Lesson::all())->where("status", "published")->flatten();
+
+            $published = $publishedCollection->reject(function ($lesson) use ($user){
+                return $lesson->tutor !== $user->name;
+            });
+
                 if($published){
                     $publishedLessons = $published->map(function ($lesson) use ($user) {
                         return [
@@ -28,14 +33,18 @@ class Classroom {
                             "title" => $lesson->title,
                             "description" => $lesson->description,
                             "datePublished" => formatDate($lesson->created_at),
-                            "tutor" => $user->name,
+                            "tutor" => $lesson->tutor,
                             "views" => $lesson->views->count,
                             "taskSubmissions" => TaskManager::getSubmissions($lesson->tasks, $user->course->students)->count()
                         ];
                     });
                 }
-    
-                $unpublished = collect($user->course->lessons)->where("status", "unpublished")->flatten();
+
+                $unpublishedCollection = collect(Lesson::all())->where("status", "unpublished")->flatten();
+
+                $unpublished = $unpublishedCollection->reject(function ($lesson) use ($user){
+                    return $lesson !== $user->name;
+                });
 
                 if($unpublished){
                     $unpublishedLessons = $unpublished->map(function ($lesson) use ($user) {
@@ -52,7 +61,7 @@ class Classroom {
                         ];
                     });
                 }
-    
+
                 return [
                     "published_lessons" => $publishedLessons,
                     "unpublished_lessons" => $unpublishedLessons,
@@ -63,10 +72,10 @@ class Classroom {
                 "unpublished_lessons" => [],
                 "error" => $th->getMessage()
             ];
-        }        
+        }
     }
 
-    public static function save($request, $course){
+    public static function save($request, $course, string $tutor){
         // upload file to server
         $video = $request->file('lessonVideo')->store("/lessons", "public");
         $videoUrl = asset("/uploads/{$video}");
@@ -86,7 +95,7 @@ class Classroom {
         $lesson = $course->lessons()->create([
             "title" => $request->title,
             "description" => $request->description,
-            "tutor" => $course->facilitator->name,
+            "tutor" => $tutor,
         ]);
 
         $lesson->media()->create([
@@ -126,7 +135,7 @@ class Classroom {
             // Send notification to students
             Notification::send($student, new NotifyStudentWhenLessonCreated());
         }
-        
+
         $lesson->views()->create();
 
         // foreach($request->resources as $resource){
@@ -155,7 +164,7 @@ class Classroom {
 
                 $videoLink = getYoutubeVideoDetails($request);
 
-                
+
             }
 
             $lesson->update([
@@ -192,7 +201,7 @@ class Classroom {
                 'status' => "error",
                 'message' => "An error has occurred while updating the lesson.",
             ], 400);
-        }   
+        }
     }
 
 }
