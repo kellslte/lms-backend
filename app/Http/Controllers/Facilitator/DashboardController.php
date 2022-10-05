@@ -36,8 +36,8 @@ class DashboardController extends Controller
         }
 
         if($lessons = ClassroomAlias::allLessons($user)){
-            $data["published_lessons"] = $lessons["published_lessons"];
-            $data["unpublished_lessons"] = $lessons["unpublished_lessons"];
+            $data["published_lessons"] = [...$lessons["published_lessons"]];
+            $data["unpublished_lessons"] = [...$lessons["unpublished_lessons"]];
         }
 
         return response()->json([
