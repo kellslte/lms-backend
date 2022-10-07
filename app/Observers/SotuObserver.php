@@ -5,16 +5,17 @@ namespace App\Observers;
 use App\Models\Sotu;
 use App\Models\User;
 use App\Notifications\SotuCreatedNotification;
+use App\Notifications\SotuUpdatedNotification;
 use Illuminate\Support\Facades\Notification;
 
 class SotuObserver
 {
-    public $afterCommit = true;
+    public bool $afterCommit = true;
 
     /**
      * Handle the Sotu "created" event.
      *
-     * @param  \App\Models\Sotu  $sotu
+     * @param Sotu $sotu
      * @return void
      */
     public function created(Sotu $sotu): void
@@ -25,18 +26,18 @@ class SotuObserver
     /**
      * Handle the Sotu "updated" event.
      *
-     * @param  \App\Models\Sotu  $sotu
+     * @param Sotu $sotu
      * @return void
      */
     public function updated(Sotu $sotu)
     {
-        //
+        Notification::send(User::all(), new SotuUpdatedNotification());
     }
 
     /**
      * Handle the Sotu "deleted" event.
      *
-     * @param  \App\Models\Sotu  $sotu
+     * @param Sotu $sotu
      * @return void
      */
     public function deleted(Sotu $sotu)
@@ -47,7 +48,7 @@ class SotuObserver
     /**
      * Handle the Sotu "restored" event.
      *
-     * @param  \App\Models\Sotu  $sotu
+     * @param Sotu $sotu
      * @return void
      */
     public function restored(Sotu $sotu)
@@ -58,7 +59,7 @@ class SotuObserver
     /**
      * Handle the Sotu "force deleted" event.
      *
-     * @param  \App\Models\Sotu  $sotu
+     * @param Sotu $sotu
      * @return void
      */
     public function forceDeleted(Sotu $sotu)

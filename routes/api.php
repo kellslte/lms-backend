@@ -72,26 +72,52 @@ Route::prefix('v1')->group(function(){
     Route::post('auth/password/{user}/send-reset-link', [PasswordController::class, 'checkUserIdentity']);
 
     Route::post('auth/password/{user}/reset', [PasswordController::class, 'checkUserIdentityForReset']);
-    
-    
+
+
     // Protected Routes
     Route::middleware('auth:sanctum')->group(function(){
 
         Route::get('timeline', TimelineController::class);
 
         Route::prefix('auth')->group(function(){
-            // system wide notifications
+            // Get courses
+            Route::get('courses', function(){
+                $courses = \App\Models\Course::all();
+
+                return response()->json([
+                    "status" => "success",
+                    "data" => [
+                        "courses" => $courses->map(fn($course) => [
+                            "title" => $course->title
+                        ])
+                    ]
+                ], 200);
+            });
+            // Get facilitators
+            Route::get('facilitators', function (){
+                $facilitators = \App\Models\Facilitator::all();
+
+                return response()->json([
+                    "status" => "success",
+                    "data" => [
+                        "facilitators" => $facilitators->map(fn($faci) => [
+                            "name" => $faci->name
+                        ])
+                    ]
+                ], 200);
+            });
+            // system-wide notifications
             Route::get("notifications", [NotificationsController::class, 'index']);
             // Mark notification as read
             Route::put("notifications/{notificaition}/read", [NotificationsController::class, 'markAsRead']);
-            // award point to the user 
+            // award point to the user
             // knowledgebase resource
             Route::get('knowledgebase/resources', KnowledgebaseController::class);
         });
 
 
-        Route::post('password/change', [PasswordController::class, 'changePassword']); 
-        
+        Route::post('password/change', [PasswordController::class, 'changePassword']);
+
         // Student Routes
         Route::prefix('auth/user')->group(function(){
             // User Logout
@@ -118,7 +144,7 @@ Route::prefix('v1')->group(function(){
             Route::put('classroom/progress/{lesson}', [ProgressController::class, 'incrementStudentProgress']);
             // Get Single Lesson from classroom
             Route::get('classroom/lessons/{lesson}', [StudentClassroomController::class, 'getLesson']);
-            // Increment View Count for a partitcular lesson
+            // Increment View Count for a particular lesson
             Route::put('classroom/lessons/{lesson}/views', [StudentClassroomController::class, 'incrementViewCount']);
             // Mark attendance for a meeting
             Route::put('classroom/meeting/{meeting}/student/{userId}', [StudentClassroomController::class, 'markAttendance']);
@@ -128,6 +154,8 @@ Route::prefix('v1')->group(function(){
             Route::get('tasks', [StudentTaskController::class, 'index']);
             // Submit Task
             Route::post('tasks/{task}', [StudentTaskController::class, 'submit']);
+            // Edit Task submission
+            Route::put('tasks/{task}', [StudentTaskController::class, 'editSubmission']);
             // Helpdesk route
             Route::get('helpdesk', [StudentHelpdeskController::class, 'index']);
             // Report a problem
@@ -216,7 +244,7 @@ Route::prefix('v1')->group(function(){
             // Get particular task with students that have submitted theirs
             Route::get('tasks/{task}', [FacilitatorTaskController::class, 'viewSubmissions']);
             // create lesson task route
-            Route::post('tasks/{lesson}', [FacilitatorTaskController::class, 'store']); 
+            Route::post('tasks/{lesson}', [FacilitatorTaskController::class, 'store']);
             // update lesson task route
             Route::put('tasks/{task}', [FacilitatorTaskController::class, 'update']);
             // grade lesson task
@@ -225,6 +253,8 @@ Route::prefix('v1')->group(function(){
             Route::put('tasks/{task}/close', [FacilitatorTaskController::class, 'closeSubmission']);
             // Mark lesson task as graded
             Route::put('tasks/{task}/graded', [FacilitatorTaskController::class, 'markTaskAsGraded']);
+            // Edit submitted task
+            Route::put('tasks/{task}/edit/{student}', [FacilitatorTaskController::class, 'editSubmission']);
             // Student Leaderboard route
             Route::get('students/leaderboard', [FacilitatorsStudentPerformanceControler::class, 'index']);
             // Add bonus point to student
@@ -242,7 +272,7 @@ Route::prefix('v1')->group(function(){
         // Mentor Routes
         Route::prefix('auth/mentor')->group(function(){
             Route::post('auth/logout', fn() => (new LoginController)->logout());
-        
+
             // Create Password Route
             Route::post('auth/mentor/password/create', [PasswordController::class, 'createPassword']);
             // Profile Route

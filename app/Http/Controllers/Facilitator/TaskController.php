@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Facilitator;
 
+use App\Http\Requests\EditTaskGradeRequest;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Lesson;
@@ -146,5 +147,10 @@ class TaskController extends Controller
             "task" => $response["task"],
             "status" => $response["status"]
         ], $response["code"]);
+    }
+
+    public function editSubmission(User $student, Task $task, EditTaskGradeRequest $request): \Illuminate\Http\JsonResponse
+    {
+        return TaskManager::editTaskGrade($student, $task,$request);
     }
 }

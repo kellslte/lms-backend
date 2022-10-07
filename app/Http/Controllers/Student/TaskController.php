@@ -32,7 +32,7 @@ class TaskController extends Controller
                     return empty($item);
                 });
             }
-            
+
                 if(count($lesson->tasks) > 0){
                     return collect($lesson->tasks)->map(function($task){
                             if(!$task->exists()){
@@ -58,7 +58,7 @@ class TaskController extends Controller
                 $record[] = $item;
             }
         }
-        
+
 
         return response()->json([
             'status' => 'success',
@@ -114,5 +114,47 @@ class TaskController extends Controller
             'status' => 'success',
             'message' => 'Task submitted successfully',
         ], 201);
+    }
+
+    public function editSubmission(Task $task, TaskSubmissionRequest $request): \Illuminate\Http\JsonResponse
+    {
+        $user = getAuthenticatedUser();
+
+        if($task->expired()){
+            return response()->json([
+             'status' => 'failed',
+             'message' => 'You cannot submit this task anymore',
+            ], 400);
+        }
+
+          $submissions = $user->submissions;
+
+        $submittedTasks = collect(json_decode($submissions->tasks, true));
+
+        $newCollection = $submittedTasks->map(function ($submission) use ($task, $request){
+            if($submission["id"] === $task->id){
+                $submission["linkToResource"] = $request->linkToResource;
+            }
+
+            return $submission;
+        });
+
+        try {
+            $submissions->update([
+                "tasks" => json_encode($newCollection)
+            ]);
+
+            return response()->json([
+                "status" => "success",
+                "data" => [
+                    "submissions" => $submissions
+                ]
+            ], 200);
+        }catch(\Exception $e){
+            return response()->json([
+                "status" => "failed",
+                "message" => $e->getMessage()
+            ], $e->getCode());
+        }
     }
 }

@@ -26,9 +26,8 @@ class ScheduleController extends Controller
         ], 200);
     }
 
-    public function fixSotu(CreateSotuRequest $request){
-        $user = getAuthenticatedUser();
-
+    public function fixSotu(CreateSotuRequest $request): \Illuminate\Http\JsonResponse
+    {
         try{
             $sotu = Sotu::create([
                 "link" => $request->link,
@@ -50,7 +49,27 @@ class ScheduleController extends Controller
         }
     }
 
-    public function updateSotu(){}
+    public function updateSotu(CreateSotuRequest $request, Sotu $sotu){
+        try{
+            $sotu->update([
+                "link" => $request->link,
+                "time" => $request->time
+            ]);
+
+            return response()->json([
+                "status" => "success",
+                "data" => [
+                    "sotu" => $sotu
+                ]
+            ], 200);
+        }
+        catch(\Exception $e){
+            return response()->json([
+                "status" => "failed",
+                "message" => $e->getMessage()
+            ], $e->getCode());
+        }
+    }
 
     public function fixClass(CreateLiveClassRequest $request): \Illuminate\Http\JsonResponse
     {

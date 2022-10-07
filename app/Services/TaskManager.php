@@ -7,6 +7,7 @@ use App\Models\Course;
 use App\Models\Lesson;
 use App\Events\TaskGraded;
 use App\Events\TaskCreated;
+use Illuminate\Http\Request;
 
 
 class TaskManager{
@@ -215,5 +216,35 @@ class TaskManager{
                 "submission" => $entry
             ]: null;
         })->filter()->all();
+    }
+
+    public static function editTaskGrade(User $student, Task $task, Request $request): \Illuminate\Http\JsonResponse
+    {
+        $submissions = collect(json_decode($student->submissions->tasks, true));
+
+        try {
+            $newCollection = $submissions->map(function($submission) use ($task, $request){
+                if($submission["id"] === $task->id){
+                    $submission["grade"] = $request->grade;
+                    $submission["date_graded"] = today();
+                }
+
+                return $submission;
+            });
+
+            $student->submissions->update([
+                "tasks" => json_encode($newCollection)
+            ]);
+
+            return response()->json([
+                "status" => "successful",
+                "message" => "student task has been edited"
+            ], 200);
+        }catch(\Exception $e){
+            return response()->json([
+                "status" => "failed",
+                "message" => $e->getMessage()
+            ], $e->getCode());
+        }
     }
 }

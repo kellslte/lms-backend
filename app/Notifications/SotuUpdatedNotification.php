@@ -2,13 +2,12 @@
 
 namespace App\Notifications;
 
-use App\Models\Sotu;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class SotuCreatedNotification extends Notification
+class SotuUpdatedNotification extends Notification
 {
     use Queueable;
 
@@ -17,7 +16,10 @@ class SotuCreatedNotification extends Notification
      *
      * @return void
      */
-    public function __construct(public Sotu $sotu){}
+    public function __construct()
+    {
+        //
+    }
 
     /**
      * Get the notification's delivery channels.
@@ -25,7 +27,7 @@ class SotuCreatedNotification extends Notification
      * @param  mixed  $notifiable
      * @return array
      */
-    public function via($notifiable): array
+    public function via($notifiable)
     {
         return ['mail'];
     }
@@ -36,12 +38,11 @@ class SotuCreatedNotification extends Notification
      * @param  mixed  $notifiable
      * @return \Illuminate\Notifications\Messages\MailMessage
      */
-    public function toMail($notifiable): MailMessage
+    public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->line('Hey there, a new SOTU meeting has been fixed')
-                    ->line('Go to your dashboard to check it out')
-                    ->action('Go to your dashboard', url(config('app.front.url')))
+                    ->line('Your state of the union meeting has been updated. You can check it out on your dahsboard')
+                    ->action('Go to dashboard', url(config('app.front.url')))
                     ->line('Thank you for using our application!');
     }
 
@@ -51,12 +52,12 @@ class SotuCreatedNotification extends Notification
      * @param  mixed  $notifiable
      * @return array
      */
-    public function toArray($notifiable): array
+    public function toArray($notifiable)
     {
         return [
-            "type" => "sotu_fixed",
+            "type" => "sotu_updated",
             "time" => time(),
-            "message" => "A new sotu meeting has been fixed"
+            "message" => "Sotu meeting has been updated"
         ];
     }
 }
