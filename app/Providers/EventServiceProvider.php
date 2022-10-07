@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Point;
 use App\Models\Lesson;
+use App\Models\Sotu;
 use App\Models\Timeline;
 use App\Events\ClassFixed;
 use App\Events\LessonCreated;
@@ -15,6 +16,7 @@ use App\Observers\PointObserver;
 use App\Listeners\LiveClassFixed;
 use App\Observers\LessonObserver;
 use App\Events\LeaderboardUpdated;
+use App\Observers\SotuObserver;
 use App\Observers\TimelineObserver;
 use App\Listeners\SendSlackInviteMail;
 use Illuminate\Auth\Events\Registered;
@@ -86,6 +88,7 @@ class EventServiceProvider extends ServiceProvider
         Point::observe(PointObserver::class);
         Lesson::observe(LessonObserver::class);
         Timeline::observe(TimelineObserver::class);
+        Sotu::observe(SotuObserver::class);
     }
 
     /**

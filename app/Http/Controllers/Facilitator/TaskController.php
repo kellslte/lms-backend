@@ -14,7 +14,8 @@ use App\Http\Requests\CreateTaskRequest;
 
 class TaskController extends Controller
 {
-    public function index(){
+    public function index(): \Illuminate\Http\JsonResponse
+    {
         $user = getAuthenticatedUser();
 
         $response = TaskManager::taskStatus($user->course->id);
@@ -112,7 +113,7 @@ class TaskController extends Controller
        $response = TaskManager::gradeTask($task, $student, (int)$request->grade);
 
        PointService::awardPoints($student, [
-        "key" => "task_points", 
+        "key" => "task_points",
         "points" => (int)$request->grade
        ]);
 
@@ -125,19 +126,25 @@ class TaskController extends Controller
        ], 400);
     }
 
-    public function markTaskAsGraded(Task $task){
+    public function markTaskAsGraded(Task $task): \Illuminate\Http\JsonResponse
+    {
         $response = TaskManager::markAsGraded($task);
 
-        $code = ($response["status"] === "success") ? 200 : 400;
-
-        return response()->json($response, $code);
+        return response()->json([
+            "status" => $response["status"],
+            "task" => $response["task"],
+            "message" => $response["message"],
+        ], $response["code"]);
     }
 
-    public function closeSubmission(Task $task){
+    public function closeSubmission(Task $task): \Illuminate\Http\JsonResponse
+    {
         $response = TaskManager::closeTasksubmission($task);
 
-        $code = ($response["status"] === "success") ? 200 : 400;
-
-        return response()->json($response, $code);
+        return response()->json([
+            "message" => $response["message"],
+            "task" => $response["task"],
+            "status" => $response["status"]
+        ], $response["code"]);
     }
 }

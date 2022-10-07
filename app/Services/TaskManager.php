@@ -23,7 +23,7 @@ class TaskManager{
             }
 
             return [];
-            
+
         })->filter();
     }
 
@@ -83,7 +83,8 @@ class TaskManager{
         }
     }
 
-    public static function gradeTask(Task $task, User $student, Int $grade){
+    public static function gradeTask(Task $task, User $student, Int $grade): ?bool
+    {
         // get the data for the student
         $submissions = $student->submissions;
 
@@ -166,13 +167,16 @@ class TaskManager{
 
             return [
                 "status" =>  "success",
-                "task" => $task
+                "task" => $task,
+                "code" => 200,
             ];
         }
         catch(\Exception $e){
             return [
                 "status" =>  "failed",
-                "task" =>  $e->getMessage()
+                "message" =>  $e->getMessage(),
+                "task" => [],
+                "code" => 400
             ];
         }
     }
@@ -185,12 +189,16 @@ class TaskManager{
 
             return [
                 "status" =>  "success",
-                "task" => $task
+                "task" => $task,
+                "message" => null,
+                "code" => 200
             ];
         }catch(\Exception $e){
             return [
                 "status" =>  "failed",
-                "task" =>  $e->getMessage()
+                "message" =>  $e->getMessage(),
+                "task" => [],
+                "code" => 400,
             ];
         }
     }
@@ -205,7 +213,7 @@ class TaskManager{
                 "student_id" => $student->id,
                 "student_name" => $student->name,
                 "submission" => $entry
-            ]: null; 
+            ]: null;
         })->filter()->all();
     }
 }

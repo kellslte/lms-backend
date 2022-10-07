@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace App\Services;
 
 use App\Models\Sotu;
@@ -9,7 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class ScheduleService {
 
-    public static function getSchedule($user){
+    public static function getSchedule($user): array
+    {
         $schedule = [
             "happening_today" => [],
             "happening_this_week" => [],
@@ -19,10 +20,10 @@ class ScheduleService {
 
         if($user->schedule){
             $meetings = collect(json_decode($user->schedule->meetings, true));
-        
+
             $week = $meetings->map(function ($val) {
                 $meeting = Meeting::find($val["id"]);
-    
+
                 return [
                     "caption" => $meeting->caption,
                     "host" => $meeting->host_name,
@@ -34,10 +35,10 @@ class ScheduleService {
             })->groupBy(function ($val) {
                 return Carbon::parse($val['date'])->format('W');
             });
-    
+
             $month = $meetings->map(function ($val) {
                 $meeting = Meeting::find($val["id"]);
-    
+
                 return [
                     "caption" => $meeting->caption,
                     "host" => $meeting->host_name,
@@ -49,10 +50,10 @@ class ScheduleService {
             })->groupBy(function ($val) {
                 return Carbon::parse($val['date'])->format('M');
             });
-    
+
             $day = $meetings->map(function ($val) {
                 $meeting = Meeting::find($val["id"]);
-    
+
                 return [
                     "caption" => $meeting->caption,
                     "host" => $meeting->host_name,
@@ -64,10 +65,10 @@ class ScheduleService {
             })->groupBy(function ($val) {
                 return Carbon::parse($val['date'])->format('D');
             });
-    
+
             $schedule["happening_today"] = ($day->get(getDay(today()))) ? $day[getDay(today())]->map(function ($val) {
                 $meeting = Meeting::find($val["id"]);
-    
+
                 return [
                     "caption" => $meeting->caption,
                     "host" => $meeting->host_name,
@@ -80,24 +81,11 @@ class ScheduleService {
         }
 
 
-        $schedule["happening_this_week"] = $week[getWeek(today())] ?? [];
-
-        $schedule["happening_this_month"] = $month[getMonth(today())] ?? [];
-
-        $sotu = Sotu::all();
-
-        $schedule["sotu"] = collect($sotu)->map(function ($meeting) {
-                    return [
-                        "link" => $meeting->link,
-                        "done" => true,
-                    ];
-        });
-        
-
-        return $schedule;
+        return self::extracted($week, $schedule, $month);
     }
 
-    public static function addToSchedule(Model $user, Array $data){
+    public static function addToSchedule(Model $user, Array $data): Model
+    {
         $meetings = json_decode($user->schedule->meetings);
 
         array_push($meetings, $data);
@@ -107,5 +95,101 @@ class ScheduleService {
         ]);
 
         return $user;
+    }
+
+    public static function displayAdminSchedule(Model $admin): array
+    {
+        $schedule = [
+            "happening_today" => [],
+            "happening_this_week" => [],
+            "happening_this_month" => [],
+            "sotu" => []
+        ];
+
+            $meetings =  Meeting::all();
+
+            if($meetings->count() < 0){
+                return self::extracted(collect([]), [], collect([]));
+            }
+
+            $week = $meetings->map(callback: function ($meeting) {
+                return [
+                    "caption" => $meeting->caption,
+                    "host" => $meeting->host_name,
+                    "date" => $meeting->date,
+                    "start_time" => formatTime($meeting->start_time),
+                    "link" => $meeting->link,
+                    "id" => $meeting->id,
+                ];
+            })->groupBy(function ($val) {
+                return Carbon::parse($val->date)->format('W');
+            });
+
+            $month = $meetings->map(function ($meeting) {
+                return [
+                    "caption" => $meeting->caption,
+                    "host" => $meeting->host_name,
+                    "date" => $meeting->date,
+                    "start_time" => formatTime($meeting->start_time),
+                    "link" => $meeting->link,
+                    "id" => $meeting->id,
+                ];
+            })->groupBy(function ($val) {
+                return Carbon::parse($val->date)->format('M');
+            });
+
+            $day = $meetings->map(function ($meeting) {
+                return [
+                    "caption" => $meeting->caption,
+                    "host" => $meeting->host_name,
+                    "date" => $meeting->date,
+                    "start_time" => formatTime($meeting->start_time),
+                    "link" => $meeting->link,
+                    "id" => $meeting->id,
+                ];
+            })->groupBy(function ($val) {
+                return Carbon::parse($val->date)->format('D');
+            });
+
+            $schedule["happening_today"] = ($day->get(getDay(today()))) ? $day[getDay(today())]->map(function ($meeting) {
+                return [
+                    "caption" => $meeting->caption,
+                    "host" => $meeting->host_name,
+                    "date" => $meeting->date,
+                    "start_time" => formatTime($meeting->start_time),
+                    "link" => $meeting->link,
+                    "id" => $meeting->id,
+                ];
+            }) : [];
+
+        return self::extracted($week, $schedule, $month);
+    }
+
+    /**
+     * @param \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection $week
+     * @param array $schedule
+     * @param \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection $month
+     * @return array
+     */
+    public static function extracted(\Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection $week, array $schedule, \Illuminate\Database\Eloquent\Collection|\Illuminate\Support\Collection $month): array
+    {
+        $schedule["happening_this_week"] = $week[getWeek(today())] ?? [];
+
+        $schedule["happening_this_month"] = $month[getMonth(today())] ?? [];
+
+        $sotu = Sotu::all();
+
+        if($sotu->count() < 0){
+            $schedule["sotu"] = [];
+        }
+
+        $schedule["sotu"] = collect($sotu)->map(function ($meeting) {
+            return [
+                "link" => $meeting->link,
+                "done" => true,
+            ];
+        });
+
+        return $schedule;
     }
 }

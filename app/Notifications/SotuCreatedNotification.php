@@ -2,12 +2,13 @@
 
 namespace App\Notifications;
 
+use App\Models\Sotu;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NotifyStudentWhenTaskGraded extends Notification
+class SotuCreatedNotification extends Notification
 {
     use Queueable;
 
@@ -16,10 +17,7 @@ class NotifyStudentWhenTaskGraded extends Notification
      *
      * @return void
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(public Sotu $sotu){}
 
     /**
      * Get the notification's delivery channels.
@@ -29,7 +27,7 @@ class NotifyStudentWhenTaskGraded extends Notification
      */
     public function via($notifiable)
     {
-        return [$notifiable->settings->notification_preference];
+        return ['mail'];
     }
 
     /**
@@ -41,10 +39,10 @@ class NotifyStudentWhenTaskGraded extends Notification
     public function toMail($notifiable)
     {
         return (new MailMessage)
-                    ->subject('You task has been graded!')
-                    ->line('Hi'. $notifiable->name)
-                    ->line('You task has been graded!')
-                    ->line('Go to your dashboard to check it out!');
+                    ->line('Hey there, a new SOTU meeting has been fixed')
+                    ->line('Go to your dashboard to check it out')
+                    ->action('Go to your dashboard', url(config('app.front.url'))
+                    ->line('Thank you for using our application!');
     }
 
     /**
@@ -56,9 +54,9 @@ class NotifyStudentWhenTaskGraded extends Notification
     public function toArray($notifiable)
     {
         return [
-            "type" => "task_graded",
+            "type" => "sotu_fixed",
             "time" => time(),
-            "message" => "Your task has been graded"
+            "message" => "A new sotu meeting has been fixed"
         ];
     }
 }
