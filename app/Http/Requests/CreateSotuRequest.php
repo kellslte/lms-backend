@@ -2,13 +2,14 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Foundation\Http\FormRequest;
 
-class CreateLiveClassRequest extends FormRequest
+class CreateSotuRequest extends FormRequest
 {
-    /**
+        /**
      * Get the validation rules that apply to the request.
      *
      * @return array<string, mixed>
@@ -16,11 +17,8 @@ class CreateLiveClassRequest extends FormRequest
     public function rules()
     {
         return [
-            'caption' => 'required|string|min:3',
             'link' => 'required|string',
-            'host' => 'required|string',
             'time' => 'required',
-            'date' => 'required|date',
         ];
     }
 

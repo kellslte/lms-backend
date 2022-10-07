@@ -13,7 +13,8 @@ use App\Services\ScheduleService;
 
 class ScheduleController extends Controller
 {
-    public function index(){
+    public function index(): \Illuminate\Http\JsonResponse
+    {
         $user = getAuthenticatedUser();
 
         try {
@@ -31,10 +32,11 @@ class ScheduleController extends Controller
         }
     }
 
-    public function fixLiveClass(CreateLiveClassRequest $request){
+    public function fixLiveClass(CreateLiveClassRequest $request): \Illuminate\Http\JsonResponse
+    {
 
         $user = getAuthenticatedUser();
-        
+
         try{
             $class = Meeting::create([
                 'host_name' => $user->name,
