@@ -102,7 +102,8 @@ class TaskManager{
         return true;
     }
 
-    public static function createTask(Array $task, Lesson $lesson, $users){
+    public static function createTask(Array $task, Lesson $lesson, $users): array
+    {
         try{
             $lesson->tasks()->create([
                 "title" => $task["title"],
@@ -128,7 +129,8 @@ class TaskManager{
         }
     }
 
-    public static function updateTask(Array $data, Task $task){
+    public static function updateTask(Array $data, Task $task): array
+    {
         try{
             $task->update([
                 "title" => $data["title"],
@@ -151,7 +153,8 @@ class TaskManager{
         }
     }
 
-    public static function closeTasksubmission(Task $task){
+    public static function closeTasksubmission(Task $task): array
+    {
         try{
             $task->update([
                 "status" => "expired"
@@ -174,7 +177,8 @@ class TaskManager{
         }
     }
 
-    public static function markAsGraded(Task $task){
+    public static function markAsGraded(Task $task): array
+    {
         try{
             $task->update([
                 "status" => "graded"
@@ -196,11 +200,11 @@ class TaskManager{
         }
     }
 
-    public static function totalSubmissions(Task $task, $students){
+    public static function totalSubmissions(Task $task, $students): array
+    {
         // get the submissions for each task
         return collect($students)->map(function($student) use ($task){
-            $entry =
-            collect(json_decode($student->submissions->tasks, true))->where("id", $task->id)->first();
+            $entry = collect(json_decode($student->submissions->tasks, true))->firstWhere("id", $task->id);
 
             return ($entry) ? [
                 "student_id" => $student->id,

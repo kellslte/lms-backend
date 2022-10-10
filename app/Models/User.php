@@ -156,7 +156,7 @@ class User extends Authenticatable
         if(!$submittedTasks->isEmpty()){
             $tasks = collect($lessons)->map(fn($lesson)=> $lesson->tasks)->flatten();
 
-            $pending = $tasks->reject(fn($task) => $submittedTasks->firstWhere('id', $task->id))->filter(fn($task) => $task->status === 'expired')->flatten();
+            $pending = $tasks->reject(fn($task) => $submittedTasks->firstWhere('id', $task->id))->filter(fn($task) => $task->status !== 'expired')->flatten();
 
             return $pending->map(fn($task) => new TaskResource($task));
         }
