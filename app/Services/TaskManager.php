@@ -18,9 +18,7 @@ class TaskManager{
             $submissions = collect(json_decode($user->submissions->tasks, true));
 
             if($submissions->count() > 0){
-                return collect($tasks)->map(function($task) use ($submissions) {
-                    return $submissions->where("id", $task->id)->first();
-                });
+                return collect($tasks)->map(fn($task) => $submissions->firstWhere("id", $task->id));
             }
 
             return [];
@@ -34,40 +32,34 @@ class TaskManager{
 
         $lessons->load('tasks');
 
-        $tasks = collect($lessons)->map(function($lesson){
-            return $lesson->tasks;
-        })->filter()->flatten();
+        $tasks = collect($lessons)->map(fn($lesson) => $lesson->tasks)->filter()->flatten();
 
         $pendingTasks = [];
         $gradedTasks = [];
 
         try{
             if($tasks){
-                $pendingTasks = collect($tasks)->where("status", "pending")->map(function ($task) {
-                    return [
-                        "id" => $task->id,
-                        "title" => $task->title,
-                        "description" => $task->description,
-                        "task_deadline_date" => formatDate($task->task_deadline_date),
-                        "task_deadline_time" => formatTime($task->task_deadline_time),
-                        "lesson_id" => $task->lesson->id,
-                        "status" => $task->status,
-                        "submissions" => self::totalSubmissions($task, $task->lesson->course->students)
-                    ];
-                })->toArray();
+                $pendingTasks = $tasks->where("status", "pending")->map(fn($task) => [
+                    "id" => $task->id,
+                    "title" => $task->title,
+                    "description" => $task->description,
+                    "task_deadline_date" => formatDate($task->task_deadline_date),
+                    "task_deadline_time" => formatTime($task->task_deadline_time),
+                    "lesson_id" => $task->lesson->id,
+                    "status" => $task->status,
+                    "submissions" => self::totalSubmissions($task, $task->lesson->course->students)
+                ])->toArray();
 
-                $gradedTasks = collect($tasks)->where("status", "graded")->map(function ($task) {
-                    return [
-                        "id" => $task->id,
-                        "title" => $task->title,
-                        "description" => $task->description,
-                        "task_deadline_date" => formatDate($task->task_deadline_date),
-                        "task_deadline_time" => formatTime($task->task_deadline_time),
-                        "lesson_id" => $task->lesson->id,
-                        "status" => $task->status,
-                        "submissions" => self::totalSubmissions($task, $task->lesson->course->students)
-                    ];
-                })->toArray();
+                $gradedTasks = $tasks->where("status", "graded")->map(fn($task) => [
+                    "id" => $task->id,
+                    "title" => $task->title,
+                    "description" => $task->description,
+                    "task_deadline_date" => formatDate($task->task_deadline_date),
+                    "task_deadline_time" => formatTime($task->task_deadline_time),
+                    "lesson_id" => $task->lesson->id,
+                    "status" => $task->status,
+                    "submissions" => self::totalSubmissions($task, $task->lesson->course->students)
+                ])->toArray();
 
                 return [
                        "pending_tasks" => [...$pendingTasks],
@@ -105,7 +97,6 @@ class TaskManager{
             return null;
         }
 
-        // TODO send a notification to user once the task has been graded
         TaskGraded::dispatch($submissions);
 
         return true;
