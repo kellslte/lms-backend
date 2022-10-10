@@ -219,7 +219,7 @@ class TaskManager{
         })->filter()->all();
     }
 
-    public static function editTaskGrade(User $student, Task $task, Request $request): \Illuminate\Http\JsonResponse
+    public static function editTaskGrade(Task $task, User $student, Request $request): \Illuminate\Http\JsonResponse
     {
         $submissions = collect(json_decode($student->submissions->tasks, true));
 
