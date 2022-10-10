@@ -180,7 +180,7 @@ class User extends Authenticatable
 
     public function lessons()
     {
-        return $this->course->lessons;
+        return $this->course->lessons->orderByAsc('created_at');
     }
 
     public function track(): \Illuminate\Database\Eloquent\Relations\HasOneThrough
