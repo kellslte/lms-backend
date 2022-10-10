@@ -169,6 +169,7 @@ class TaskManager{
             return [
                 "status" =>  "success",
                 "task" => $task,
+                "message" => "Task submission closed",
                 "code" => 200,
             ];
         }

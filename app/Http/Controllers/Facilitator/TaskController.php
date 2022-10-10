@@ -142,10 +142,6 @@ class TaskController extends Controller
     {
         $response = TaskManager::closeTasksubmission($task);
 
-        if(!$response["message"]){
-            $response["message"] = "Task submissions closed";
-        }
-
         return response()->json([
             "message" => $response["message"],
             "task" => $response["task"],
