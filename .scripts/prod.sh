@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "Deployment started..."
+echo "Production deployment started..."
 
 
 # Enter maintenance mode or return true
