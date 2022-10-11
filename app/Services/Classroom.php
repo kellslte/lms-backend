@@ -12,59 +12,51 @@ use App\Notifications\NotifyStudentWhenLessonCreated;
 
 
 class Classroom {
-    public static function allLessons(Facilitator $user){
-
+    public static function allLessons(Facilitator $user): array
+    {
         $publishedLessons = [];
         $unpublishedLessons = [];
 
         try {
-            $publishedCollection  =  collect(Lesson::all())->where("status", "published")->flatten();
+            $publishedCollection  =  Lesson::all()->where("status", "published")->flatten();
 
-            $published = $publishedCollection->reject(function ($lesson) use ($user){
-                return $lesson->tutor !== $user->name;
-            });
+            $published = $publishedCollection->reject(fn($lesson) => $lesson->tutor !== $user->name);
 
                 if($published){
-                    $publishedLessons = $published->map(function ($lesson) use ($user) {
-                        return [
-                            "id" => $lesson->id,
-                            "status" => $lesson->status,
-                            "thumbnail" =>  isset($lesson->media->thumbnail) ? $lesson->media->thumbnail : null,
-                            "title" => $lesson->title,
-                            "description" => $lesson->description,
-                            "datePublished" => formatDate($lesson->created_at),
-                            "tutor" => $lesson->tutor,
-                            "views" => $lesson->views->count,
-                            "taskSubmissions" => TaskManager::getSubmissions($lesson->tasks, $user->course->students)->count()
-                        ];
-                    });
+                    $publishedLessons = $published->map(fn($lesson) => [
+                        "id" => $lesson->id,
+                        "status" => $lesson->status,
+                        "thumbnail" => $lesson->media->thumbnail ?? null,
+                        "title" => $lesson->title,
+                        "description" => $lesson->description,
+                        "datePublished" => formatDate($lesson->created_at),
+                        "tutor" => $lesson->tutor,
+                        "views" => $lesson->views->count,
+                        "taskSubmissions" => TaskManager::getSubmissions($lesson->tasks, $user->course->students)->count()
+                    ]);
                 }
 
-                $unpublishedCollection = collect(Lesson::all())->where("status", "unpublished")->flatten();
+                $unpublishedCollection = Lesson::all()->where("status", "unpublished")->flatten();
 
-                $unpublished = $unpublishedCollection->reject(function ($lesson) use ($user){
-                    return $lesson !== $user->name;
-                });
+                $unpublished = $unpublishedCollection->reject(fn($lesson) => $lesson !== $user->name);
 
                 if($unpublished){
-                    $unpublishedLessons = $unpublished->map(function ($lesson) use ($user) {
-                        return [
-                            "id" => $lesson->id,
-                            "status" => $lesson->status,
-                            "thumbnail" => isset($lesson->media->thumbnail) ? $lesson->media->thumbnail : null,
-                            "title" => $lesson->title,
-                            "description" => $lesson->description,
-                            "datePublished" => formatDate($lesson->created_at),
-                            "tutor" => $user->name,
-                            "views" => $lesson->views->count,
-                            "taskSubmissions" => TaskManager::getSubmissions($lesson->tasks, $user->course->students)->count()
-                        ];
-                    });
+                    $unpublishedLessons = $unpublished->map(fn($lesson) => [
+                        "id" => $lesson->id,
+                        "status" => $lesson->status,
+                        "thumbnail" => $lesson->media->thumbnail ?? null,
+                        "title" => $lesson->title,
+                        "description" => $lesson->description,
+                        "datePublished" => formatDate($lesson->created_at),
+                        "tutor" => $user->name,
+                        "views" => $lesson->views->count,
+                        "taskSubmissions" => TaskManager::getSubmissions($lesson->tasks, $user->course->students)->count()
+                    ]);
                 }
 
                 return [
-                    "published_lessons" => $publishedLessons,
-                    "unpublished_lessons" => $unpublishedLessons,
+                    "published_lessons" => [...$publishedLessons],
+                    "unpublished_lessons" => [...$unpublishedLessons],
                 ];
         } catch (\Throwable $th) {
             return [
@@ -75,7 +67,8 @@ class Classroom {
         }
     }
 
-    public static function save($request, $course, string $tutor){
+    public static function save($request, $course, string $tutor): array
+    {
         // upload file to server
         $video = $request->file('lessonVideo')->store("/lessons", "public");
         $videoUrl = asset("/uploads/{$video}");
@@ -138,18 +131,11 @@ class Classroom {
 
         $lesson->views()->create();
 
-        // foreach($request->resources as $resource){
-        //     $resources[] = [
-        //         "title" => $resource["name"],
-        //         "link" => $resource["link"],
-        //         "type" => "file_link"
-        //     ];
-        // }
-
         return  ["lesson" => $lesson, "resources" =>  $request->resources];
     }
 
-    public static function updateLesson($request, $lesson){
+    public static function updateLesson($request, $lesson): \Illuminate\Http\JsonResponse
+    {
         try {
             if($lesson->status === "unpublished"){
                 $videoPath = $lesson->media->video_link;
@@ -203,5 +189,4 @@ class Classroom {
             ], 400);
         }
     }
-
 }

@@ -17,7 +17,7 @@ class TaskController extends Controller
             $tasks = collect($user->completedTasks());
             if(!$tasks->isEmpty()){
                 return collect($lesson->tasks)->map(function($task) use ($tasks){
-                    $taskRE = $tasks->where("id", $task->id)->first();
+                    $taskRE = $tasks->firstWhere("id", $task->id);
 
                 return [
                     "id" => $task->id,
@@ -28,9 +28,7 @@ class TaskController extends Controller
                     "task_deadline_time" => formatTime($task->task_deadline_time),
                     "lesson_id" => $task->lesson->id,
                 ];
-                })->reject(function($item){
-                    return empty($item);
-                });
+                })->reject(fn($item) => empty($item));
             }
 
                 if(count($lesson->tasks) > 0){

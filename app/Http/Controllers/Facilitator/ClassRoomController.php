@@ -11,7 +11,8 @@ use App\Http\Requests\CreateLessonRequest;
 
 class ClassRoomController extends Controller
 {
-    public function index(){
+    public function index(): \Illuminate\Http\JsonResponse
+    {
        $user = getAuthenticatedUser();
 
        $response = Classroom::allLessons($user);
@@ -31,7 +32,8 @@ class ClassRoomController extends Controller
         ]);
     }
 
-    public function store(CreateLessonRequest $request){
+    public function store(CreateLessonRequest $request): \Illuminate\Http\JsonResponse
+    {
         $user = getAuthenticatedUser();
 
         try{
@@ -63,7 +65,8 @@ class ClassRoomController extends Controller
         }
     }
 
-    public function showLesson(String $lesson){
+    public function showLesson(String $lesson): \Illuminate\Http\JsonResponse
+    {
         $dblesson  = Lesson::find($lesson);
 
         if(!$lesson){
@@ -90,13 +93,15 @@ class ClassRoomController extends Controller
         ]);
     }
 
-    public function update(CreateLessonRequest $request, Lesson $lesson){
+    public function update(CreateLessonRequest $request, Lesson $lesson): \Illuminate\Http\JsonResponse
+    {
         $user = getAuthenticatedUser();
 
         return LessonsService::updateLesson($request, $user, $lesson);
     }
 
-    public function delete(Lesson $lesson){
+    public function delete(Lesson $lesson): \Illuminate\Http\JsonResponse
+    {
         $response = LessonsService::deleteLesson($lesson);
 
         if($response){

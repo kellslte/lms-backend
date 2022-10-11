@@ -18,9 +18,7 @@ class TaskManager{
             $submissions = collect(json_decode($user->submissions->tasks, true));
 
             if($submissions->count() > 0){
-                return collect($tasks)->map(function($task) use ($submissions) {
-                    return $submissions->where("id", $task->id)->first();
-                });
+                return collect($tasks)->map(fn($task) => $submissions->firstWhere("id", $task->id));
             }
 
             return [];
@@ -34,40 +32,34 @@ class TaskManager{
 
         $lessons->load('tasks');
 
-        $tasks = collect($lessons)->map(function($lesson){
-            return $lesson->tasks;
-        })->filter()->flatten();
+        $tasks = collect($lessons)->map(fn($lesson) => $lesson->tasks)->filter()->flatten();
 
         $pendingTasks = [];
         $gradedTasks = [];
 
         try{
             if($tasks){
-                $pendingTasks = collect($tasks)->where("status", "pending")->map(function ($task) {
-                    return [
-                        "id" => $task->id,
-                        "title" => $task->title,
-                        "description" => $task->description,
-                        "task_deadline_date" => formatDate($task->task_deadline_date),
-                        "task_deadline_time" => formatTime($task->task_deadline_time),
-                        "lesson_id" => $task->lesson->id,
-                        "status" => $task->status,
-                        "submissions" => self::totalSubmissions($task, $task->lesson->course->students)
-                    ];
-                })->toArray();
+                $pendingTasks = $tasks->where("status", "pending")->map(fn($task) => [
+                    "id" => $task->id,
+                    "title" => $task->title,
+                    "description" => $task->description,
+                    "task_deadline_date" => formatDate($task->task_deadline_date),
+                    "task_deadline_time" => formatTime($task->task_deadline_time),
+                    "lesson_id" => $task->lesson->id,
+                    "status" => $task->status,
+                    "submissions" => self::totalSubmissions($task, $task->lesson->course->students)
+                ])->toArray();
 
-                $gradedTasks = collect($tasks)->where("status", "graded")->map(function ($task) {
-                    return [
-                        "id" => $task->id,
-                        "title" => $task->title,
-                        "description" => $task->description,
-                        "task_deadline_date" => formatDate($task->task_deadline_date),
-                        "task_deadline_time" => formatTime($task->task_deadline_time),
-                        "lesson_id" => $task->lesson->id,
-                        "status" => $task->status,
-                        "submissions" => self::totalSubmissions($task, $task->lesson->course->students)
-                    ];
-                })->toArray();
+                $gradedTasks = $tasks->where("status", "graded")->map(fn($task) => [
+                    "id" => $task->id,
+                    "title" => $task->title,
+                    "description" => $task->description,
+                    "task_deadline_date" => formatDate($task->task_deadline_date),
+                    "task_deadline_time" => formatTime($task->task_deadline_time),
+                    "lesson_id" => $task->lesson->id,
+                    "status" => $task->status,
+                    "submissions" => self::totalSubmissions($task, $task->lesson->course->students)
+                ])->toArray();
 
                 return [
                        "pending_tasks" => [...$pendingTasks],
@@ -105,13 +97,13 @@ class TaskManager{
             return null;
         }
 
-        // TODO send a notification to user once the task has been graded
         TaskGraded::dispatch($submissions);
 
         return true;
     }
 
-    public static function createTask(Array $task, Lesson $lesson, $users){
+    public static function createTask(Array $task, Lesson $lesson, $users): array
+    {
         try{
             $lesson->tasks()->create([
                 "title" => $task["title"],
@@ -137,7 +129,8 @@ class TaskManager{
         }
     }
 
-    public static function updateTask(Array $data, Task $task){
+    public static function updateTask(Array $data, Task $task): array
+    {
         try{
             $task->update([
                 "title" => $data["title"],
@@ -160,7 +153,8 @@ class TaskManager{
         }
     }
 
-    public static function closeTasksubmission(Task $task){
+    public static function closeTasksubmission(Task $task): array
+    {
         try{
             $task->update([
                 "status" => "expired"
@@ -169,6 +163,7 @@ class TaskManager{
             return [
                 "status" =>  "success",
                 "task" => $task,
+                "message" => "Task submission closed",
                 "code" => 200,
             ];
         }
@@ -182,7 +177,8 @@ class TaskManager{
         }
     }
 
-    public static function markAsGraded(Task $task){
+    public static function markAsGraded(Task $task): array
+    {
         try{
             $task->update([
                 "status" => "graded"
@@ -204,11 +200,11 @@ class TaskManager{
         }
     }
 
-    public static function totalSubmissions(Task $task, $students){
+    public static function totalSubmissions(Task $task, $students): array
+    {
         // get the submissions for each task
         return collect($students)->map(function($student) use ($task){
-            $entry =
-            collect(json_decode($student->submissions->tasks, true))->where("id", $task->id)->first();
+            $entry = collect(json_decode($student->submissions->tasks, true))->firstWhere("id", $task->id);
 
             return ($entry) ? [
                 "student_id" => $student->id,
@@ -218,7 +214,7 @@ class TaskManager{
         })->filter()->all();
     }
 
-    public static function editTaskGrade(User $student, Task $task, Request $request): \Illuminate\Http\JsonResponse
+    public static function editTaskGrade(Task $task, User $student, Request $request): \Illuminate\Http\JsonResponse
     {
         $submissions = collect(json_decode($student->submissions->tasks, true));
 

@@ -19,7 +19,7 @@ use App\Http\Controllers\Auth\MagicLoginController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\OnboardingController;
 use App\Http\Controllers\Admin\TrackChangeController;
-use App\Http\Controllers\Admin\CourseController as AdminCourseController;
+use App\Http\Controllers\Admin\ClassroomController as AdminCourseController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\StudentController as AdminStudentController;
