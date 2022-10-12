@@ -18,7 +18,7 @@ class Classroom {
         $unpublishedLessons = [];
 
         try {
-            $lessons  =  Lesson::where("tutor", $user->name)->flatten();
+            $lessons  =  Lesson::where("tutor", $user->name)->orderBy('created_at')->get();
 
             $published = $lessons->reject(fn($lesson) => $lesson->status !== "published");
 
