@@ -2,6 +2,7 @@
 
 use App\Services\EventService;
 use App\Services\YoutubeService;
+use Illuminate\Support\Carbon;
 use Laravel\Sanctum\PersonalAccessToken;
 
 function getAuthenticatedUser()
@@ -94,10 +95,10 @@ function createEvent(array $details)
 }
 
 function getDaysInMonth(Int $monthToAdd = 0)
-{   
+{
     $dates = [];
     $record = [];
-    
+
     for($w = 0; $w <= $monthToAdd; $w++){
         $month = today()->addMonths($w)->format('m');
         $year = today()->addMonths($w)->format('Y');
@@ -123,4 +124,12 @@ function checkTaskSubmittionStatus($user, $task){
     $submission = collect(json_decode($user->submissions->task, true))->where("id", $task->id)->first();
 
     return is_null($submission["date_graded"]);
+}
+
+function compareDates($date): bool
+{
+    $first = Carbon::createFromFormat('Y-m-d', $date);
+    $second = Carbon::createFromFormat('Y-m-d H:i:s', today());
+
+    return $first->gt($second);
 }
