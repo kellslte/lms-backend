@@ -32,19 +32,7 @@ class CourseTableSeeder extends Seeder
 
         $this->createCourse([
             'title' =>
-            'Android Application Development',
-            'playlistId' => 'PL6IFoRm0_cOYwtsyB22f23ZARF4UbG0Be'
-        ], 'Explorer');
-
-        $this->createCourse([
-            'title' =>
-            'iOS Application Development',
-            'playlistId' => 'PL6IFoRm0_cOb3-38a8SlE1u7DOkJ6p_xU'
-        ], 'Explorer');
-
-        $this->createCourse([
-            'title' =>
-            'Flutter Application Development',
+            'Mobile Application Development',
             'playlistId' => 'PL6IFoRm0_cOaYoaO1f0EGNCrYvrujOeZN'
         ], 'Explorer');
 
@@ -62,45 +50,14 @@ class CourseTableSeeder extends Seeder
 
         $this->createCourse([
             'title' =>
-            'Data Science',
+            'Data',
             'playlistId' => 'PL6IFoRm0_cOZ1y20wB99gql-hLfJUnegb'
-        ], 'Explorer');
-
-        $this->createCourse([
-            'title' =>
-            'Data Analysis',
-            'playlistId' => 'PL6IFoRm0_cOZyYcRR1AB_JrHxaGq-GS_2'
         ], 'Explorer');
 
         // Innovator Tracks
         $this->createCourse([
             'title' => 'Cloud Engineering',
             'playlistId' => 'PL6IFoRm0_cObAuWfCbqtHOExXy34BuJch'
-        ], 'Innovator');
-
-        $this->createCourse([
-            'title' => 'Mixed Reality',
-            'playlistId' => 'PL6IFoRm0_cOaxP4zASxZQHKbSVaydWxD1'
-        ], 'Innovator');
-
-        $this->createCourse([
-            'title' => 'Software Engineering (Java)',
-            'playlistId' => 'PL6IFoRm0_cObibS7CPmxzo93srQEu_Pa4'
-        ], 'Innovator');
-
-        $this->createCourse([
-            'title' => 'Augmented Reality',
-            'playlistId' => 'PL6IFoRm0_cOYqibrxrujMyTyFNYtDpDtT'
-        ], 'Innovator');
-
-        $this->createCourse([
-            'title' => 'Blockchain',
-            'playlistId' => 'PL6IFoRm0_cOaiM2E5e3ZfXowu1uo_aHBU'
-        ], 'Innovator');
-
-        $this->createCourse([
-            'title' => 'Software Engineering (C++)',
-            'playlistId' => 'PL6IFoRm0_cOZZJSJOKOkIJhXUM0tWsCPL'
         ], 'Innovator');
     }
 
