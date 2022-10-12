@@ -18,9 +18,9 @@ class Classroom {
         $unpublishedLessons = [];
 
         try {
-            $publishedCollection  =  Lesson::all()->where("status", "published")->flatten();
+            $lessons  =  Lesson::where("tutor", $user->name)->flatten();
 
-            $published = $publishedCollection->reject(fn($lesson) => $lesson->tutor !== $user->name);
+            $published = $lessons->reject(fn($lesson) => $lesson->status !== "published");
 
                 if($published){
                     $publishedLessons = $published->map(fn($lesson) => [
@@ -36,9 +36,7 @@ class Classroom {
                     ]);
                 }
 
-                $unpublishedCollection = Lesson::all()->where("status", "unpublished")->flatten();
-
-                $unpublished = $unpublishedCollection->reject(fn($lesson) => $lesson !== $user->name);
+                $unpublished = $lessons->reject(fn($lesson) => $lesson->status !== "unpublished");
 
                 if($unpublished){
                     $unpublishedLessons = $unpublished->map(fn($lesson) => [
@@ -129,9 +127,12 @@ class Classroom {
             Notification::send($student, new NotifyStudentWhenLessonCreated());
         }
 
+//        get lesson resources and convert to array
+        //$resources = explode(",", $request->resources);
+
         $lesson->views()->create();
 
-        return  ["lesson" => $lesson, "resources" =>  $request->resources];
+        return  ["lesson" => $lesson, "resources" =>  explode(",", $request->resources)];
     }
 
     public static function updateLesson($request, $lesson): \Illuminate\Http\JsonResponse

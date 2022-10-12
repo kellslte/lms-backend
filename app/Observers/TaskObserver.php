@@ -6,8 +6,6 @@ use App\Models\Task;
 
 class TaskObserver
 {
-
-
     /**
      * Handle the Task "updated" event.
      *
