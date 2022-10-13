@@ -50,6 +50,17 @@ class TaskManager{
                     "submissions" => self::totalSubmissions($task, $task->lesson->course->students)
                 ])->toArray();
 
+                $expiredTasks = $tasks->where('status', 'expired')->map(fn($task) => [
+                    "id" => $task->id,
+                    "title" => $task->title,
+                    "description" => $task->description,
+                    "task_deadline_date" => formatDate($task->task_deadline_date),
+                    "task_deadline_time" => formatTime($task->task_deadline_time),
+                    "lesson_id" => $task->lesson->id,
+                    "status" => $task->status,
+                    "submissions" => self::totalSubmissions($task, $task->lesson->course->students)
+                ])->toArray();
+
                 $gradedTasks = $tasks->where("status", "graded")->map(fn($task) => [
                     "id" => $task->id,
                     "title" => $task->title,
@@ -62,7 +73,7 @@ class TaskManager{
                 ])->toArray();
 
                 return [
-                       "pending_tasks" => [...$pendingTasks],
+                       "pending_tasks" => [...$pendingTasks, ...$expiredTasks],
                        "graded_tasks" => [...$gradedTasks],
                    ];
             }
