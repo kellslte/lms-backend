@@ -17,12 +17,12 @@ class Classroom {
         $publishedLessons = [];
         $unpublishedLessons = [];
 
-        $lessons  =  Lesson::where("tutor", $user->name)->orderBy('created_at')->get();
         try {
-        
-        $published = $lessons->reject(fn($lesson) => $lesson->status !== "published");
-        
-        if($published){
+            $lessons  =  Lesson::where("tutor", $user->name)->flatten();
+
+            $published = $lessons->reject(fn($lesson) => $lesson->status !== "published");
+
+                if($published){
                     $publishedLessons = $published->map(fn($lesson) => [
                         "id" => $lesson->id,
                         "status" => $lesson->status,
