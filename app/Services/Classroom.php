@@ -140,7 +140,7 @@ class Classroom {
 
         $lesson->views()->create();
 
-        return  ["lesson" => $lesson, "resources" =>  explode("," ,$request->resources)];
+        return  ["lesson" => $lesson, "resources" =>  json_encode($request->resources)];
     }
 
     public static function updateLesson($request, $lesson): \Illuminate\Http\JsonResponse
