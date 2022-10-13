@@ -22,9 +22,15 @@ php artisan migrate:fresh --seed
 php artisan optimize
 
 # cache events
-php artisan event:cache 
+php artisan event:cache
 
 # Exit maintenance mode
 php artisan up
+
+# Remove all the uploaded files on the server
+cd public/uploads/lessons && rm -rf ./*
+cd ../thumbnails && rm -rf ./*
+cd ../transcripts && rm -rf ./*
+cd ../../../
 
 echo "Deployment finished!"
