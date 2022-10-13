@@ -17,12 +17,12 @@ class Classroom {
         $publishedLessons = [];
         $unpublishedLessons = [];
 
+        $lessons  =  Lesson::where("tutor", $user->name)->orderBy('created_at')->get();
         try {
-            $lessons  =  Lesson::where("tutor", $user->name)->orderBy('created_at')->get();
-
-            $published = $lessons->reject(fn($lesson) => $lesson->status !== "published");
-
-                if($published){
+        
+        $published = $lessons->reject(fn($lesson) => $lesson->status !== "published");
+        
+        if($published){
                     $publishedLessons = $published->map(fn($lesson) => [
                         "id" => $lesson->id,
                         "status" => $lesson->status,
@@ -31,8 +31,8 @@ class Classroom {
                         "description" => $lesson->description,
                         "datePublished" => formatDate($lesson->created_at),
                         "tutor" => $lesson->tutor,
-                        "views" => $lesson->views->count,
-                        "taskSubmissions" => TaskManager::getSubmissions($lesson->tasks, $user->course->students)->count()
+                        "views" => 0,
+                        "taskSubmissions" => count(TaskManager::getSubmissions($lesson->tasks, $user->course->students))
                     ]);
                 }
 
@@ -47,8 +47,8 @@ class Classroom {
                         "description" => $lesson->description,
                         "datePublished" => formatDate($lesson->created_at),
                         "tutor" => $user->name,
-                        "views" => $lesson->views->count,
-                        "taskSubmissions" => TaskManager::getSubmissions($lesson->tasks, $user->course->students)->count()
+                        "views" => 0,
+                        "taskSubmissions" => count(TaskManager::getSubmissions($lesson->tasks, $user->course->students))
                     ]);
                 }
 

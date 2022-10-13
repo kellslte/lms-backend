@@ -17,8 +17,10 @@ class TaskManager{
         return collect($students)->map(function ($user) use ($tasks) {
             $submissions = collect(json_decode($user->submissions->tasks, true));
 
-            if($submissions->count() > 0){
-                return collect($tasks)->map(fn($task) => $submissions->firstWhere("id", $task->id));
+            if($submissions){
+                if($submissions->count() > 0){
+                    return collect($tasks)->map(fn($task) => $submissions->firstWhere("id", $task->id));
+                }
             }
 
             return [];
