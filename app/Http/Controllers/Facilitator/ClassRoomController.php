@@ -37,7 +37,7 @@ class ClassRoomController extends Controller
         $user = getAuthenticatedUser();
 
         try{
-            $course = Course::where("title", $request->track)->first() ?? $user->course;
+            $course = Course::where("title", $request->track)->first();
 
             $response = Classroom::save($request, $course, $user->name);
 
