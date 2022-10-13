@@ -29,10 +29,9 @@ class LessonsTableSeeder extends Seeder
             'description' => 'Introduction to Design',
             'tutor' => $course->facilitator->name
         ]);
-        
+
         $lesson->resources()->create([
-            'title' => 'Design Cheatsheet',
-            'resource' => 'https://drive.google.com/file/d/1bxQqth8Lph3RQLnFr-1DrjziupM0v_RD/view?usp=sharing'
+            'link' => 'https://drive.google.com/file/d/1bxQqth8Lph3RQLnFr-1DrjziupM0v_RD/view?usp=sharing'
         ]);
 
         $lesson->views()->create();
@@ -46,7 +45,7 @@ class LessonsTableSeeder extends Seeder
 
         $lesson->tasks()->create([
             'title' => 'And you\'re off to a start! '. $count,
-            'description' => 'Do a write up explaning what you understand from the lesson you have just had',
+            'description' => 'Do a write up explaining what you understand from the lesson you have just had',
             'task_deadline_date' => Carbon::now()->addDay(5),
             'task_deadline_time' => Carbon::now()->addHours(125),
         ]);

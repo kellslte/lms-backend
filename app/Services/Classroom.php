@@ -128,7 +128,15 @@ class Classroom {
         }
 
 //        get lesson resources and convert to array
-        //$resources = explode(",", $request->resources);
+        if ($request->has('resources')) {
+            $resources = explode(",", $request->resources);
+
+            foreach ($resources as $resource) {
+                $lesson->resources()->create([
+                    "link" => preg_replace('/\"/i', '', str_replace('"', '', $resource))
+                ]);
+            }
+        }
 
         $lesson->views()->create();
 
