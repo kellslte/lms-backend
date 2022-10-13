@@ -151,6 +151,6 @@ class TaskController extends Controller
 
     public function editSubmission(User $student, Task $task, EditTaskGradeRequest $request): \Illuminate\Http\JsonResponse
     {
-        return TaskManager::editTaskGrade($student, $task,$request);
+        return TaskManager::editTaskGrade($task, $student, $request);
     }
 }
