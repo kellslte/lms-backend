@@ -2,7 +2,7 @@
 
 namespace App\Actions;
 
-class UpdateProgress
+class DeleteMeeting
 {
     public static function handle(){}
 }

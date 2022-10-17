@@ -105,6 +105,23 @@ class TaskController extends Controller
         ], 404);
     }
 
+    public function exportSubmissions($task){
+        $user =  getAuthenticatedUSer();
+
+        $dbTask = Task::find($task);
+
+        if ($dbTask) {
+            $response = TaskManager::totalSubmissions($dbTask, $user->course->students);
+
+            //return 
+        }
+
+        return response()->json([
+            'status' => 'failed',
+            'message' => 'Task submissions could not be fetched',
+        ], 404);
+    }
+
     public function gradeTask(Request $request, Task $task, User $student){
         $request->validate([
             'grade' => 'required|numeric'

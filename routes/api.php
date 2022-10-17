@@ -243,6 +243,8 @@ Route::prefix('v1')->group(function(){
             Route::get('tasks', [FacilitatorTaskController::class, 'index']);
             // Get particular task with students that have submitted theirs
             Route::get('tasks/{task}', [FacilitatorTaskController::class, 'viewSubmissions']);
+            // Get particular task with students that have submitted theirs
+            Route::get('tasks/{task}/export', [FacilitatorTaskController::class, 'exportSubmissions']);
             // create lesson task route
             Route::post('tasks/{lesson}', [FacilitatorTaskController::class, 'store']);
             // update lesson task route

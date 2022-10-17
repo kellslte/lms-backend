@@ -2,7 +2,7 @@
 
 namespace App\Actions;
 
-class UpdateProgress
+class EditMeeting
 {
     public static function handle(){}
 }

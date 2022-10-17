@@ -2,7 +2,7 @@
 
 namespace App\Actions;
 
-class UpdateProgress
+class EditTask
 {
     public static function handle(){}
 }

@@ -6,15 +6,30 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class ProcessVideo{
-    private static function getVideoInfo($path){
+    private static function getVideoInfo($path): string
+    {
          return Storage::path($path);
     }
 
-    private static function getVideoThumbnail($path){
-        return Storage::path($path);      
+    private static function getVideoThumbnail($path): string
+    {
+        return Storage::path($path);
     }
 
-    public static function execute(Lesson $lesson){
+    private static function cleanUp($videoPath, $thumbnailPath): void
+    {
+        // delete the files on the server on successful upload
+        Storage::delete([
+            $videoPath,
+            $thumbnailPath
+        ]);
+    }
+
+    /**
+     * @throws \Exception
+     */
+    public static function execute(Lesson $lesson): void
+    {
         $videoFile = self::getVideoInfo($lesson->media->videoPath);
 
         $thumbnailFile = self::getVideoThumbnail($lesson->media->thumbnailPath);
@@ -40,6 +55,9 @@ class ProcessVideo{
                 "thumbnail" => $response["thumbnail"],
                 "youtube_video_id" => $response["youtube_video_id"],
             ]);
+
+            // delete the files from the server
+            self::cleanUp($lesson->media->videoPath, $lesson->media->thubnailPath);
         }
         catch(\Exception $e){
             throw new \Exception($e->getMessage());

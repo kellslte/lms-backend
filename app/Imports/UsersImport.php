@@ -18,6 +18,10 @@ class UsersImport implements ToModel, WithHeadingRow
     public function model(array $row)
     {
         $course = $this->getCourseDetails($row['course']);
+
+        if(!$course){
+            return null;
+        }
         
         if(!$student = User::whereEmail($row['email'])->first()){
             // create the user

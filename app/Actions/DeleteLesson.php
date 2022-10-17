@@ -2,7 +2,7 @@
 
 namespace App\Actions;
 
-class UpdateProgress
+class DeleteLesson
 {
     public static function handle(){}
 }

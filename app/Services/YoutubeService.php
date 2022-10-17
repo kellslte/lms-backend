@@ -53,10 +53,10 @@ class YoutubeService {
 
         $this->service = new YouTube($this->client);
     }
-    
+
     public function getGoogleAuth(){
         $authUrl = $this->client->createAuthUrl($this->scope);
-        
+
         return redirect($authUrl);
     }
 
@@ -164,7 +164,7 @@ class YoutubeService {
             $this->client->setDefer(false);
 
             $thumbnail = $this->uploadThumbnail($request["lessonThumbnail"], $status['id']);
-            
+
             return [
                 "videoLink" => $this->listVideos($status['id']),
                 "videoId" => $status['id'],
@@ -246,13 +246,13 @@ class YoutubeService {
             fclose($handle);
 
             $this->client->setDefer(false);
-            
+
             return $status['items'][0]['default']['url'];
         } catch (\Google_Service_Exception $e) {
             throw new \Exception($e->getMessage());
         } catch (\Google_Exception $e) {
             throw new \Exception($e->getMessage());
-        }       
+        }
     }
 
     public function createPlaylist($title){
@@ -262,7 +262,7 @@ class YoutubeService {
         $path = "id,snippet,status";
 
         $snippet = new PlaylistSnippet();
-        
+
         $snippet->setTitle($title);
         $track = strtolower($title);
         $snippet->setDescription("A collection of the videos for the {$track} track on the ADA LMS");
@@ -281,17 +281,18 @@ class YoutubeService {
             throw new \Exception($e->getMessage());
         } catch (\Google_Exception $e) {
             throw new \Exception($e->getMessage());
-        } 
+        }
     }
 
-    public function uploadVideoToPlaylist(Array $request){
+    public function uploadVideoToPlaylist(Array $request): array
+    {
         $this->refreshToken();
 
         try{
             // upload vide and get video id
             $videoDetails = $this->uploadVideo($request);
 
-            // setup params for playlist 
+            // setup params for playlist
             $course = Course::whereTitle($request["courseTitle"])->first();
             $playlistId = $course->playlistId;
 
@@ -338,12 +339,12 @@ class YoutubeService {
             $response = $this->service->analytics->list($report);
 
             return $response;
-        } 
+        }
         catch (\Google_Service_Exception $e) {
             throw new \Exception($e->getMessage());
         } catch (\Google_Exception $e) {
             throw new \Exception($e->getMessage());
         }
-        
+
     }
 }

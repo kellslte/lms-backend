@@ -1,6 +1,8 @@
 <?php
 namespace App\Services;
 
+use App\Actions\GetLessons;
+use App\Actions\UploadLessonToYouTube;
 use App\Models\Lesson;
 use App\Models\User;
 use App\Models\Facilitator;
@@ -22,40 +24,9 @@ class Classroom {
 
             $published = $lessons->reject(fn($lesson) => $lesson->status !== "published");
 
-                if($published){
-                    $publishedLessons = $published->map(fn($lesson) => [
-                        "id" => $lesson->id,
-                        "status" => $lesson->status,
-                        "thumbnail" => $lesson->media->thumbnail ?? null,
-                        "title" => $lesson->title,
-                        "description" => $lesson->description,
-                        "datePublished" => formatDate($lesson->created_at),
-                        "tutor" => $lesson->tutor,
-                        "views" => 0,
-                        "taskSubmissions" => count(TaskManager::getSubmissions($lesson->tasks, $user->course->students))
-                    ]);
-                }
+            $unpublished = $lessons->reject(fn($lesson) => $lesson->status !== "unpublished");
 
-                $unpublished = $lessons->reject(fn($lesson) => $lesson->status !== "unpublished");
-
-                if($unpublished){
-                    $unpublishedLessons = $unpublished->map(fn($lesson) => [
-                        "id" => $lesson->id,
-                        "status" => $lesson->status,
-                        "thumbnail" => $lesson->media->thumbnail ?? null,
-                        "title" => $lesson->title,
-                        "description" => $lesson->description,
-                        "datePublished" => formatDate($lesson->created_at),
-                        "tutor" => $user->name,
-                        "views" => 0,
-                        "taskSubmissions" => count(TaskManager::getSubmissions($lesson->tasks, $user->course->students))
-                    ]);
-                }
-
-                return [
-                    "published_lessons" => [...$publishedLessons],
-                    "unpublished_lessons" => [...$unpublishedLessons],
-                ];
+            return GetLessons::handle($published, $unpublished);
         } catch (\Throwable $th) {
             return [
                 "published_lessons" => [],
@@ -67,21 +38,22 @@ class Classroom {
 
     public static function save($request, $course, string $tutor): array
     {
-        // upload file to server
-        $video = $request->file('lessonVideo')->store("/lessons", "public");
-        $videoUrl = asset("/uploads/{$video}");
-
-        $transcriptUrl = "";
-
-        // upload transcript to server
-        if($request->file("lessonTranscript")){
-            $transcript = $request->file('lessonTranscript')->store("/transcripts", "public");
-            $transcriptUrl = asset("/uploads/{$transcript}");
-        }
-
-        // upload lesson thumbnail to server
-        $thumbnail = $request->file('lessonThumbnail')->store("/thumbnails", "public");
-        $thumbnailUrl = asset("/uploads/{$thumbnail}");
+//        // upload file to server
+//        $video = $request->file('lessonVideo')->store("/lessons", "public");
+//        $videoUrl = asset("/uploads/{$video}");
+//
+//        $transcriptUrl = "";
+//
+//        // upload transcript to server
+//        if($request->file("lessonTranscript")){
+//            $transcript = $request->file('lessonTranscript')->store("/transcripts", "public");
+//            $transcriptUrl = asset("/uploads/{$transcript}");
+//        }
+//
+//        // upload lesson thumbnail to server
+//        $thumbnail = $request->file('lessonThumbnail')->store("/thumbnails", "public");
+//        $thumbnailUrl = asset("/uploads/{$thumbnail}");
+        $response = UploadLessonToYouTube::handle($request);
 
         $lesson = $course->lessons()->create([
             "title" => $request->title,

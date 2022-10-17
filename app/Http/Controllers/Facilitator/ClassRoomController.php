@@ -37,15 +37,7 @@ class ClassRoomController extends Controller
         $user = getAuthenticatedUser();
 
         try{
-
-            if($request->has('track')){
-                $course = Course::where("title", $request->track)->first();
-                if($course){
-                   $response = Classroom::save($request, $course, $user->name);
-                }
-            }else {
-                $response = Classroom::save($request, $user->course, $user->name);
-            }
+            $response = Classroom::save($request, $request->track, $user->name);
 
             return response()->json([
                 "status" => "success",
