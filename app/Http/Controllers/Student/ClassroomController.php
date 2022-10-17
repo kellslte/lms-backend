@@ -34,12 +34,10 @@ class ClassroomController extends Controller
             ], 404);
         }
 
-        $resource = new LessonResource($lesson);
-        
         return response()->json([
             'status' => 'success',
             'data' => [
-                "lesson" => $resource,
+                "lesson" => new LessonResource($lesson),
             ]
         ], 200);
     }
@@ -58,7 +56,7 @@ class ClassroomController extends Controller
 
         $record = AttendanceService::mark($user);
 
-        // return response 
+        // return response
         return ($record) ? response()->json([
             "status" => "success",
             "message" => "attendance record has been marked successfully",

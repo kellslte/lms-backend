@@ -25,8 +25,9 @@ class LessonResource extends JsonResource
             "video_link" => $this->media->video_link,
             "thumbnail" => $this->media->thumbnail,
             "transcript" => null,
-            "task" => $this->task,
-            "resources" => $this->resources,
+            "resources" => $this->resources->map(fn($resource) => [
+                "link" => $resource->link
+            ]),
             "percentage" => $lessonPercentage["percentage"]
         ];
     }
