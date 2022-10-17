@@ -79,21 +79,21 @@ class YoutubeService {
 
             $tokens = collect($this->client->refreshToken($refreshToken->token));
 
-            $token = $this->storeTokens($tokens);
+            return $this->storeTokens($tokens);
         }
-
-        return $token;
     }
 
     private function storeTokens($tokens){
 
         $collection = json_decode(collect($tokens)->toJson(), true);
 
-        // TODO store access token in cache
+        dd($collection);
+
+        // store access token in cache
         Cache::put("access_token", $collection["access_token"], 1800);
 
         // check if token exists in database
-        if(!$token = GoogleToken::where("token", $collection['refresh_token'])->first()){
+        if(!GoogleToken::where("token", $collection['refresh_token'])->first()){
             GoogleToken::create([
                 "token" => $collection['refresh_token'],
             ]);
