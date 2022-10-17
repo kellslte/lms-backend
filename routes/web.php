@@ -32,37 +32,24 @@ Route::middleware('guest')->get('auth/magiclink/{token}', fn($token) => response
 ]))->name('magic-login');
 
 Route::get('auth', function(){
-    $client = new YoutubeService();
-
-    return $client->getGoogleAuth();
+    return app(YoutubeService::class)->getGoogleAuth();
 });
 
 Route::get('redirect', function(Request $request){
-    $client = new YoutubeService();
-
-    return $client->authenticateUser($request);
+    return app(YoutubeService::class)->authenticateUser($request);
 });
 
-Route::get('playlist', function(Request $request){
-    $playlistId = Http::post("localhost:8000/api/playlist", [
-        "title" => "Product Design"
-    ]);
-
-    dd($playlistId);
-});
 
 Route::get('students', function(){
     $students = User::all();
 
     $students->load("course");
 
-    $response = collect($students)->map(function($student){
-        return [
-            "course" => $student->course->title,
-            "studentId" => $student->id,
-            "studentName" => $student->name
-        ];
-    })->groupBy("course");
+    $response = $students->map(fn($student) => [
+        "course" => $student->course->title,
+        "studentId" => $student->id,
+        "studentName" => $student->name
+    ])->groupBy("course");
 
     return response()->json([
         "status" => "successful",
