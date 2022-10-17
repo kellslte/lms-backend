@@ -102,10 +102,6 @@ class YoutubeService {
         return Cache::get("access_token");
     }
 
-    public function listYoutubeChannels(){
-        $token = $this->refreshToken();
-    }
-
     private function listVideos(String $id){
         $token = $this->refreshToken();
 

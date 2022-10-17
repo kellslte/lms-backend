@@ -2,6 +2,7 @@
 
 namespace App\Actions;
 
+use App\Services\TaskManager;
 use Illuminate\Support\Collection;
 
 class GetLessons
@@ -17,7 +18,10 @@ class GetLessons
                         "datePublished" => formatDate($lesson->created_at),
                         "tutor" => $lesson->tutor,
                         "views" => 0,
-                        "taskSubmissions" => count(TaskManager::getSubmissions($lesson->tasks, $user->course->students))
+                        "taskSubmissions" => count(TaskManager::getSubmissions($lesson->tasks, $user->course->students)),
+                        "resources" => $lesson->resources->map(fn($resource) => [
+                            "link" => $resource->link
+                        ])
                     ]);
 
                 $unpublishedLessons = $unpublished->map(fn($lesson) => [
@@ -29,7 +33,10 @@ class GetLessons
                         "datePublished" => formatDate($lesson->created_at),
                         "tutor" => $user->name,
                         "views" => 0,
-                        "taskSubmissions" => count(TaskManager::getSubmissions($lesson->tasks, $user->course->students))
+                        "taskSubmissions" => count(TaskManager::getSubmissions($lesson->tasks, $user->course->students)),
+                        "resources" => $lesson->resources->map(fn($resource) => [
+                            "link" => $resource->link
+                        ])
                 ]);
 
 

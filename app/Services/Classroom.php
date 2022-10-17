@@ -39,21 +39,21 @@ class Classroom {
     public static function save($request, $course, string $tutor): array
     {
 //        // upload file to server
-//        $video = $request->file('lessonVideo')->store("/lessons", "public");
-//        $videoUrl = asset("/uploads/{$video}");
-//
-//        $transcriptUrl = "";
-//
-//        // upload transcript to server
-//        if($request->file("lessonTranscript")){
-//            $transcript = $request->file('lessonTranscript')->store("/transcripts", "public");
-//            $transcriptUrl = asset("/uploads/{$transcript}");
-//        }
-//
-//        // upload lesson thumbnail to server
-//        $thumbnail = $request->file('lessonThumbnail')->store("/thumbnails", "public");
-//        $thumbnailUrl = asset("/uploads/{$thumbnail}");
-        $response = UploadLessonToYouTube::handle($request);
+        $video = $request->file('lessonVideo')->store("/lessons", "public");
+        $videoUrl = asset("/uploads/{$video}");
+
+        $transcriptUrl = "";
+
+        // upload transcript to server
+        if($request->file("lessonTranscript")){
+            $transcript = $request->file('lessonTranscript')->store("/transcripts", "public");
+            $transcriptUrl = asset("/uploads/{$transcript}");
+        }
+
+        // upload lesson thumbnail to server
+        $thumbnail = $request->file('lessonThumbnail')->store("/thumbnails", "public");
+        $thumbnailUrl = asset("/uploads/{$thumbnail}");
+//        $response = UploadLessonToYouTube::handle($request);
 
         $lesson = $course->lessons()->create([
             "title" => $request->title,
