@@ -62,12 +62,12 @@ class Classroom {
         ]);
 
         $lesson->media()->create([
-            "video_link" => $videoUrl,
-            "videoPath" => $video,
-            "thumbnail" => $thumbnailUrl,
-            "thumbnailPath" => $thumbnail,
-            "transcript" => $transcriptUrl,
-            "youtube_video_id" => ""
+            "video_link" => $response["videoLink"],
+            "videoPath" => "",
+            "thumbnail" => $response["thumbnail"],
+            "thumbnailPath" => "",
+            "transcript" => "",
+            "youtube_video_id" => $response["youtube_video_id"]
         ]);
 
         foreach ($course->students as $student) {
