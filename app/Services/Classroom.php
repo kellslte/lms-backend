@@ -22,7 +22,7 @@ class Classroom {
 
             $unpublished = $lessons->reject(fn($lesson) => $lesson->status !== "unpublished");
 
-            return GetLessons::handle($published, $unpublished);
+            return GetLessons::handle($published, $unpublished, $user);
         } catch (\Throwable $th) {
             return [
                 "published_lessons" => [],
