@@ -16,7 +16,7 @@ class Classroom {
         $unpublishedLessons = [];
 
         try {
-            $lessons  =  Lesson::firstWhere("tutor", $user->name);
+            $lessons  =  Lesson::firstWhere("tutor", $user->name)->get();
 
             $published = $lessons->reject(fn($lesson) => $lesson->status !== "published");
 
