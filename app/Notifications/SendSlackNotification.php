@@ -33,6 +33,7 @@ class SendSlackNotification extends Notification
     public function toSlack(): SlackMessage
     {
         return (new SlackMessage)
+                ->success()
                 ->content($this->content);
     }
 }

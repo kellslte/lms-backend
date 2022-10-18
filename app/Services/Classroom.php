@@ -2,15 +2,10 @@
 namespace App\Services;
 
 use App\Actions\GetLessons;
-use App\Actions\UploadLessonToYouTube;
+use App\Actions\UploadLesson;
+use App\Models\Course;
 use App\Models\Lesson;
-use App\Models\User;
 use App\Models\Facilitator;
-use Illuminate\Support\Str;
-use App\Events\LessonCreated;
-use App\Services\StudentService;
-use Illuminate\Support\Facades\Notification;
-use App\Notifications\NotifyStudentWhenLessonCreated;
 
 
 class Classroom {
@@ -20,13 +15,13 @@ class Classroom {
         $unpublishedLessons = [];
 
         try {
-            $lessons  =  Lesson::where("tutor", $user->name)->flatten();
+            $lessons  =  Lesson::firstWhere("tutor", $user->name)->get();
 
             $published = $lessons->reject(fn($lesson) => $lesson->status !== "published");
 
             $unpublished = $lessons->reject(fn($lesson) => $lesson->status !== "unpublished");
 
-            return GetLessons::handle($published, $unpublished);
+            return GetLessons::handle($published, $unpublished, $user);
         } catch (\Throwable $th) {
             return [
                 "published_lessons" => [],
@@ -36,25 +31,12 @@ class Classroom {
         }
     }
 
-    public static function save($request, $course, string $tutor): array
+    public static function save($request, Course $course, string $tutor): array
     {
-//        // upload file to server
-        $video = $request->file('lessonVideo')->store("/lessons", "public");
-        $videoUrl = asset("/uploads/{$video}");
+        // upload lesson media
+        $response = UploadLesson::handle($request);
 
-        $transcriptUrl = "";
-
-        // upload transcript to server
-        if($request->file("lessonTranscript")){
-            $transcript = $request->file('lessonTranscript')->store("/transcripts", "public");
-            $transcriptUrl = asset("/uploads/{$transcript}");
-        }
-
-        // upload lesson thumbnail to server
-        $thumbnail = $request->file('lessonThumbnail')->store("/thumbnails", "public");
-        $thumbnailUrl = asset("/uploads/{$thumbnail}");
-//        $response = UploadLessonToYouTube::handle($request);
-
+        // create lesson record in database
         $lesson = $course->lessons()->create([
             "title" => $request->title,
             "description" => $request->description,
@@ -62,11 +44,11 @@ class Classroom {
         ]);
 
         $lesson->media()->create([
-            "video_link" => $videoUrl,
-            "videoPath" => $video,
-            "thumbnail" => $thumbnailUrl,
-            "thumbnailPath" => $thumbnail,
-            "transcript" => $transcriptUrl,
+            "video_link" => $response["video_url"],
+            "videoPath" => "",
+            "thumbnail" => $response["thumbnail_url"],
+            "thumbnailPath" => "",
+            "transcript" => $response['transcript_url'],
             "youtube_video_id" => ""
         ]);
 
@@ -94,9 +76,6 @@ class Classroom {
             ]]);
 
             $curriculum->save();
-
-            // Send notification to students
-            Notification::send($student, new NotifyStudentWhenLessonCreated());
         }
 
 //        get lesson resources and convert to array
@@ -112,7 +91,7 @@ class Classroom {
 
         $lesson->views()->create();
 
-        return  ["lesson" => $lesson, "resources" =>  json_encode($request->resources)];
+        return  ["lesson" => $lesson];
     }
 
     public static function updateLesson($request, $lesson): \Illuminate\Http\JsonResponse

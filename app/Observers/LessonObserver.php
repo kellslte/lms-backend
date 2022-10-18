@@ -2,8 +2,7 @@
 
 namespace App\Observers;
 
-use UpdateProgress;
-use UpdateCurriculum;
+use App\Actions\Notifier;
 use App\Models\Lesson;
 
 class LessonObserver
@@ -12,20 +11,14 @@ class LessonObserver
 
     /**
      * Handle the Lesson "updated" event.
-     * 
+     *
      * @param  \App\Models\Lesson $lesson
      * @return void
     */
-    public function create(Lesson $lesson){
-        $students = $lesson->course->students;
-
-        foreach($students as $student){
-            // UpdateCurriculum::execute($student, $lesson);
-            // UpdateProgress::execute($student, $lesson);
-        }
+    public function created(Lesson $lesson): void
+    {
+        Notifier::notify($lesson->course->title, "A new lesson has been uploaded. Go to your dashboard to check it out!");
     }
-
-
 
     /**
      * Handle the Lesson "retrieved" event.
@@ -36,30 +29,5 @@ class LessonObserver
     public function retrieved(Lesson $lesson)
     {
         $students = $lesson->course->students;
-
-        // foreach ($students as $student) {
-        //     // pull student progress information
-        //     $student->load('progress');
-
-        //     if(!$student->progress){
-        //         $student->progress()->create([
-        //             "course" => $lesson->course->title,
-        //             "course_progress" => json_encode([])
-        //         ]);
-        //     }
-            
-        //     $progress = collect(json_decode($student->progress->course_progress, true));
-
-        //     $lessonProgress = $progress->where("lesson_id", $lesson->id)->first();
-
-        //     if($lessonProgress){
-        //         if($lessonProgress["percentage"] === 100){
-        //             $count = $lesson->views->count + 1;
-        //             $lesson->views->update([
-        //                 "count" => $count,
-        //             ]); 
-        //         }
-        //     }
-        // }
     }
 }

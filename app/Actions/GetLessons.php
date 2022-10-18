@@ -2,12 +2,14 @@
 
 namespace App\Actions;
 
+
+use App\Models\Facilitator;
 use App\Services\TaskManager;
 use Illuminate\Support\Collection;
 
 class GetLessons
 {
-    public static function handle(Collection $published, Collection $unpublished): array
+    public static function handle(Collection $published, Collection $unpublished, Facilitator $user): array
     {
                 $publishedLessons = $published->map(fn($lesson) => [
                         "id" => $lesson->id,
