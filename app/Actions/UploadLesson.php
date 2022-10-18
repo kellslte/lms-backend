@@ -10,8 +10,7 @@ class UploadLesson
     public static function handle(Request $request): array
     {
         // upload file to server
-        $video = $request->file('lessonVideo')->store("/lessons", "public");
-        $videoUrl = asset("/uploads/{$video}");
+        $video = cloudinary()->upload($request->file('lessonVideo')->getRealPath())->getSecurePath();
 
         $transcriptUrl = "";
 
@@ -26,8 +25,8 @@ class UploadLesson
         $thumbnailUrl = asset("/uploads/{$thumbnail}");
 
         return [
-            'video_path' => Storage::path($video),
-            'video_url' => $videoUrl,
+            'video_path' => "",
+            'video_url' => $video,
             'transcript' => $transcript ?? Storage::path($transcript),
             'transcript_url' => $transcriptUrl,
             'thumbnail_path' => $thumbnail,

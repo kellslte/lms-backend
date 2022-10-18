@@ -2,6 +2,7 @@
 namespace App\Services;
 
 use App\Actions\GetLessons;
+use App\Actions\UploadLesson;
 use App\Actions\UploadLessonToYouTube;
 use App\Models\Lesson;
 use App\Models\User;
@@ -38,22 +39,7 @@ class Classroom {
 
     public static function save($request, $course, string $tutor): array
     {
-//        // upload file to server
-//        $video = $request->file('lessonVideo')->store("/lessons", "public");
-//        $videoUrl = asset("/uploads/{$video}");
-//
-//        $transcriptUrl = "";
-//
-//        // upload transcript to server
-//        if($request->file("lessonTranscript")){
-//            $transcript = $request->file('lessonTranscript')->store("/transcripts", "public");
-//            $transcriptUrl = asset("/uploads/{$transcript}");
-//        }
-//
-//        // upload lesson thumbnail to server
-//        $thumbnail = $request->file('lessonThumbnail')->store("/thumbnails", "public");
-//        $thumbnailUrl = asset("/uploads/{$thumbnail}");
-        $response = UploadLessonToYouTube::handle($request);
+        $response = UploadLesson::handle($request);
 
         $lesson = $course->lessons()->create([
             "title" => $request->title,
@@ -62,12 +48,12 @@ class Classroom {
         ]);
 
         $lesson->media()->create([
-            "video_link" => $response["videoLink"],
+            "video_link" => $response["video_url"],
             "videoPath" => "",
             "thumbnail" => $response["thumbnail"],
             "thumbnailPath" => "",
-            "transcript" => "",
-            "youtube_video_id" => $response["youtube_video_id"]
+            "transcript" => $response['transcript_url'],
+            "youtube_video_id" => ""
         ]);
 
         foreach ($course->students as $student) {
@@ -94,9 +80,6 @@ class Classroom {
             ]]);
 
             $curriculum->save();
-
-            // Send notification to students
-            Notification::send($student, new NotifyStudentWhenLessonCreated());
         }
 
 //        get lesson resources and convert to array
@@ -112,7 +95,7 @@ class Classroom {
 
         $lesson->views()->create();
 
-        return  ["lesson" => $lesson, "resources" =>  json_encode($request->resources)];
+        return  ["lesson" => $lesson];
     }
 
     public static function updateLesson($request, $lesson): \Illuminate\Http\JsonResponse
