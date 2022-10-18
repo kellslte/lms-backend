@@ -92,8 +92,6 @@ class Classroom {
 
         $lesson->views()->create();
 
-        SlackAlert::message("A new lesson has been uploaded in the {$lesson->course->title} track!");
-
         return  ["lesson" => $lesson];
     }
 

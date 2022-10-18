@@ -2,9 +2,7 @@
 
 namespace App\Observers;
 
-use Spatie\SlackAlerts\Facades\SlackAlert;
-use UpdateProgress;
-use UpdateCurriculum;
+use App\Actions\Notifier;
 use App\Models\Lesson;
 
 class LessonObserver
@@ -19,7 +17,7 @@ class LessonObserver
     */
     public function created(Lesson $lesson): void
     {
-        //SlackAlert::message("A new lesson has been uploaded in the {$lesson->course->title} track!");
+        Notifier::notify($lesson->course->title, "A new lesson has been uploaded. Go to your dashboard to check it out!");
     }
 
     /**
