@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Actions\GetLessons;
 use App\Actions\UploadLesson;
 use App\Actions\UploadLessonToYouTube;
+use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\User;
 use App\Models\Facilitator;
@@ -12,6 +13,7 @@ use App\Events\LessonCreated;
 use App\Services\StudentService;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\NotifyStudentWhenLessonCreated;
+use Spatie\SlackAlerts\Facades\SlackAlert;
 
 
 class Classroom {
@@ -37,10 +39,12 @@ class Classroom {
         }
     }
 
-    public static function save($request, $course, string $tutor): array
+    public static function save($request, Course $course, string $tutor): array
     {
+        // upload lesson media
         $response = UploadLesson::handle($request);
 
+        // create lesson record in database
         $lesson = $course->lessons()->create([
             "title" => $request->title,
             "description" => $request->description,
@@ -50,7 +54,7 @@ class Classroom {
         $lesson->media()->create([
             "video_link" => $response["video_url"],
             "videoPath" => "",
-            "thumbnail" => $response["thumbnail"],
+            "thumbnail" => $response["thumbnail_url"],
             "thumbnailPath" => "",
             "transcript" => $response['transcript_url'],
             "youtube_video_id" => ""
@@ -94,6 +98,8 @@ class Classroom {
         }
 
         $lesson->views()->create();
+
+        SlackAlert::message("A new lesson has been uploaded in the {$lesson->course->title} track!");
 
         return  ["lesson" => $lesson];
     }

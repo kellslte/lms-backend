@@ -36,18 +36,19 @@ class ClassRoomController extends Controller
     {
         $user = getAuthenticatedUser();
 
-        try{
-            $response = Classroom::save($request, $request->track, $user->name);
+            $course = Course::whereTitle($request->track)->first();
+
+            $response = Classroom::save($request, $course, $user->name);
 
             return response()->json([
                 "status" => "success",
                 "data" => [
                     'lesson' => $response["lesson"],
                     'thumbnail' => $response["lesson"]->media->thumbnail,
-                    'video_link' => $response["lesson"]->media->video_link,
-                    'resources' => $response["resources"],
+                    'video_link' => $response["lesson"]->media->video_link
                 ]
             ], 200);
+            try{
         }
         catch(\Exception $e){
             return response()->json([

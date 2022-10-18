@@ -19,7 +19,7 @@ class LessonObserver
     */
     public function created(Lesson $lesson): void
     {
-        SlackAlert::message("A new lesson has been uploaded in the {$lesson->course->title} track!");
+        //SlackAlert::message("A new lesson has been uploaded in the {$lesson->course->title} track!");
     }
 
     /**
