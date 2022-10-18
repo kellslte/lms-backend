@@ -3,9 +3,21 @@
 namespace App\Observers;
 
 use App\Models\Task;
+use App\Actions\Notifier;
 
 class TaskObserver
 {
+    /**
+     * Handle the Task "created" event.
+     *
+     * @param  \App\Models\Task  $task
+     * @return void
+     */
+    public function created(Task $task)
+    {
+        Notifier::notify($task->lesson->course->title, 'A new task has been created. Go to your dashboard to check it out!');
+    }
+
     /**
      * Handle the Task "updated" event.
      *
