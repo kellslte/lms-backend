@@ -2,6 +2,8 @@
 
 namespace App\Observers;
 
+use App\Actions\Notifier;
+use App\Models\Course;
 use App\Models\Meeting;
 
 class MeetingObserver
@@ -16,7 +18,11 @@ class MeetingObserver
      */
     public function created(Meeting $meeting)
     {
-        //
+        $tutor = $meeting->host;
+
+        $courseTitle = Course::whereTutor($tutor)->first()->title;
+
+        Notifier::notify($courseTitle, "A live meeting has been scheduled, go to your dashboard and check it out!");
     }
 
     /**
