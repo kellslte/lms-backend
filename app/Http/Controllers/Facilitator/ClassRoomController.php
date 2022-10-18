@@ -36,6 +36,7 @@ class ClassRoomController extends Controller
     {
         $user = getAuthenticatedUser();
 
+        try{
             $course = Course::whereTitle($request->track)->first();
 
             $response = Classroom::save($request, $course, $user->name);
@@ -48,7 +49,6 @@ class ClassRoomController extends Controller
                     'video_link' => $response["lesson"]->media->video_link
                 ]
             ], 200);
-            try{
         }
         catch(\Exception $e){
             return response()->json([

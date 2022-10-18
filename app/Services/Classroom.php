@@ -3,16 +3,9 @@ namespace App\Services;
 
 use App\Actions\GetLessons;
 use App\Actions\UploadLesson;
-use App\Actions\UploadLessonToYouTube;
 use App\Models\Course;
 use App\Models\Lesson;
-use App\Models\User;
 use App\Models\Facilitator;
-use Illuminate\Support\Str;
-use App\Events\LessonCreated;
-use App\Services\StudentService;
-use Illuminate\Support\Facades\Notification;
-use App\Notifications\NotifyStudentWhenLessonCreated;
 use Spatie\SlackAlerts\Facades\SlackAlert;
 
 
@@ -23,7 +16,7 @@ class Classroom {
         $unpublishedLessons = [];
 
         try {
-            $lessons  =  Lesson::where("tutor", $user->name)->flatten();
+            $lessons  =  Lesson::firstWhere("tutor", $user->name);
 
             $published = $lessons->reject(fn($lesson) => $lesson->status !== "published");
 
