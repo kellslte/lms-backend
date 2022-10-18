@@ -2,21 +2,25 @@
 
 namespace App\Providers;
 
+use App\Models\Sotu;
+use App\Models\Task;
 use App\Models\Point;
 use App\Models\Lesson;
-use App\Models\Sotu;
+use App\Models\Meeting;
 use App\Models\Timeline;
 use App\Events\ClassFixed;
 use App\Events\LessonCreated;
 use App\Events\SendMagicLink;
 use App\Events\TaskSubmitted;
 use App\Events\SendSlackInvite;
+use App\Observers\SotuObserver;
+use App\Observers\TaskObserver;
 use App\Events\CreateCurriculum;
 use App\Observers\PointObserver;
 use App\Listeners\LiveClassFixed;
 use App\Observers\LessonObserver;
 use App\Events\LeaderboardUpdated;
-use App\Observers\SotuObserver;
+use App\Observers\MeetingObserver;
 use App\Observers\TimelineObserver;
 use App\Listeners\SendSlackInviteMail;
 use Illuminate\Auth\Events\Registered;
@@ -24,11 +28,11 @@ use App\Listeners\LessonProgressUpdate;
 use App\Listeners\UpdateStudentSchedule;
 use App\Listeners\CreateCurriculumRecord;
 use App\Listeners\SendMagicLinkToStudents;
+use App\Listeners\UpdateStudentCurriculum;
 use App\Listeners\UpdateFacilitatorSchedule;
 use App\Listeners\NotifyStudentsAboutTaskGrade;
 use App\Listeners\NotifyStudentsOfLessonCreation;
 use App\Listeners\NotifyFacilitatorAboutSubmission;
-use App\Listeners\UpdateStudentCurriculum;
 use App\Notifications\NotifyStudentsOnTaskCreation;
 use App\Listeners\UpdateStudentsOnLeaderboardUpdate;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -89,6 +93,8 @@ class EventServiceProvider extends ServiceProvider
         Lesson::observe(LessonObserver::class);
         Timeline::observe(TimelineObserver::class);
         Sotu::observe(SotuObserver::class);
+        Meeting::observe(MeetingObserver::class);
+        Task::observe(TaskObserver::class);
     }
 
     /**

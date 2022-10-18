@@ -7,6 +7,8 @@ use App\Actions\Notifier;
 
 class TaskObserver
 {
+    public $afterCommit = true;
+
     /**
      * Handle the Task "created" event.
      *
