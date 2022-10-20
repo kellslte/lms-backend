@@ -21,11 +21,11 @@ class LessonObserver
 
         foreach ($lesson->course->students as $student) {
             // update progress
-            $progress = $student->progress;
+            $student->load("progress");
 
-            $courseProgress = json_decode($progress->course_progress, true);
+            $courseProgress = json_decode($student->progress->course_progress, true);
 
-            $progress->update([
+            $student->progress->update([
                 "course_progress" => json_encode([...$courseProgress, [
                     "lesson_id" => $lesson->id,
                     "percentage" => 0
@@ -33,11 +33,11 @@ class LessonObserver
             ]);
 
             // update curriculum
-            $curriculum = $student->curriculum;
+            $student->load("curriculum");
 
-            $courseCurriculum = json_decode($curriculum->viewables, true);
+            $courseCurriculum = json_decode($student->curriculum->viewables, true);
 
-            $curriculum->update([
+            $student->curriculum->update([
                 "viewables" => json_encode([...$courseCurriculum, [
                 "lesson_id" => $lesson->id,
                 "lesson_status" => "uncompleted"
