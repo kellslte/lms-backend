@@ -75,33 +75,17 @@ class TestUserTableSeeder extends Seeder
             "meetings" => json_encode([]),
         ]);
 
-        $lessons = [];
-        $progress = [];
-
         $student->submissions()->create([
             "tasks" => json_encode([]),
         ]);
 
-        foreach ($course->lessons as $lesson) {
-            $lessons[] = [
-                "lesson_id" => $lesson->id,
-                "lesson_status" => "uncompleted",
-            ];
-
-            $progress[] = [
-                "lesson_id" => $lesson->id,
-                "percentage" => 0
-            ];
-        }
-
         $student->progress()->create([
             "course" => $course->title,
-            "course_progress" => json_encode($progress),
+            "course_progress" => json_encode([]),
         ]);
 
-
         $student->curriculum()->create([
-            "viewables" => json_encode($lessons),
+            "viewables" => json_encode([]),
         ]);
 
         $record = getDaysInMonth(7);
