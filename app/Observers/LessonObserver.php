@@ -24,61 +24,35 @@ class LessonObserver
 
         $students->load(["curriculum", "progress"]);
 
-        $newcount = $students->each(function($item) use ($count){
-            $curriculum =  $item->curriculum;
-            $progress = $item->progress;
+        foreach($students as $student) {
+            // update progress
+            $student->load("progress");
 
-            // perform curriculum update
-            $currentCurriculum = json_decode($curriculum->viewable, true);
-            $newCurriculum = [...$currentCurriculum, ["lesson_id" => $item->id,
-                "lesson_status" => "uncompleted"
-                ]];
-            $curriculum->update([
-                "viewables" => json_encode($newCurriculum)
-            ]);
+            $courseProgress = json_decode($student->progress->course_progress, true);
 
-            // perform progress update
-            $currentProgress = json_decode($progress->course_progress, true);
-            $newProgress = [...$currentProgress, [
-                    "lesson_id" => $item->id,
+            $student->progress->update([
+                "course_progress" => json_encode([...$courseProgress, [
+                    "lesson_id" => $lesson->id,
                     "percentage" => 0
-                ]];
-            $progress->update([
-                "course_progress" => json_encode($newProgress)
+                ]])
             ]);
 
-            return $count++;
-        });
+            // update curriculum
+            $student->load("curriculum");
 
-//        foreach($students as $student) {
-//            // update progress
-//            $student->load("progress");
-//
-//            $courseProgress = json_decode($student->progress->course_progress, true);
-//
-//            $student->progress->update([
-//                "course_progress" => json_encode([...$courseProgress, [
-//                    "lesson_id" => $lesson->id,
-//                    "percentage" => 0
-//                ]])
-//            ]);
-//
-//            // update curriculum
-//            $student->load("curriculum");
-//
-//            $courseCurriculum = json_decode($student->curriculum->viewables, true);
-//
-//            $student->curriculum->update([
-//                "viewables" => json_encode([...$courseCurriculum, [
-//                "lesson_id" => $lesson->id,
-//                "lesson_status" => "uncompleted"
-//                ]])
-//            ]);
-//
-//            $count++;
-//        }
+            $courseCurriculum = json_decode($student->curriculum->viewables, true);
 
-        Notifier::dm("personal", "A new lesson has been uploaded successfully to the {$lesson->course->title} track and {$newcount} students' progress and curriculum has been updated");
+            $student->curriculum->update([
+                "viewables" => json_encode([...$courseCurriculum, [
+                "lesson_id" => $lesson->id,
+                "lesson_status" => "uncompleted"
+                ]])
+            ]);
+
+            $count++;
+        }
+
+        Notifier::dm("personal", "A new lesson has been uploaded successfully to the {$lesson->course->title} track and {$count} students' progress and curriculum has been updated");
 
         Notifier::notify($lesson->course->title, "A new lesson has been uploaded. Go to your dashboard to check it out!");
     }
