@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Actions\Notifier;
 use App\Models\Sotu;
 use App\Models\User;
 use App\Notifications\SotuCreatedNotification;
@@ -20,7 +21,7 @@ class SotuObserver
      */
     public function created(Sotu $sotu): void
     {
-        Notification::send(User::all(), new SotuCreatedNotification($sotu));
+        Notifier::notify("", "SOTU has been fixed! Go to your dashboard to join thr meeting");
     }
 
     /**

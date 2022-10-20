@@ -18,6 +18,8 @@ class TaskObserver
     public function created(Task $task)
     {
         Notifier::notify($task->lesson->course->title, 'A new task has been created. Go to your dashboard to check it out!');
+
+        Notifier::dm("personal", "A task has been created for {$task->lesson->course->title} students.");
     }
 
     /**

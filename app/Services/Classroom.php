@@ -52,32 +52,6 @@ class Classroom {
             "youtube_video_id" => ""
         ]);
 
-        foreach ($course->students as $student) {
-            // update progress
-            $progress = $student->progress;
-
-            $courseProgress = json_decode($progress->course_progress, true);
-
-            $progress->course_progress = json_encode([...$courseProgress, [
-                "lesson_id" => $lesson->id,
-                "percentage" => 0
-            ]]);
-
-            $progress->save();
-
-            // update curriculum
-            $curriculum = $student->curriculum;
-
-            $courseCurriculum = json_decode($curriculum->viewables, true);
-
-            $curriculum->viewables = json_encode([...$courseCurriculum, [
-                "lesson_id" => $lesson->id,
-                "lesson_status" => "uncompleted"
-            ]]);
-
-            $curriculum->save();
-        }
-
 //        get lesson resources and convert to array
         if ($request->has('resources')) {
             $resources = explode(",", $request->resources);

@@ -9,7 +9,8 @@ return [
         'web-backend' => env('SLACK_BACKEND_ALERT_WEBHOOK'),
         'web-frontend' => env('SLACK_FRONTEND_ALERT_WEBHOOK'),
         'product-mgt' => env('SLACK_PRODUCT_MANAGEMENT_ALERT_WEBHOOK'),
-        'tooling-docs-technical-writing' => env('SLACK_GENERAL_ALERT_WEBHOOK')
+        'tooling-docs-technical-writing' => env('SLACK_GENERAL_ALERT_WEBHOOK'),
+        'personal' => env('MY_SLACK_DM_WEBHOOK'),
     ],
 
     /*

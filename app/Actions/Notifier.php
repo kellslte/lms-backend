@@ -39,4 +39,8 @@ class Notifier {
             break;
         }
     }
+
+    public static function dm(String $webhook, String $message){
+        SlackAlert::to($webhook)->message($message);
+    }
 }
