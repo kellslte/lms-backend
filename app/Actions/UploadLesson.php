@@ -11,7 +11,7 @@ class UploadLesson
     public static function handle(Request $request): array
     {
         // upload file to server
-        $videoPath = Storage::disk('local')->put("uploads", $request->file('lessonVideo')); 
+        $videoPath = Storage::disk('local')->put("uploads", $request->file('lessonVideo'));
 
         // upload transcript to server
         if($request->file("lessonTranscript")){
@@ -23,7 +23,7 @@ class UploadLesson
 
         return [
             'video_path' => "",
-            'video_url' => Storage::disk('local')->url($videoPath),
+            'video_url' => asset("uploads/".$videoPath),
             'transcript' => "",
             'transcript_url' => "",
             'thumbnail_path' => $thumbnail,
