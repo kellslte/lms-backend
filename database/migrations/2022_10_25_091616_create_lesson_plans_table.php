@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('lesson_plans', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('course_id')->references('id')->on('courses');
-            $table->json('plan')->default([]);
+            $table->json('plan')->default(json_encode([]));
             $table->timestamps();
         });
     }
