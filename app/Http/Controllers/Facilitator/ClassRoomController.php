@@ -4,55 +4,49 @@ namespace App\Http\Controllers\Facilitator;
 
 use App\Models\Course;
 use App\Models\Lesson;
-use App\Services\Classroom;
 use App\Services\LessonsService;
 use App\Http\Controllers\Controller;
+use App\Services\Facilitator\Classroom;
 use App\Http\Requests\CreateLessonRequest;
 
 class ClassRoomController extends Controller
 {
-    public function index(): \Illuminate\Http\JsonResponse
+    public function index()
     {
        $user = getAuthenticatedUser();
 
-       $response = Classroom::allLessons($user);
-
-       if(array_key_exists("error", $response)){
-        return response()->json([
-            "status" => "failed",
-            "message" => $response["error"]
-        ], 400);
-       }
-
-        return response()->json([
-            'status' => "successful",
-            'data' => [
-                'lessons' => $response,
-            ]
-        ]);
-    }
-
-    public function store(CreateLessonRequest $request): \Illuminate\Http\JsonResponse
-    {
-        $user = getAuthenticatedUser();
-
-        try{
-            $course = Course::whereTitle($request->track)->first();
-
-            $response = Classroom::save($request, $course, $user->name);
+       try {
+            $response = Classroom::getLessons($user);
 
             return response()->json([
                 "status" => "success",
                 "data" => [
-                    'lesson' => $response["lesson"],
-                    'thumbnail' => $response["lesson"]->media->thumbnail,
-                    'video_link' => $response["lesson"]->media->video_link
+                    "lessons" => $response
                 ]
             ], 200);
+       } catch (\Throwable $th) {
+            return response()->json([
+                "status" => "failed",
+                "data" => [],
+                "message" => $th->getMessage()
+            ], 422);
+       }
+    }
+
+    public function store(CreateLessonRequest $request): \Illuminate\Http\JsonResponse
+    {
+        try{
+            $response = Classroom::createLesson($request);
+
+            return response()->json([
+                "status" => "success",
+                "data" => $response,
+            ], 201);
         }
         catch(\Exception $e){
             return response()->json([
                 "status" => "failed",
+                "data" => [],
                 "message" => $e->getMessage(),
             ], 400);
         }
@@ -60,6 +54,7 @@ class ClassRoomController extends Controller
 
     public function showLesson(String $lesson): \Illuminate\Http\JsonResponse
     {
+        
         $dblesson  = Lesson::find($lesson);
 
         if(!$lesson){

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Actions;
+namespace App\Actions\Task;
 
-class EditMeeting
+class EditTask
 {
     public static function handle(){}
 }

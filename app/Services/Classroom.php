@@ -11,17 +11,10 @@ use App\Models\Facilitator;
 class Classroom {
     public static function allLessons(Facilitator $user): array
     {
-        $publishedLessons = [];
-        $unpublishedLessons = [];
+        return ;
 
         try {
-            $lessons  =  Lesson::where("tutor", $user->name)->get();
 
-            $published = $lessons->reject(fn($lesson) => $lesson->status !== "published");
-
-            $unpublished = $lessons->reject(fn($lesson) => $lesson->status !== "unpublished");
-
-            return GetLessons::handle($published, $unpublished, $user);
         } catch (\Throwable $th) {
             return [
                 "published_lessons" => [],

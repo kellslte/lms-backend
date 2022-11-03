@@ -1,8 +1,7 @@
 <?php
+namespace App\Actions\Meeting;
 
-namespace App\Actions;
-
-class MakeSubmission
+class CreateMeeting
 {
     public function handle()
     {
