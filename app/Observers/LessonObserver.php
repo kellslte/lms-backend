@@ -54,7 +54,7 @@ class LessonObserver
 
         Notifier::dm("personal", "A new lesson has been uploaded successfully to the {$lesson->course->title} track and {$count} students' progress and curriculum has been updated");
 
-        Notifier::notify($lesson->course->title, "A new lesson has been uploaded. Go to your dashboard to check it out!");
+        Notifier::notify($lesson->course->title, "A new lesson has been uploadedto the {$lesson->course->title} track. Please to your dashboard to check it out!");
     }
 
     /**
