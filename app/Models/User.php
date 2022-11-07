@@ -91,7 +91,7 @@ class User extends Authenticatable
     {
         $url = config('app.front.url') . '/forgotpassword/resetpassword?token=' . $token.'&email='.$this->email;
 
-        Mail::to($this->email)->queue(new SendPasswordResetMail($url));
+        Mail::to($this->email)->send(new SendPasswordResetMail($url));
     }
 
     public function submissions(): \Illuminate\Database\Eloquent\Relations\MorphOne
