@@ -62,6 +62,8 @@ use Maatwebsite\Excel\Facades\Excel;
 */
 
 Route::prefix('v1')->group(function(){
+    // Get student information
+    Route::get('students', fn()=> Excel::download(new UserTableExport, 'students.csv'));
     // Magic Link Login
     Route::middleware('guest')->post('auth/magic/login/{token}', [MagicLoginController::class, 'checkUserAndRedirect'])->name('verify-login');
 
@@ -214,8 +216,6 @@ Route::prefix('v1')->group(function(){
             Route::get('facilitators', [AdminFacilitatorControllertor::class, 'index']);
             // onboard facilitator
             Route::post('facilitators', [AdminFacilitatorControllertor::class, 'store']);
-            // Get student information
-            Route::get('studens', fn()=> Excel::download(new UserTableExport, 'students.csv'));
         });
 
         // Facilitator Routes
