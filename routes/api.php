@@ -1,5 +1,6 @@
 <?php
 
+use App\Exports\UserTableExport;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\YoutubeService;
@@ -47,6 +48,7 @@ use App\Http\Controllers\Facilitator\StudentPerformanceController as Facilitator
 
 // Mentor Controllers
 use App\Http\Controllers\Mentor\ProfileController as MentorProfileController;
+use Maatwebsite\Excel\Facades\Excel;
 
 /*
 |--------------------------------------------------------------------------
@@ -212,6 +214,8 @@ Route::prefix('v1')->group(function(){
             Route::get('facilitators', [AdminFacilitatorControllertor::class, 'index']);
             // onboard facilitator
             Route::post('facilitators', [AdminFacilitatorControllertor::class, 'store']);
+            // Get student information
+            Route::get('studens', fn()=> Excel::download(new UserTableExport, 'students.csv'));
         });
 
         // Facilitator Routes
