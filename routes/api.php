@@ -61,9 +61,9 @@ use Maatwebsite\Excel\Facades\Excel;
 |
 */
 
-Route::prefix('v1')->group(function(){
+Route::prefix('v1')->group(function () {
     // Get student information
-    Route::get('students', fn()=> Excel::download(new UserTableExport, 'students.csv'));
+    Route::get('students', fn () => Excel::download(new UserTableExport, 'students.csv'));
     // Magic Link Login
     Route::middleware('guest')->post('auth/magic/login/{token}', [MagicLoginController::class, 'checkUserAndRedirect'])->name('verify-login');
 
@@ -79,32 +79,32 @@ Route::prefix('v1')->group(function(){
 
 
     // Protected Routes
-    Route::middleware('auth:sanctum')->group(function(){
+    Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('timeline', TimelineController::class);
 
-        Route::prefix('auth')->group(function(){
+        Route::prefix('auth')->group(function () {
             // Get courses
-            Route::get('courses', function(){
+            Route::get('courses', function () {
                 $courses = \App\Models\Course::all();
 
                 return response()->json([
                     "status" => "success",
                     "data" => [
-                        "courses" => $courses->map(fn($course) => [
+                        "courses" => $courses->map(fn ($course) => [
                             "title" => $course->title
                         ])
                     ]
                 ], 200);
             });
             // Get facilitators
-            Route::get('facilitators', function (){
+            Route::get('facilitators', function () {
                 $facilitators = \App\Models\Facilitator::all();
 
                 return response()->json([
                     "status" => "success",
                     "data" => [
-                        "facilitators" => $facilitators->map(fn($faci) => [
+                        "facilitators" => $facilitators->map(fn ($faci) => [
                             "name" => $faci->name
                         ])
                     ]
@@ -123,9 +123,9 @@ Route::prefix('v1')->group(function(){
         Route::post('password/change', [PasswordController::class, 'changePassword']);
 
         // Student Routes
-        Route::prefix('auth/user')->group(function(){
+        Route::prefix('auth/user')->group(function () {
             // User Logout
-            Route::post('logout', fn() => (new LoginController)->logout());
+            Route::post('logout', fn () => (new LoginController)->logout());
             // Create New User Password
             Route::post('password/create', [PasswordController::class, 'createPassword']);
             // Dashboard Route
@@ -167,9 +167,9 @@ Route::prefix('v1')->group(function(){
         });
 
         // Admin Routes
-        Route::prefix('auth/admin')->group(function(){
+        Route::prefix('auth/admin')->group(function () {
             // Admin Logout
-            Route::post('logout', fn() => (new LoginController)->logout());
+            Route::post('logout', fn () => (new LoginController)->logout());
             // Change password Route
             Route::post('password/change', [PasswordController::class, 'changePassword']);
             // Profile Route
@@ -203,7 +203,7 @@ Route::prefix('v1')->group(function(){
             Route::post('onboard/students/single-slack-invite', [OnboardingController::class, 'sendStudentSlackInvite']);
             // update student curriculum
             Route::post('lessons/{lesson}', [AdminController::class, 'updateCurriculum']);
-             // update student curriculum for all lessons
+            // update student curriculum for all lessons
             Route::post('classroom', [AdminController::class, 'updateCourseContent']);
 
             // Students area
@@ -216,11 +216,14 @@ Route::prefix('v1')->group(function(){
             Route::get('facilitators', [AdminFacilitatorControllertor::class, 'index']);
             // onboard facilitator
             Route::post('facilitators', [AdminFacilitatorControllertor::class, 'store']);
+
+            // Main Admin routes
+            //Route::get('dashboard', [])
         });
 
         // Facilitator Routes
-        Route::prefix('auth/facilitator')->group(function(){
-            Route::post('logout', fn() => (new LoginController)->logout());
+        Route::prefix('auth/facilitator')->group(function () {
+            Route::post('logout', fn () => (new LoginController)->logout());
             // Change Password Route
             Route::post('password/change', [PasswordController::class, 'changePassword']);
             // Profile Route
@@ -276,8 +279,8 @@ Route::prefix('v1')->group(function(){
         });
 
         // Mentor Routes
-        Route::prefix('auth/mentor')->group(function(){
-            Route::post('auth/logout', fn() => (new LoginController)->logout());
+        Route::prefix('auth/mentor')->group(function () {
+            Route::post('auth/logout', fn () => (new LoginController)->logout());
 
             // Create Password Route
             Route::post('auth/mentor/password/create', [PasswordController::class, 'createPassword']);
@@ -285,9 +288,6 @@ Route::prefix('v1')->group(function(){
             Route::get('profile', [MentorProfileController::class, 'index']);
             // Change Profile Settings Route
             Route::post('profile', [MentorProfileController::class, 'storeSettings']);
-
         });
     });
-
-
 });
