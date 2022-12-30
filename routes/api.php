@@ -177,7 +177,7 @@ Route::prefix('v1')->group(function () {
             // Change Proflie Settings Route
             Route::post('profile', [AdminProfileController::class, 'storeSettings']);
             //  Dashboard route
-            Route::post('dashboard', AdminDashboardController::class);
+            Route::get('dashboard', AdminDashboardController::class);
 
             // Onboarding Routes
             Route::post('onboard/facilitator', [OnboardingController::class, 'facilitator']);
