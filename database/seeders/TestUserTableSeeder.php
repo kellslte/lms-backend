@@ -52,11 +52,11 @@ class TestUserTableSeeder extends Seeder
 
         // $this->createMentors();
 
-        //$this->createFacilitators();
+        $this->createFacilitators();
 
         // $this->call(LessonsTableSeeder::class);
 
-        $this->createStudents();
+        //$this->createStudents();
     }
 
     protected function createStudent(array $data, String $courseTitle)
@@ -120,7 +120,7 @@ class TestUserTableSeeder extends Seeder
         foreach (Course::all() as $course) {
             $this->createFacilitator([
                 "name" => "Chidubem Anowor",
-                "email" => "acount{$courses}.facilitator@gmail.com",
+                "email" => "account{$courses}.facilitator@theadaproject.com.ng",
                 "recovery_email" => "anowor{$courses}@gmail.com",
                 "password" => bcrypt("password"),
             ], $course->title);
