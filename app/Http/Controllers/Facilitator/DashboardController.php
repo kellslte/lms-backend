@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Facilitator;
 
 use App\Models\Meeting;
-use App\Services\Classroom as ClassroomAlias;
+use App\Services\Facilitator\Classroom;
 use Illuminate\Http\Request;
 use App\Services\TaskManager;
 use App\Services\TaskService;
@@ -30,12 +30,12 @@ class DashboardController extends Controller
             'total_enrolled_students' => $user->course->students->count(),
         ];
 
-        if($tasks = TaskManager::taskStatus($user->course->id)){
+        if ($tasks = TaskManager::taskStatus($user->course->id)) {
             $data["pending_tasks"] = $tasks["pending_tasks"];
             $data["completed_tasks"] = $tasks["graded_tasks"];
         }
 
-        if($lessons = ClassroomAlias::allLessons($user)){
+        if ($lessons = Classroom::getLessons($user)) {
             $data["published_lessons"] = [...$lessons["published_lessons"]];
             $data["unpublished_lessons"] = [...$lessons["unpublished_lessons"]];
         }
