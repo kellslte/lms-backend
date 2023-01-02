@@ -28,7 +28,7 @@ class ScheduleController extends Controller
 
     public function fixSotu(CreateSotuRequest $request): \Illuminate\Http\JsonResponse
     {
-        try{
+        try {
             $sotu = Sotu::create([
                 "link" => $request->link,
                 "time" => $request->time,
@@ -40,8 +40,7 @@ class ScheduleController extends Controller
                     "sotu" => $sotu
                 ]
             ], 201);
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 "status" => "failed",
                 "message" => $e->getMessage()
@@ -49,8 +48,9 @@ class ScheduleController extends Controller
         }
     }
 
-    public function updateSotu(CreateSotuRequest $request, Sotu $sotu){
-        try{
+    public function updateSotu(CreateSotuRequest $request, Sotu $sotu)
+    {
+        try {
             $sotu->update([
                 "link" => $request->link,
                 "time" => $request->time
@@ -62,8 +62,7 @@ class ScheduleController extends Controller
                     "sotu" => $sotu
                 ]
             ], 200);
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 "status" => "failed",
                 "message" => $e->getMessage()
@@ -73,32 +72,42 @@ class ScheduleController extends Controller
 
     public function fixClass(CreateLiveClassRequest $request): \Illuminate\Http\JsonResponse
     {
-        $user = getAuthenticatedUser();
 
         try {
-            $meeting =  Meeting::create([
+
+            $meeting = "";
+
+            $meeting = Meeting::whereCaption($request->caption)->first();
+
+            if ($meeting !== null) return response()->json([
+                "status" => "failed",
+                "message" => "Class already exists",
+                "error_code" => 400,
+            ], 400);
+
+            $meeting =  Meeting::firstOrCreate([
                 "caption" => $request->caption,
-                "host" => $request->host,
+                "host_name" => $request->host,
                 "link" => $request->link,
                 "start_time" => $request->time,
-                "end_time"=> $request->time,
+                "end_time" => $request->time,
                 "date" => $request->date,
                 "calendarId" => '6318e0104204e',
                 "type" => "class",
-        ]);
+            ]);
 
-        $host = Facilitator::whereName($request->host)->first();
+            $host = Facilitator::whereName($request->host)->first();
 
-         ClassFixed::dispatch($host->course->students, $meeting, $user);
+            ClassFixed::dispatch($host->course->students, $meeting, $host);
 
-         return response()->json([
+            return response()->json([
                 "status" => "successful",
                 "message" => "Class has been fixed",
                 "data" => [
                     "class" => $meeting
                 ]
             ], 201);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 "status" => "failed",
                 "message" => $e->getMessage()
@@ -108,36 +117,57 @@ class ScheduleController extends Controller
 
     public function updateClass(CreateLiveClassRequest $request, Meeting $meeting): \Illuminate\Http\JsonResponse
     {
-        $user = getAuthenticatedUser();
 
         try {
-            $meeting->update([
+            $response = $meeting->update([
                 "caption" => $request->caption,
                 "host" => $request->host,
                 "link" => $request->link,
                 "start_time" => $request->time,
-                "end_time"=> $request->time,
+                "end_time" => $request->time,
                 "date" => $request->date,
                 "calendarId" => '6318e0104204e',
                 "type" => "class",
-        ]);
+            ]);
 
-        $host = Facilitator::whereName($request->host)->first();
+            $host = Facilitator::whereName($request->host)->first();
 
-         ClassFixed::dispatch($host->course->students, $meeting, $user);
+            ClassFixed::dispatch($host->course->students, $meeting, $host);
 
-         return response()->json([
+            return response()->json([
                 "status" => "successful",
                 "message" => "Class has been updated",
                 "data" => [
-                    "class" => $meeting
+                    "class" => $response
                 ]
             ]);
-        }catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
                 "status" => "failed",
                 "message" => $e->getMessage()
             ], 400);
         }
+    }
+
+    public function deleteSotu(Sotu $sotu)
+    {
+        $sotu->delete();
+
+        return response()->json([
+            "success" => true,
+            "message" => "Sotu deleted successfully",
+            "data" => []
+        ], 204);
+    }
+
+    public function deleteClass(Meeting $meeting)
+    {
+        $meeting->delete();
+
+        return response()->json([
+            "success" => true,
+            "message" => "Class deleted successfully",
+            "data" => []
+        ], 204);
     }
 }

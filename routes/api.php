@@ -24,7 +24,8 @@ use App\Http\Controllers\Admin\ClassroomController as AdminCourseController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\StudentController as AdminStudentController;
-use App\Http\Controllers\Admin\FacilitatorController as AdminFacilitatorControllertor;
+use App\Http\Controllers\Admin\FacilitatorController as AdminFacilitatorController;
+use App\Http\Controllers\Admin\ScheduleController as AdminScheduleController;
 
 // Student Controllers
 use App\Http\Controllers\Student\ProgressController;
@@ -176,8 +177,7 @@ Route::prefix('v1')->group(function () {
             Route::get('profile', [AdminProfileController::class, 'index']);
             // Change Proflie Settings Route
             Route::post('profile', [AdminProfileController::class, 'storeSettings']);
-            //  Dashboard route
-            Route::get('dashboard', AdminDashboardController::class);
+
 
             // Onboarding Routes
             Route::post('onboard/facilitator', [OnboardingController::class, 'facilitator']);
@@ -206,6 +206,8 @@ Route::prefix('v1')->group(function () {
             // update student curriculum for all lessons
             Route::post('classroom', [AdminController::class, 'updateCourseContent']);
 
+            // Main Admin routes
+
             // Students area
             // overview
             Route::get('students', [AdminStudentController::class, 'index']);
@@ -213,12 +215,26 @@ Route::prefix('v1')->group(function () {
             Route::post('students/{student}', [AdminStudentController::class, 'destroy']);
 
             // Facilitators area
-            Route::get('facilitators', [AdminFacilitatorControllertor::class, 'index']);
+            Route::get('facilitators', [AdminFacilitatorController::class, 'index']);
             // onboard facilitator
-            Route::post('facilitators', [AdminFacilitatorControllertor::class, 'store']);
+            Route::post('facilitators', [AdminFacilitatorController::class, 'store']);
 
-            // Main Admin routes
-            //Route::get('dashboard', [])
+
+            //  Dashboard route
+            Route::get('dashboard', AdminDashboardController::class);
+
+            // Classroom routes
+            Route::get('classroom', [AdminCourseController::class, 'index']);
+            Route::get('classroom/{course}', [AdminCourseController::class, 'search']);
+
+            // Shedule routes
+            Route::get('schedule', [AdminScheduleController::class, 'index']);
+            Route::post('schedule/sotu', [AdminScheduleController::class, 'fixSotu']);
+            Route::put('schedule/sotu/{sotu}', [AdminScheduleController::class, 'updateSotu']);
+            Route::delete('schedule/sotu/{sotu}', [AdminScheduleController::class, 'deleteSotu']);
+            Route::post('schedule/class', [AdminScheduleController::class, 'fixClass']);
+            Route::put('schedule/class/{class}', [AdminScheduleController::class, 'updateClass']);
+            Route::delete('schedule/class/{class}', [AdminScheduleController::class, 'deleteClass']);
         });
 
         // Facilitator Routes

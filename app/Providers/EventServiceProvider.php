@@ -73,7 +73,7 @@ class EventServiceProvider extends ServiceProvider
             SendSlackInviteMail::class,
         ],
         ClassFixed::class => [
-            LiveClassFixed::class,
+            //LiveClassFixed::class,
             UpdateFacilitatorSchedule::class,
             UpdateStudentSchedule::class,
         ],

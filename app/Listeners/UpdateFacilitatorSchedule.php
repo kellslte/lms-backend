@@ -26,6 +26,11 @@ class UpdateFacilitatorSchedule
      */
     public function handle(ClassFixed $event)
     {
+        // check if the facilitator has a schedule or create one if he doesn't
+        $event->facilitator->schedule()->firstOrCreate([
+            "meetings" => json_encode([])
+        ]);
+
         $schedule = json_decode($event->facilitator->schedule->meetings, true);
 
         $schedule[] = $event->meeting;

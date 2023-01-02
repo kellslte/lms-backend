@@ -5,6 +5,7 @@ namespace App\Observers;
 use App\Models\Course;
 use App\Models\Meeting;
 use App\Actions\Notifier;
+use App\Models\Facilitator;
 
 class MeetingObserver
 {
@@ -18,9 +19,9 @@ class MeetingObserver
      */
     public function created(Meeting $meeting)
     {
-        $tutor = $meeting->host;
+        $tutor = Facilitator::where("name", $meeting->host_name)->first();
 
-        $courseTitle = Course::whereTutor($tutor)->first()->title;
+        $courseTitle = $tutor->course->title;
 
         Notifier::dm("personal", "{$tutor} just created a new meeting");
 

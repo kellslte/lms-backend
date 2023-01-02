@@ -9,33 +9,37 @@ use App\Http\Controllers\Controller;
 
 class StudentController extends Controller
 {
-    public function index(){
+    public function index()
+    {
         $students = User::all();
 
         $mentors = Mentor::all();
 
-        $response = $students->map(function(User $user) use ($mentors){
+        $response = $students->map(function (User $user) use ($mentors) {
 
-            $mentor = $mentors->reject(function(Mentor $mentor) use ($user){
+            $mentor = $mentors->reject(function (Mentor $mentor) use ($user) {
                 return !$mentor->mentees->where("student_id", $user->id);
             });
 
             $name = "";
 
-            if($mentor){
-                $name = $mentor->name;
-            }
+            // if($mentor){
+            //     $name = $mentor->name;
+            // }
 
             return [
+                'id' => $user->id,
                 'name' => $user->name,
                 'track' => $user->course->title,
-                'attendance' => $user->point->attendance_points,
-                'tasks' => $user->point->task_points,
-                'bonus' => $user->point->bonus_points,
-                'total' => $user->point->total,
+                'points' => [
+                    'attendance' => $user->point->attendance_points,
+                    'tasks' => $user->point->task_points,
+                    'bonus' => $user->point->bonus_points,
+                    'total' => $user->point->total,
+                ],
                 'mentor' => $name
             ];
-        });
+        })->groupBy('track');
 
         return response()->json([
             'status' => 'success',
@@ -45,8 +49,9 @@ class StudentController extends Controller
         ]);
     }
 
-    public function destroy(User $student){
-        try{
+    public function destroy(User $student)
+    {
+        try {
             $student->submissions()->delete();
             $student->schedule()->delete();
             $student->attendance()->delete();
@@ -60,11 +65,10 @@ class StudentController extends Controller
                 'status' => 'success',
                 'message' => 'Student record deleted successfully',
             ], 200);
-        }
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             return response()->json([
-               'status' => 'error',
-               'message' => $e->getMessage(),
+                'status' => 'error',
+                'message' => $e->getMessage(),
             ], 400);
         }
     }
