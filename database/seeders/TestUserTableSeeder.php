@@ -56,7 +56,7 @@ class TestUserTableSeeder extends Seeder
 
         // $this->call(LessonsTableSeeder::class);
 
-        // $this->createStudents();
+        $this->createStudents();
     }
 
     protected function createStudent(array $data, String $courseTitle)
