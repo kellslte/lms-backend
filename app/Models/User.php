@@ -65,7 +65,8 @@ class User extends Authenticatable
         return $this->morphMany(MagicToken::class, 'tokenable');
     }
 
-    public function sendMagicLink(){
+    public function sendMagicLink()
+    {
         $data =  MagicLinkService::createToken($this);
 
         Mail::to($this->email)->queue(new SendMagicLinkToUser($data['token'], $data['expires_at'],  $this));
@@ -89,7 +90,7 @@ class User extends Authenticatable
      */
     public function sendPasswordResetNotification($token): void
     {
-        $url = config('app.front.url') . '/forgotpassword/resetpassword?token=' . $token.'&email='.$this->email;
+        $url = config('app.front.url') . '/forgotpassword/resetpassword?token=' . $token . '&email=' . $this->email;
 
         Mail::to($this->email)->send(new SendPasswordResetMail($url));
     }
@@ -118,14 +119,14 @@ class User extends Authenticatable
     {
         $tasks  = collect(json_decode($this->submissions->tasks, true));
 
-        if(!$tasks->isEmpty()){
+        if (!$tasks->isEmpty()) {
             $taskInDb = Task::all();
 
-            return $tasks->reject(fn($task) => $task["status"] !== "submitted")->map(function($task) use ($taskInDb){
+            return $tasks->reject(fn ($task) => $task["status"] !== "submitted")->map(function ($task) use ($taskInDb) {
 
                 $tasks = $taskInDb->firstWhere("id", $task["id"]);
 
-                if(is_null($tasks)){
+                if (is_null($tasks)) {
                     return [];
                 }
 
@@ -140,7 +141,6 @@ class User extends Authenticatable
                     "linkToResource" => $task["linkToResource"]
                 ];
             });
-
         }
 
         return $tasks;
@@ -153,16 +153,16 @@ class User extends Authenticatable
 
         $lessons->load('tasks');
 
-        if(!$submittedTasks->isEmpty()){
-            $tasks = collect($lessons)->map(fn($lesson)=> $lesson->tasks)->flatten();
+        if (!$submittedTasks->isEmpty()) {
+            $tasks = collect($lessons)->map(fn ($lesson) => $lesson->tasks)->flatten();
 
-            $pending = $tasks->reject(fn($task) => $submittedTasks->firstWhere('id', $task->id))->filter(fn($task) => $task->status !== 'expired')->flatten();
+            $pending = $tasks->reject(fn ($task) => $submittedTasks->firstWhere('id', $task->id))->filter(fn ($task) => $task->status !== 'expired')->flatten();
 
-            return $pending->map(fn($task) => new TaskResource($task));
+            return $pending->map(fn ($task) => new TaskResource($task));
         }
 
-        if(!collect($this->lessons())->isEmpty()){
-            return collect($lessons)->map(fn($lesson) => collect($lesson->tasks)->map(fn($task) => new TaskResource($task)))->flatten();
+        if (!collect($this->lessons())->isEmpty()) {
+            return collect($lessons)->map(fn ($lesson) => collect($lesson->tasks)->map(fn ($task) => new TaskResource($task)))->flatten();
         }
 
         return [];
@@ -170,12 +170,11 @@ class User extends Authenticatable
 
     public function expiredTasks(): \Illuminate\Support\Collection
     {
-       $lessons = $this->lessons();
+        $lessons = $this->lessons();
 
-       $lessons->load('tasks');
+        $lessons->load('tasks');
 
-       return collect($lessons)->map(fn($lesson) => collect($lesson->tasks)->filter(fn($task) => $task->status == 'expired')->filter())->flatten();
-
+        return collect($lessons)->map(fn ($lesson) => collect($lesson->tasks)->filter(fn ($task) => $task->status == 'expired')->filter())->flatten();
     }
 
     public function lessons()
@@ -206,5 +205,10 @@ class User extends Authenticatable
     public function allowedDevices(): \Illuminate\Database\Eloquent\Relations\MorphOne
     {
         return $this->morphOne(AllowedDevices::class, "loggable");
+    }
+
+    public function curriculum()
+    {
+        return $this->morphOne(Curriculum::class, 'plannable');
     }
 }

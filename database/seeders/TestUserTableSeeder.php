@@ -52,7 +52,7 @@ class TestUserTableSeeder extends Seeder
 
         // $this->createMentors();
 
-        $this->createFacilitators();
+        //$this->createFacilitators();
 
         // $this->call(LessonsTableSeeder::class);
 
@@ -62,6 +62,23 @@ class TestUserTableSeeder extends Seeder
     protected function createStudent(array $data, String $courseTitle)
     {
         $course = Course::whereTitle($courseTitle)->firstOrFail();
+
+        $lessons = $course->lessons;
+
+        $curriculum = [];
+        $progress = [];
+
+        foreach ($lessons as $lesson) {
+            $curriculum[] = [
+                "lesson_id" => $lesson->id,
+                "lesson_status" => "uncompleted"
+            ];
+
+            $progress[] = [
+                "lesson_id" => $lesson->id,
+                "percentage" => 0
+            ];
+        }
 
         $student = $course->students()->create($data);
 
@@ -82,11 +99,11 @@ class TestUserTableSeeder extends Seeder
 
         $student->progress()->create([
             "course" => $course->title,
-            "course_progress" => json_encode([]),
+            "course_progress" => json_encode($progress),
         ]);
 
         $student->curriculum()->create([
-            "viewables" => json_encode([]),
+            "viewables" => json_encode($curriculum),
         ]);
 
         $record = getDaysInMonth(7);
@@ -105,12 +122,6 @@ class TestUserTableSeeder extends Seeder
                 "name" => "Chidubem Anowor",
                 "email" => "acount{$courses}.facilitator@gmail.com",
                 "recovery_email" => "anowor{$courses}@gmail.com",
-                "password" => bcrypt("password"),
-            ], $course->title);
-
-            $this->createStudent([
-                "name" => "Dubem Anowor",
-                "email" => "anowor{$courses}@gmail.com",
                 "password" => bcrypt("password"),
             ], $course->title);
 
@@ -140,6 +151,18 @@ class TestUserTableSeeder extends Seeder
 
     protected function createStudents()
     {
+        $courses = Course::count();
+
+        foreach (Course::all() as $course) {
+
+            $this->createStudent([
+                "name" => "Dubem Anowor",
+                "email" => "anowor{$courses}@gmail.com",
+                "password" => bcrypt("password"),
+            ], $course->title);
+
+            $courses--;
+        }
     }
 
     protected function createMentor(array $data)
