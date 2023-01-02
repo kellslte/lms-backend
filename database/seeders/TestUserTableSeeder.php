@@ -19,44 +19,44 @@ class TestUserTableSeeder extends Seeder
      */
     public function run()
     {
-        Admin::create([
-            'name' => 'Favour Max-Oti',
-            'email' => 'maxotif.admin@gmail.com',
-            'recovery_email' => 'maxotif@gmail.com',
-            'password' => bcrypt('password'),
-        ])->settings()->create();
+        // Admin::create([
+        //     'name' => 'Favour Max-Oti',
+        //     'email' => 'maxotif.admin@gmail.com',
+        //     'recovery_email' => 'maxotif@gmail.com',
+        //     'password' => bcrypt('password'),
+        // ])->settings()->create();
 
-        Admin::create([
-            'name' => 'Sophia Abubaka',
-            'email' => 'sophia.admin@gmail.com',
-            'recovery_email' => 'sophia.ahuoyiza@gmail.com',
-            'password' => bcrypt('password'),
-        ])->settings()->create();
+        // Admin::create([
+        //     'name' => 'Sophia Abubaka',
+        //     'email' => 'sophia.admin@gmail.com',
+        //     'recovery_email' => 'sophia.ahuoyiza@gmail.com',
+        //     'password' => bcrypt('password'),
+        // ])->settings()->create();
 
-        Admin::create([
-            'name' => 'Ihuoma Agbaru',
-            'email' => 'ihuoma.admin@gmail.com',
-            'recovery_email' => 'theadaproject@enugutechhub.en.gov.ng',
-            'password' => bcrypt('password'),
-        ])->settings()->create();
+        // Admin::create([
+        //     'name' => 'Ihuoma Agbaru',
+        //     'email' => 'ihuoma.admin@gmail.com',
+        //     'recovery_email' => 'theadaproject@enugutechhub.en.gov.ng',
+        //     'password' => bcrypt('password'),
+        // ])->settings()->create();
 
-        CommunityManager::create([
-            'name' => 'Bell Omoboye',
-            'avatar' => 'https://www.forbes.com/sites/angelicamarideoliveira/2021/07/06/meet-the-entrepreneurs-ushering-black-women-into-ux-careers-in-brazil/'
-        ])->socials()->create([
-            'linkedin' => 'https://linkedin.com/in/bellomoboye',
-            'twitter' => 'https://twitter.com/omobells',
-            'facebook' => 'https://facebook.com/omoboyebell',
-            'mail' => 'bellomoboye@gmail.com'
-        ]);
+        // CommunityManager::create([
+        //     'name' => 'Bell Omoboye',
+        //     'avatar' => 'https://www.forbes.com/sites/angelicamarideoliveira/2021/07/06/meet-the-entrepreneurs-ushering-black-women-into-ux-careers-in-brazil/'
+        // ])->socials()->create([
+        //     'linkedin' => 'https://linkedin.com/in/bellomoboye',
+        //     'twitter' => 'https://twitter.com/omobells',
+        //     'facebook' => 'https://facebook.com/omoboyebell',
+        //     'mail' => 'bellomoboye@gmail.com'
+        // ]);
 
-        $this->createMentors();
+        // $this->createMentors();
 
         $this->createFacilitators();
 
-        $this->call(LessonsTableSeeder::class);
+        // $this->call(LessonsTableSeeder::class);
 
-        $this->createStudents();
+        // $this->createStudents();
     }
 
     protected function createStudent(array $data, String $courseTitle)
@@ -97,26 +97,24 @@ class TestUserTableSeeder extends Seeder
 
     protected function createFacilitators()
     {
-        $this->createFacilitator([
-            'name' => 'Signs Madueke',
-            'email' => 'signs.facilitator@gmail.com',
-            'recovery_email' => 'signsmaduaeke@gmail.com',
-            'password' => bcrypt('fascille'),
-        ], 'Cloud Engineering');
+        $courses = Course::count();
 
-        $this->createFacilitator([
-            'name' => 'Favour Onyebuchi',
-            'email' => 'favour.facilitator@gmail.com',
-            'recovery_email' => 'onyifavour@gmail.com',
-            'password' => bcrypt('fascille'),
-        ], 'Product Design');
+        foreach (Course::all() as $course) {
+            $this->createFacilitator([
+                "name" => "Chidubem Anowor",
+                "email" => "acount{$courses}.facilitator@gmail.com",
+                "recovery_email" => "anowor{$courses}@gmail.com",
+                "password" => bcrypt("password"),
+            ], $course->title);
 
-        $this->createFacilitator([
-            'name' => 'Sophia Ahuoyiza',
-            'email' => 'sophia.facilitator@gmail.com',
-            'recovery_email' => 'sophiaabubaka@gmail.com',
-            'password' => bcrypt('fascille'),
-        ], 'Backend Engineering');
+            $this->createStudent([
+                "name" => "Dubem Anowor",
+                "email" => "anowor{$courses}@gmail.com",
+                "password" => bcrypt("password"),
+            ], $course->title);
+
+            $courses--;
+        }
     }
 
     protected function createFacilitator(array $data, String $courseTitle)
@@ -141,32 +139,10 @@ class TestUserTableSeeder extends Seeder
 
     protected function createStudents()
     {
-        $this->createStudent([
-            'name' => 'Bibi Wellington',
-            'email' => 'maxotif@gmail.com',
-            'current_education_level' => 'Others',
-            'access_to_laptop' => 'Yes',
-            'password' => bcrypt('student'),
-        ], 'Product Design');
-
-        $this->createStudent([
-            'name' => 'Temilade Williamson',
-            'email' => 'chrisnonso8@gmail.com',
-            'current_education_level' => 'HND',
-            'access_to_laptop' => 'Yes',
-            'password' => bcrypt('student'),
-        ], 'Product Design');
-
-        $this->createStudent([
-            'name' => 'Chidinma Samson',
-            'email' => 'chibest235@gmail.com',
-            'current_education_level' => 'BSc',
-            'access_to_laptop' => 'Yes',
-            'password' => bcrypt('student'),
-        ], 'Product Design');
     }
 
-    protected function createMentor(Array $data){
+    protected function createMentor(array $data)
+    {
         $mentor = Mentor::create([
             'name' => $data["name"],
             'email' => $data["email"],
@@ -181,8 +157,9 @@ class TestUserTableSeeder extends Seeder
         ]);
     }
 
-    public function createMentors(){
-        for($i=0; $i <= 20; $i++){
+    public function createMentors()
+    {
+        for ($i = 0; $i <= 20; $i++) {
             $this->createMentor([
                 "name" => "Mentor {$i}",
                 "email" => "mentor{$i}.mentor@gmail.com",
