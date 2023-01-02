@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Actions;
+namespace App\Actions\Task;
 
-class EditTask
+class DeleteTask
 {
     public static function handle(){}
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Actions;
+namespace App\Actions\Task;
 
-class DraftLesson
+class MakeSubmission
 {
     public function handle()
     {

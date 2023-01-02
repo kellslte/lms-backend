@@ -193,11 +193,6 @@ class User extends Authenticatable
         return $this->hasOne(Point::class);
     }
 
-    public function curriculum(): \Illuminate\Database\Eloquent\Relations\MorphOne
-    {
-        return $this->morphOne(Curriculum::class, 'plannable');
-    }
-
     public function reports(): \Illuminate\Database\Eloquent\Relations\MorphMany
     {
         return $this->morphMany(Report::class, 'reporter');

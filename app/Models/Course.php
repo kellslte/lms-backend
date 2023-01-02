@@ -22,7 +22,7 @@ class Course extends Model
     ];
 
     public function facilitator(){
-        return $this->hasOne(Facilitator::class);
+        return $this->hasMany(Facilitator::class);
     }
 
     public function track()
@@ -37,5 +37,10 @@ class Course extends Model
     public function lessons()
     {
         return $this->hasMany(Lesson::class);
+    }
+
+    public function curriculum()
+    {
+        return $this->hasOne(LessonPlan::class);
     }
 }

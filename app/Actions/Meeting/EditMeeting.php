@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Actions;
+namespace App\Actions\Meeting;
 
-class DeleteMeeting
+class EditMeeting
 {
     public static function handle(){}
 }

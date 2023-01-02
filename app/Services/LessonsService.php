@@ -60,6 +60,18 @@ class LessonsService {
         }
     }
 
+    public static function getCourseCurriculum($course, $user){
+        $progress=
+        collect(json_decode($user->progress->course_progress, true));
+
+        return collect(json_decode($course->curriculum->plan, true))->map(function($lesson)use ($progress){
+            $lessonProgress = $progress->where("lesson_id", $lesson["lesson_id"])->first();
+
+            
+        });
+
+    }
+
     public static function getUserCurriculum($user){
         $progress = collect(json_decode($user->progress->course_progress, true));
 

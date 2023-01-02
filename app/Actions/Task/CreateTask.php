@@ -1,6 +1,6 @@
 <?php
+namespace App\Actions\Task;
 
-namespace App\Actions;
 
 class CreateTask
 {
