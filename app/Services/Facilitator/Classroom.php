@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Services\Facilitator;
 
 use App\Actions\Curriculum\UpdateCurriculum;
@@ -9,11 +8,11 @@ use App\Models\Facilitator;
 use App\Actions\Lesson\GetLessons;
 use App\Actions\Lesson\UploadLessonMedia;
 
-class Classroom
-{
-    public static function getLessons(Facilitator $user)
-    {
-        $lessons  =  $user->course->lessons;
+class Classroom{
+    public static function getLessons(Facilitator $user){
+        //$lessons  =  $user->course->lessons;
+
+        $lessons  =  Lesson::where("tutor", $user->name)->get();
 
         $published = $lessons->reject(fn ($lesson) => $lesson->status !== "published");
 
@@ -22,8 +21,7 @@ class Classroom
         return GetLessons::handle($published, $unpublished, $user);
     }
 
-    public static function getLesson(Lesson $lesson)
-    {
+    public static function getLesson(Lesson $lesson){
         return [
             "id" => $lesson->id,
             "title" => $lesson->title,
@@ -31,8 +29,7 @@ class Classroom
         ];
     }
 
-    public static function createLesson($request)
-    {
+    public static function createLesson($request){
         // upload lesson media
         $media = UploadLessonMedia::handle($request);
 
@@ -49,18 +46,15 @@ class Classroom
                 "video" => $lesson->media->video_link,
                 "thumbnail" => $lesson->media->thumbnail
             ],
-            "resources" => collect($lesson->resources)->map(fn ($resource) => $resource->link)
+            "resources" => collect($lesson->resources)->map(fn($resource) => $resource->link )
         ];
     }
 
-    public static function editLesson($request, $lesson)
-    {
+    public static function editLesson($request, $lesson){
         // $lesson->update([
         //     "title" =>
         // ]);
     }
 
-    public static function deleteLesson()
-    {
-    }
+    public static function deleteLesson(){}
 }
